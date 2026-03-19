@@ -16,17 +16,34 @@
         #top-display {
             position: fixed;
             top: 40px;
-            left: calc(50% - 150px);
-            width: 300px; /* A specific width is required */
+            left: calc(50% - 175px);
+            width: 350px;
             height: 50px;
-            background-color: rgba(177, 0, 56, 0.6);
             display: flex;
             align-items: center;
             justify-content: center;
+            background-color: rgba(177, 0, 56, 0.6);
             color: rgba(255, 255, 255, 1);
-            font-family: 'Consolas';
             border: 2px solid rgba(50, 0, 16, 0.6);
-            transition: color 0.5s
+            font-family: 'Consolas';
+            font-size: 18px;
+        }
+
+        #left-panel {
+            position: fixed;
+            top: calc(50% - 250px);
+            left: 30px;
+            width: 250px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(177, 0, 56, 0.4);
+            color: rgba(255, 255, 255, 1);
+            border: 2px solid rgba(50, 0, 16, 0.4);
+            font-family: 'Consolas';
+            font-size: 15px;
         }
 
         #map {
@@ -36,31 +53,203 @@
             background: #0b0d23;
         }
 
-        
+        .dist-popup {
+            font-family: 'Consolas';
+            font-size: 20px;
+            text-align: center;
+            opacity: 1;
+            position: fixed;
+        }
+
+        input[type="number"] {
+            font-family: 'Consolas';
+            border-radius: 0;
+            border: 1px solid rgb(0, 0, 0);
+            background-color: rgb(50, 0, 16);
+            color: white;
+            appearance: textfield;
+        }
+
+        button, select {
+            font-family: 'Consolas';
+            border-radius: 0;
+            border: 1px solid rgb(0, 0, 0);
+            background-color: rgb(50, 0, 16);
+            color: white;
+            cursor: pointer;
+        }
+
+        @keyframes move-popup-text {
+            0% {transform: translate(0, 0); opacity: 1;}
+            100% {transform: translate(0, -50px); opacity: 0;}
+        }
     </style>
 </head>
 
 <body>
     <div id="map"></div>
-    <div id="top-display">
+    <div id="top-display"></div>
+    <div id="left-panel">
+        <div style="margin-bottom: 20px">
+            <label for="map-select">Select map:</label>
+            <select id="map-select" name="map-select">
+                <option value="usa">United States</option>
+                <option value="china">China</option>
+                <option value="india">India</option>
+                <option value="brazil">Brazil</option>
+                <option value="indonesia">Indonesia</option>
+                <option value="russia">Russia</option>
+                <option value="canada">Canada</option>
+                <option value="custom">Custom map...</option>
+            </select>
+        </div>
+        <div>
+            <label for="min-population">Min. population:</label>
+            <input type="number" id="min-population" name="min-population" value="1000000" style="width: 70px;">
+        </div>
+        <div>
+            <label for="max-population">Max. population:</label>
+            <input type="number" id="max-population" name="max-population" value="100000000" style="width: 70px;">
+        </div>
+        <button style="margin-bottom: 20px" id="set-prefs">Set</button>
+        <div style="margin-bottom: 20px">Possible locations: <span id="num-locs"></span></div>
+        <div>
+            <input type="checkbox" id="checkbox-outline">
+            <span>Show country outline</span>
+        </div><br>
+        <div><input type="checkbox" id="checkbox-division-name" checked>
+            <span>Show subdivision name</span>
+        </div><br>
+        <div>
+            <input type="checkbox" id="checkbox-country-name">
+            <span>Show country name</span>
+        </div>
+        <div style="position: fixed; left: 0; bottom: 0; font-size: 14px;">
+            Country outlines by <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoboundaries</a>
+        </div>
     </div>
 
     <script>
+        // Data used: https://public.opendatasoft.com/explore/assets/geonames-all-cities-with-a-population-1000/view
+
+        let mouseX = 0;
+        let mouseY = 0;
         let autoStart = true;
-        let allCities;
+        let fadeTime = 1000;
+        let allCities = [];
         let currCitiesList = [];
         let currCity;
-        $.getJSON("all_cities.json", (cities)=>{
-            allCities = cities;
+        let inTransition = false;
+        let currCountriesList;
+        let showDivision = $("#checkbox-division-name")[0].checked;
+        let showCountry = $("#checkbox-country-name")[0].checked;
+        let minPopulation = 1000000;
+        let maxPopulation = 100000000;
+
+        let cn_codes = {1:"Anhui",2:"Zhejiang",3:"Jiangxi",4:"Jiangsu",5:"Jilin",6:"Qinghai",7:"Fujian",8:"Heilongjiang",9:"Henan",10:"Hebei",11:"Hunan",12:"Hubei",13:"Xinjiang",14:"Tibet",15:"Gansu",16:"Guangxi",18:"Guizhou",19:"Liaoning",20:"Inner Mongolia",21:"Ningxia",22:"Beijing",23:"Shanghai",24:"Shanxi",25:"Shandong",26:"Shaanxi",28:"Tianjin",29:"Yunnan",30:"Guangdong",31:"Hainan",32:"Sichuan",33:"Chongqing"};
+        let in_codes = {1:"Andaman and Nicobar",2:"Andhra Pradesh",3:"Assam",5:"Chandigarh",7:"Delhi",9:"Gujarat",10:"Haryana",11:"Himachal Pradesh",12:"Jammu and Kashmir",13:"Kerala",14:"Lakshadweep",16:"Maharashtra",17:"Manipur",18:"Meghalaya",19:"Karnataka",20:"Nagaland",21:"Odisha",22:"Puducherry",23:"Punjab",24:"Rajasthan",25:"Tamil Nadu",26:"Tripura",28:"West Bengal",29:"Sikkim",30:"Arunachal Pradesh",31:"Mizoram",33:"Goa",34:"Bihar",35:"Madhya Pradesh",36:"Uttar Pradesh",37:"Chhattisgarh",38:"Jharkhand",39:"Uttarakhand",40:"Telangana",41:"Ladakh"}
+        let br_codes = {1:"Acre",2:"Alagoas",3:"Amapa",4:"Amazonas",5:"Bahia",6:"Ceara",7:"Distrito Federal",8:"Espirito Santo",11:"Mato Grosso do Sul",13:"Maranhao",14:"Mato Grosso",15:"Minas Gerais",16:"Para",17:"Paraiba",18:"Parana",20:"Piaui",21:"Rio de Janeiro",22:"Rio Grande do Norte",23:"Rio Grande do Sul",24:"Rondonia",25:"Roraima",26:"Santa Catarina",27:"Sao Paulo",28:"Sergipe",29:"Goias",30:"Pernambuco",31:"Tocantins"};
+        let us_codes = {"AL":"Alabama","AK":"Alaska","AS":"American Samoa","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District Of Columbia","FL":"Florida","GA":"Georgia","GU":"Guam","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","MP":"Northern Mariana Islands","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","PR":"Puerto Rico","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","VI":"Virgin Islands","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"}
+        //let id_codes_f = {}
+
+        let citiesLoaded = false;
+        $.getJSON("all_cities_p10000.json", (cities)=>{
             for (c of cities) {
-                if (c.country == "CN" && c.population > 5000000) {
-                    currCitiesList.push(c);
+                let o = {
+                    name: c.name,
+                    country: c.country_code,
+                    country_name: c.cou_name_en,
+                    population: c.population,
+                    latitude: c.coordinates.lat,
+                    longitude: c.coordinates.lon,
+                    region_code: c.admin1_code
+                }
+
+                allCities.push(o);
+
+                /*if (o.country == "ID" && o.population > 100000) {
+                    if (id_codes_f[o.region_code] === undefined) {
+                        id_codes_f[o.region_code] = [];
+                    }
+                    id_codes_f[o.region_code].push(o.name)
+                }*/
+               if (o.country == "US") {
+                    o.region = us_codes[o.region_code];
+                }
+                if (o.country == "IN") {
+                    o.region = in_codes[parseInt(o.region_code)];
+                }
+                if (o.country == "CN") {
+                    o.region = cn_codes[parseInt(o.region_code)];
+                }
+                if (o.country == "BR") {
+                    o.region = br_codes[parseInt(o.region_code)];
                 }
             }
-            selectRandCity();
-        });
-        
 
+            setCurrCountries();
+            setCurrCities();
+            selectRandCity();
+            setMapSource();
+            citiesLoaded = true;
+        });
+
+        function setCurrCities() {
+            currCitiesList = [];
+            for (o of allCities) {
+                if (currCountriesList.includes(o.country) && o.population >= minPopulation && o.population <= maxPopulation) {
+                    currCitiesList.push(o);
+                }
+            }
+            $("#num-locs")[0].innerText = currCitiesList.length;
+        }
+
+        $("#map-select")[0].addEventListener("input", (e)=>{
+            setCurrCountries();
+            setMapSource();
+        })
+
+        function setCurrCountries() {
+            let val = $("#map-select")[0].value;
+
+            let valueToCountries = {"usa": ["US"], "china": ["CN"], "india": ["IN"], "brazil": ["BR"], "indonesia": ["ID"], "russia": ["RU"], "canada": ["CA"]};
+            if (valueToCountries[val] !== undefined) {
+                currCountriesList = valueToCountries[val];
+            }
+            setCurrCities();
+            selectRandCity();
+        }
+
+        $("#set-prefs")[0].addEventListener("click", (e)=>{
+            if (!citiesLoaded) return;
+
+            let minVal = Number($("#min-population")[0].value);
+            if (minVal === NaN) {
+                alert("Invalid minimum population");
+                return;
+            }
+
+            let maxVal = Number($("#max-population")[0].value);
+            if (maxVal === NaN) {
+                alert("Invalid maximum population");
+                return;
+            }
+
+            let prevMin = minPopulation;
+            minPopulation = minVal;
+            let prevMax = maxPopulation;
+            maxPopulation = maxVal;
+            setCurrCities();
+
+            if (currCitiesList.length == 0) {
+                alert("No cities match the given restrictions");
+                minPopulation = prevMin;
+                maxPopulation = prevMax;
+                setCurrCities();
+            }
+        })
+        
+        $("#top-display")[0].style.transition = "color " + fadeTime/1000 + "s";
         function selectRandCity() {
             let newCity;
             let i = 0;
@@ -71,7 +260,17 @@
             }
 
             currCity = newCity;
-            $("#top-display")[0].innerText = currCity.name + ((currCity.region == "N/A" || currCity.region.split(" ")[0] == currCity.name) ? "" : ", " + currCity.region);
+
+            let displayText = currCity.name;
+
+            if (showDivision && currCity.region) {
+                displayText += ", " + currCity.region;
+            };
+            if (showCountry && currCity.country_name) {
+                displayText += ", " + currCity.country_name;
+            }
+
+            $("#top-display")[0].innerText = displayText;
         }
 
         let style = {
@@ -99,13 +298,71 @@
             center: [0, 0],
             maxPitch: 85,
             canvasContextAttributes: { antialias: true },
-        })//.addControl(new maplibregl.NavigationControl(), "top-right");
+        })
+
+        let outlineLayer = {
+            'id': 'polygons-stroke',
+            'type': 'line',
+            'source': 'uploaded-source',
+            'paint': {
+                'line-color': '#A00000',
+                'line-width': 1.5
+            }
+        };
+
+        function setMapSource() {
+            if (map.getLayer('polygons-stroke')) {
+                map.removeLayer('polygons-stroke');
+            }
+            if (map.getSource("uploaded-source")) {
+                map.removeSource("uploaded-source");
+            }
+
+            $.getJSON("geojson_data/" + currCountriesList[0] + ".geojson", (gj)=>{
+                map.addSource('uploaded-source', {
+                    'type': 'geojson',
+                    'data': gj
+                });
+
+                if ($("#checkbox-outline")[0].checked) {
+                    map.addLayer(outlineLayer);
+                }
+            })
+        }
+
+        map.on("load", (e)=> {
+            map.doubleClickZoom.disable();
+        });
+        
+        $("#checkbox-outline")[0].addEventListener("change", (e)=>{
+            if (!map.isStyleLoaded() || !map.getSource("uploaded-source")) return;
+            if (e.currentTarget.checked) {
+                map.addLayer(outlineLayer);
+            } else {
+                if (map.getLayer("polygons-stroke")) {
+                    map.removeLayer("polygons-stroke");
+                }
+            }
+        });
+
+        $("#checkbox-division-name")[0].addEventListener("change", (e)=>{
+            showDivision = e.currentTarget.checked;
+        })
+        $("#checkbox-country-name")[0].addEventListener("change", (e)=>{
+            showCountry = e.currentTarget.checked;
+        })
 
         let clickMarker;
         let locMarker;
         let opacityInterval;
         let markerOpacity = 1;
         map.on("click", (e)=> {
+            if (inTransition) return;
+
+            let pxl = map.project([e.lngLat.lng, e.lngLat.lat]);
+            if (Math.pow(pxl.x - mouseX, 2) + Math.pow(pxl.y - mouseY, 2) > 4) return;
+            
+            inTransition = true;
             if (clickMarker) {clickMarker.remove()}
             if (locMarker) {locMarker.remove()}
 
@@ -113,11 +370,27 @@
             locMarker = new maplibregl.Marker({color: "#00FF00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
             $("#top-display")[0].style.color = "rgba(255, 255, 255, 0)"
 
+            let distFromClick = distanceKm(e.lngLat.lat, currCity.latitude, e.lngLat.lng, currCity.longitude);
+            let score = 1000*Math.exp(-(distFromClick / 16250) * 3.5);
+
+            let distPopup = document.createElement("div");
+            distPopup.innerHTML = ""
+            distPopup.classList.add("dist-popup");
+            distPopup.style.animation = "move-popup-text " + 1.5*fadeTime/1000 + "s";
+            distPopup.innerHTML = Math.round(score) + "/1000" + "<br>" + distFromClick.toFixed(2) + " km";
+            distPopup.style.width = 200 + "px";
+            distPopup.style.left = mouseX - 100 + "px";
+            distPopup.style.top = mouseY - 50 + "px";
+            distPopup.addEventListener('animationend', distPopup.remove);
+            distPopup.style.color = "hsl(" + (180 - 180*score/1000) + ", 100%, 60%)";
+            distPopup.style["-webkit-text-stroke"] = "0.75px hsl(" + (180 - 180*score/1000) + ", 100%, 20%)";
+            $("body")[0].appendChild(distPopup);
+
             if (autoStart) {
                 opacityInterval = setInterval(() => {
-                    markerOpacity -= 0.03;
-                    clickMarker.setOpacity(Math.pow(markerOpacity, 2), markerOpacity/5);
-                    locMarker.setOpacity(Math.pow(markerOpacity, 2), markerOpacity/5);
+                    markerOpacity = Math.max(0, markerOpacity-1/(fadeTime/20));
+                    clickMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
+                    locMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
                 })
 
                 setTimeout(() => {
@@ -125,9 +398,34 @@
                     $("#top-display")[0].style.color = "rgba(255, 255, 255, 1)";
                     clearInterval(opacityInterval);
                     markerOpacity = 1;
-                }, 500);
+                    inTransition = false;
+                }, fadeTime);
             }
         })
+
+        document.addEventListener("mousemove", (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        })
+
+        // Haversine formula https://www.geeksforgeeks.org/dsa/program-distance-two-points-earth/
+        function distanceKm(lat1, lat2, lon1, lon2) {
+            lon1 = lon1 * Math.PI / 180;
+            lon2 = lon2 * Math.PI / 180;
+            lat1 = lat1 * Math.PI / 180;
+            lat2 = lat2 * Math.PI / 180;
+    
+            let dlon = lon2 - lon1; 
+            let dlat = lat2 - lat1;
+            let a = Math.pow(Math.sin(dlat / 2), 2)
+                    + Math.cos(lat1) * Math.cos(lat2)
+                    * Math.pow(Math.sin(dlon / 2),2);
+                
+            let c = 2 * Math.asin(Math.sqrt(a));
+            let r = 6371;
+    
+            return c * r;
+        }
 
     </script>
 </body>
