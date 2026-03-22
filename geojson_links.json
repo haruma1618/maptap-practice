@@ -1,0 +1,1152 @@
+[
+  {
+    "boundaryName": "Aruba",
+    "boundaryISO": "ABW",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ABW/ADM0/geoBoundaries-ABW-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Afghanistan",
+    "boundaryISO": "AFG",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AFG/ADM0/geoBoundaries-AFG-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Angola",
+    "boundaryISO": "AGO",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AGO/ADM0/geoBoundaries-AGO-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Anguilla",
+    "boundaryISO": "AIA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AIA/ADM0/geoBoundaries-AIA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Albania",
+    "boundaryISO": "ALB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ALB/ADM0/geoBoundaries-ALB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Andorra",
+    "boundaryISO": "AND",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AND/ADM0/geoBoundaries-AND-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "United Arab Emirates",
+    "boundaryISO": "ARE",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ARE/ADM0/geoBoundaries-ARE-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Argentina",
+    "boundaryISO": "ARG",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ARG/ADM0/geoBoundaries-ARG-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Armenia",
+    "boundaryISO": "ARM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ARM/ADM0/geoBoundaries-ARM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "American Samoa",
+    "boundaryISO": "ASM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ASM/ADM0/geoBoundaries-ASM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Antartica",
+    "boundaryISO": "ATA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ATA/ADM0/geoBoundaries-ATA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Antigua and Barbuda",
+    "boundaryISO": "ATG",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ATG/ADM0/geoBoundaries-ATG-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Australia",
+    "boundaryISO": "AUS",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/bdfb316/releaseData/gbOpen/AUS/ADM0/geoBoundaries-AUS-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Austria",
+    "boundaryISO": "AUT",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AUT/ADM0/geoBoundaries-AUT-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Azerbaijan",
+    "boundaryISO": "AZE",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/AZE/ADM0/geoBoundaries-AZE-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Burundi",
+    "boundaryISO": "BDI",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BDI/ADM0/geoBoundaries-BDI-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Belgium",
+    "boundaryISO": "BEL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BEL/ADM0/geoBoundaries-BEL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Benin",
+    "boundaryISO": "BEN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BEN/ADM0/geoBoundaries-BEN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Bonaire Sint Eustatius and Saba",
+    "boundaryISO": "BES",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BES/ADM0/geoBoundaries-BES-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Burkina Faso",
+    "boundaryISO": "BFA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BFA/ADM0/geoBoundaries-BFA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Bangladesh",
+    "boundaryISO": "BGD",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BGD/ADM0/geoBoundaries-BGD-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Bulgaria",
+    "boundaryISO": "BGR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BGR/ADM0/geoBoundaries-BGR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Bahrain",
+    "boundaryISO": "BHR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BHR/ADM0/geoBoundaries-BHR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Bahamas",
+    "boundaryISO": "BHS",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BHS/ADM0/geoBoundaries-BHS-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Bosnia and Herzegovina",
+    "boundaryISO": "BIH",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/f549eab/releaseData/gbOpen/BIH/ADM0/geoBoundaries-BIH-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Saint Barthélemy",
+    "boundaryISO": "BLM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BLM/ADM0/geoBoundaries-BLM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Belarus",
+    "boundaryISO": "BLR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BLR/ADM0/geoBoundaries-BLR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Belize",
+    "boundaryISO": "BLZ",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BLZ/ADM0/geoBoundaries-BLZ-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Bermuda",
+    "boundaryISO": "BMU",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BMU/ADM0/geoBoundaries-BMU-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Bolivia (Plurinational State of)",
+    "boundaryISO": "BOL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BOL/ADM0/geoBoundaries-BOL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Brazil",
+    "boundaryISO": "BRA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BRA/ADM0/geoBoundaries-BRA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Barbados",
+    "boundaryISO": "BRB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BRB/ADM0/geoBoundaries-BRB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Brunei Darussalam",
+    "boundaryISO": "BRN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/f549eab/releaseData/gbOpen/BRN/ADM0/geoBoundaries-BRN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Bhutan",
+    "boundaryISO": "BTN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BTN/ADM0/geoBoundaries-BTN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Botswana",
+    "boundaryISO": "BWA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/BWA/ADM0/geoBoundaries-BWA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Central African Republic",
+    "boundaryISO": "CAF",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CAF/ADM0/geoBoundaries-CAF-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Canada",
+    "boundaryISO": "CAN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CAN/ADM0/geoBoundaries-CAN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Switzerland",
+    "boundaryISO": "CHE",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CHE/ADM0/geoBoundaries-CHE-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Chile",
+    "boundaryISO": "CHL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CHL/ADM0/geoBoundaries-CHL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "China",
+    "boundaryISO": "CHN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CHN/ADM0/geoBoundaries-CHN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Côte d'Ivoire",
+    "boundaryISO": "CIV",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CIV/ADM0/geoBoundaries-CIV-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Cameroon",
+    "boundaryISO": "CMR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CMR/ADM0/geoBoundaries-CMR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Democratic Republic of the Congo",
+    "boundaryISO": "COD",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COD/ADM0/geoBoundaries-COD-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Congo",
+    "boundaryISO": "COG",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COG/ADM0/geoBoundaries-COG-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Cook Islands",
+    "boundaryISO": "COK",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COK/ADM0/geoBoundaries-COK-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Colombia",
+    "boundaryISO": "COL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COL/ADM0/geoBoundaries-COL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Comoros",
+    "boundaryISO": "COM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/COM/ADM0/geoBoundaries-COM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Cabo Verde",
+    "boundaryISO": "CPV",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CPV/ADM0/geoBoundaries-CPV-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Costa Rica",
+    "boundaryISO": "CRI",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CRI/ADM0/geoBoundaries-CRI-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Cuba",
+    "boundaryISO": "CUB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CUB/ADM0/geoBoundaries-CUB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Curaçao",
+    "boundaryISO": "CUW",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CUW/ADM0/geoBoundaries-CUW-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Cayman Islands",
+    "boundaryISO": "CYM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CYM/ADM0/geoBoundaries-CYM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Cyprus",
+    "boundaryISO": "CYP",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CYP/ADM0/geoBoundaries-CYP-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Czechia",
+    "boundaryISO": "CZE",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CZE/ADM0/geoBoundaries-CZE-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Germany",
+    "boundaryISO": "DEU",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DEU/ADM0/geoBoundaries-DEU-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Djibouti",
+    "boundaryISO": "DJI",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DJI/ADM0/geoBoundaries-DJI-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Dominica",
+    "boundaryISO": "DMA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DMA/ADM0/geoBoundaries-DMA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Denmark",
+    "boundaryISO": "DNK",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DNK/ADM0/geoBoundaries-DNK-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Dominican Republic",
+    "boundaryISO": "DOM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DOM/ADM0/geoBoundaries-DOM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Algeria",
+    "boundaryISO": "DZA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/DZA/ADM0/geoBoundaries-DZA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Ecuador",
+    "boundaryISO": "ECU",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ECU/ADM0/geoBoundaries-ECU-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Egypt",
+    "boundaryISO": "EGY",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/EGY/ADM0/geoBoundaries-EGY-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Eritrea",
+    "boundaryISO": "ERI",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ERI/ADM0/geoBoundaries-ERI-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Spain",
+    "boundaryISO": "ESP",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ESP/ADM0/geoBoundaries-ESP-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Estonia",
+    "boundaryISO": "EST",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/EST/ADM0/geoBoundaries-EST-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Ethiopia",
+    "boundaryISO": "ETH",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ETH/ADM0/geoBoundaries-ETH-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Finland",
+    "boundaryISO": "FIN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FIN/ADM0/geoBoundaries-FIN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Fiji",
+    "boundaryISO": "FJI",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FJI/ADM0/geoBoundaries-FJI-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Falkland Islands (Malvinas)",
+    "boundaryISO": "FLK",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FLK/ADM0/geoBoundaries-FLK-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "France",
+    "boundaryISO": "FRA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FRA/ADM0/geoBoundaries-FRA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Faroe Islands",
+    "boundaryISO": "FRO",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FRO/ADM0/geoBoundaries-FRO-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Micronesia (Fed. States of)",
+    "boundaryISO": "FSM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/FSM/ADM0/geoBoundaries-FSM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Gabon",
+    "boundaryISO": "GAB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GAB/ADM0/geoBoundaries-GAB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "United Kingdom",
+    "boundaryISO": "GBR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GBR/ADM0/geoBoundaries-GBR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Georgia",
+    "boundaryISO": "GEO",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GEO/ADM0/geoBoundaries-GEO-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Guernsey",
+    "boundaryISO": "GGY",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GGY/ADM0/geoBoundaries-GGY-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Ghana",
+    "boundaryISO": "GHA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GHA/ADM0/geoBoundaries-GHA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Gibraltar",
+    "boundaryISO": "GIB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GIB/ADM0/geoBoundaries-GIB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Guinea",
+    "boundaryISO": "GIN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GIN/ADM0/geoBoundaries-GIN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Guadeloupe",
+    "boundaryISO": "GLP",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GLP/ADM0/geoBoundaries-GLP-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Gambia",
+    "boundaryISO": "GMB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GMB/ADM0/geoBoundaries-GMB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Guinea-Bissau",
+    "boundaryISO": "GNB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GNB/ADM0/geoBoundaries-GNB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Equatorial Guinea",
+    "boundaryISO": "GNQ",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GNQ/ADM0/geoBoundaries-GNQ-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Greece",
+    "boundaryISO": "GRC",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GRC/ADM0/geoBoundaries-GRC-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Grenada",
+    "boundaryISO": "GRD",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GRD/ADM0/geoBoundaries-GRD-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Greenland",
+    "boundaryISO": "GRL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GRL/ADM0/geoBoundaries-GRL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Guatemala",
+    "boundaryISO": "GTM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GTM/ADM0/geoBoundaries-GTM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "French Guiana",
+    "boundaryISO": "GUF",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GUF/ADM0/geoBoundaries-GUF-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Guam",
+    "boundaryISO": "GUM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GUM/ADM0/geoBoundaries-GUM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Guyana",
+    "boundaryISO": "GUY",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/GUY/ADM0/geoBoundaries-GUY-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Honduras",
+    "boundaryISO": "HND",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/HND/ADM0/geoBoundaries-HND-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Croatia",
+    "boundaryISO": "HRV",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/HRV/ADM0/geoBoundaries-HRV-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Haiti",
+    "boundaryISO": "HTI",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/HTI/ADM0/geoBoundaries-HTI-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Hungary",
+    "boundaryISO": "HUN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/HUN/ADM0/geoBoundaries-HUN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Indonesia",
+    "boundaryISO": "IDN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IDN/ADM0/geoBoundaries-IDN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Isle of Man",
+    "boundaryISO": "IMN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IMN/ADM0/geoBoundaries-IMN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Ireland",
+    "boundaryISO": "IRL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IRL/ADM0/geoBoundaries-IRL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Iran (Islamic Republic of)",
+    "boundaryISO": "IRN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IRN/ADM0/geoBoundaries-IRN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Iraq",
+    "boundaryISO": "IRQ",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IRQ/ADM0/geoBoundaries-IRQ-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Iceland",
+    "boundaryISO": "ISL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ISL/ADM0/geoBoundaries-ISL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Israel",
+    "boundaryISO": "ISR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ISR/ADM0/geoBoundaries-ISR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Italy",
+    "boundaryISO": "ITA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ITA/ADM0/geoBoundaries-ITA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Jamaica",
+    "boundaryISO": "JAM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/JAM/ADM0/geoBoundaries-JAM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Jordan",
+    "boundaryISO": "JOR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/JOR/ADM0/geoBoundaries-JOR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Japan",
+    "boundaryISO": "JPN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/JPN/ADM0/geoBoundaries-JPN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Kazakhstan",
+    "boundaryISO": "KAZ",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KAZ/ADM0/geoBoundaries-KAZ-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Kenya",
+    "boundaryISO": "KEN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KEN/ADM0/geoBoundaries-KEN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Kyrgyzstan",
+    "boundaryISO": "KGZ",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KGZ/ADM0/geoBoundaries-KGZ-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Cambodia",
+    "boundaryISO": "KHM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KHM/ADM0/geoBoundaries-KHM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Kiribati",
+    "boundaryISO": "KIR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KIR/ADM0/geoBoundaries-KIR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Saint Kitts and Nevis",
+    "boundaryISO": "KNA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KNA/ADM0/geoBoundaries-KNA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Republic of Korea",
+    "boundaryISO": "KOR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KOR/ADM0/geoBoundaries-KOR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Kuwait",
+    "boundaryISO": "KWT",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/KWT/ADM0/geoBoundaries-KWT-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Lao People's Democratic Republic",
+    "boundaryISO": "LAO",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LAO/ADM0/geoBoundaries-LAO-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Lebanon",
+    "boundaryISO": "LBN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/90a1d52/releaseData/gbOpen/LBN/ADM0/geoBoundaries-LBN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Liberia",
+    "boundaryISO": "LBR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LBR/ADM0/geoBoundaries-LBR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Libya",
+    "boundaryISO": "LBY",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LBY/ADM0/geoBoundaries-LBY-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Saint Lucia",
+    "boundaryISO": "LCA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LCA/ADM0/geoBoundaries-LCA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Liechtenstein",
+    "boundaryISO": "LIE",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LIE/ADM0/geoBoundaries-LIE-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Sri Lanka",
+    "boundaryISO": "LKA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LKA/ADM0/geoBoundaries-LKA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Lesotho",
+    "boundaryISO": "LSO",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LSO/ADM0/geoBoundaries-LSO-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Lithuania",
+    "boundaryISO": "LTU",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LTU/ADM0/geoBoundaries-LTU-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Luxembourg",
+    "boundaryISO": "LUX",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LUX/ADM0/geoBoundaries-LUX-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Latvia",
+    "boundaryISO": "LVA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/LVA/ADM0/geoBoundaries-LVA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Morocco",
+    "boundaryISO": "MAR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MAR/ADM0/geoBoundaries-MAR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Monaco",
+    "boundaryISO": "MCO",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MCO/ADM0/geoBoundaries-MCO-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Republic of Moldova",
+    "boundaryISO": "MDA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MDA/ADM0/geoBoundaries-MDA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Madagascar",
+    "boundaryISO": "MDG",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MDG/ADM0/geoBoundaries-MDG-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Maldives",
+    "boundaryISO": "MDV",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MDV/ADM0/geoBoundaries-MDV-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Mexico",
+    "boundaryISO": "MEX",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MEX/ADM0/geoBoundaries-MEX-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Marshall Islands",
+    "boundaryISO": "MHL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MHL/ADM0/geoBoundaries-MHL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "North Macedonia",
+    "boundaryISO": "MKD",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MKD/ADM0/geoBoundaries-MKD-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Mali",
+    "boundaryISO": "MLI",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MLI/ADM0/geoBoundaries-MLI-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Malta",
+    "boundaryISO": "MLT",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MLT/ADM0/geoBoundaries-MLT-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Myanmar",
+    "boundaryISO": "MMR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MMR/ADM0/geoBoundaries-MMR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Montenegro",
+    "boundaryISO": "MNE",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MNE/ADM0/geoBoundaries-MNE-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Mongolia",
+    "boundaryISO": "MNG",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MNG/ADM0/geoBoundaries-MNG-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Northern Mariana Islands",
+    "boundaryISO": "MNP",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MNP/ADM0/geoBoundaries-MNP-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Mozambique",
+    "boundaryISO": "MOZ",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MOZ/ADM0/geoBoundaries-MOZ-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Mauritania",
+    "boundaryISO": "MRT",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MRT/ADM0/geoBoundaries-MRT-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Montserrat",
+    "boundaryISO": "MSR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MSR/ADM0/geoBoundaries-MSR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Martinique",
+    "boundaryISO": "MTQ",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MTQ/ADM0/geoBoundaries-MTQ-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Mauritius",
+    "boundaryISO": "MUS",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MUS/ADM0/geoBoundaries-MUS-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Malawi",
+    "boundaryISO": "MWI",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MWI/ADM0/geoBoundaries-MWI-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Malaysia",
+    "boundaryISO": "MYS",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MYS/ADM0/geoBoundaries-MYS-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Mayotte",
+    "boundaryISO": "MYT",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MYT/ADM0/geoBoundaries-MYT-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Namibia",
+    "boundaryISO": "NAM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NAM/ADM0/geoBoundaries-NAM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "New Caledonia",
+    "boundaryISO": "NCL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NCL/ADM0/geoBoundaries-NCL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Niger",
+    "boundaryISO": "NER",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NER/ADM0/geoBoundaries-NER-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Nigeria",
+    "boundaryISO": "NGA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NGA/ADM0/geoBoundaries-NGA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Nicaragua",
+    "boundaryISO": "NIC",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NIC/ADM0/geoBoundaries-NIC-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Niue",
+    "boundaryISO": "NIU",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NIU/ADM0/geoBoundaries-NIU-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Netherlands",
+    "boundaryISO": "NLD",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NLD/ADM0/geoBoundaries-NLD-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Norway",
+    "boundaryISO": "NOR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/41af8f1/releaseData/gbOpen/NOR/ADM0/geoBoundaries-NOR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Nepal",
+    "boundaryISO": "NPL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NPL/ADM0/geoBoundaries-NPL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Nauru",
+    "boundaryISO": "NRU",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NRU/ADM0/geoBoundaries-NRU-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "New Zealand",
+    "boundaryISO": "NZL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/41af8f1/releaseData/gbOpen/NZL/ADM0/geoBoundaries-NZL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Oman",
+    "boundaryISO": "OMN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/OMN/ADM0/geoBoundaries-OMN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Pakistan",
+    "boundaryISO": "PAK",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PAK/ADM0/geoBoundaries-PAK-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Panama",
+    "boundaryISO": "PAN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PAN/ADM0/geoBoundaries-PAN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Pitcairn Islands",
+    "boundaryISO": "PCN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PCN/ADM0/geoBoundaries-PCN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Peru",
+    "boundaryISO": "PER",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/90a1d52/releaseData/gbOpen/PER/ADM0/geoBoundaries-PER-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Philippines",
+    "boundaryISO": "PHL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PHL/ADM0/geoBoundaries-PHL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Palau",
+    "boundaryISO": "PLW",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PLW/ADM0/geoBoundaries-PLW-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Papua New Guinea",
+    "boundaryISO": "PNG",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PNG/ADM0/geoBoundaries-PNG-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Poland",
+    "boundaryISO": "POL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/f549eab/releaseData/gbOpen/POL/ADM0/geoBoundaries-POL-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Dem. People's Republic of Korea",
+    "boundaryISO": "PRK",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PRK/ADM0/geoBoundaries-PRK-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Portugal",
+    "boundaryISO": "PRT",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PRT/ADM0/geoBoundaries-PRT-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Paraguay",
+    "boundaryISO": "PRY",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PRY/ADM0/geoBoundaries-PRY-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "State of Palestine",
+    "boundaryISO": "PSE",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PSE/ADM0/geoBoundaries-PSE-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "French Polynesia",
+    "boundaryISO": "PYF",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PYF/ADM0/geoBoundaries-PYF-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Qatar",
+    "boundaryISO": "QAT",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/QAT/ADM0/geoBoundaries-QAT-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Réunion",
+    "boundaryISO": "REU",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/REU/ADM0/geoBoundaries-REU-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Romania",
+    "boundaryISO": "ROU",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ROU/ADM0/geoBoundaries-ROU-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Russian Federation",
+    "boundaryISO": "RUS",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/RUS/ADM0/geoBoundaries-RUS-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Rwanda",
+    "boundaryISO": "RWA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/RWA/ADM0/geoBoundaries-RWA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Saudi Arabia",
+    "boundaryISO": "SAU",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SAU/ADM0/geoBoundaries-SAU-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Sudan",
+    "boundaryISO": "SDN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SDN/ADM0/geoBoundaries-SDN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Senegal",
+    "boundaryISO": "SEN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SEN/ADM0/geoBoundaries-SEN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Singapore",
+    "boundaryISO": "SGP",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SGP/ADM0/geoBoundaries-SGP-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Saint Helena",
+    "boundaryISO": "SHN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SHN/ADM0/geoBoundaries-SHN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Solomon Islands",
+    "boundaryISO": "SLB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SLB/ADM0/geoBoundaries-SLB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Sierra Leone",
+    "boundaryISO": "SLE",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SLE/ADM0/geoBoundaries-SLE-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "El Salvador",
+    "boundaryISO": "SLV",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SLV/ADM0/geoBoundaries-SLV-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "San Marino",
+    "boundaryISO": "SMR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SMR/ADM0/geoBoundaries-SMR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Somalia",
+    "boundaryISO": "SOM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SOM/ADM0/geoBoundaries-SOM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Serbia",
+    "boundaryISO": "SRB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SRB/ADM0/geoBoundaries-SRB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "South Sudan",
+    "boundaryISO": "SSD",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SSD/ADM0/geoBoundaries-SSD-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Sao Tome and Principe",
+    "boundaryISO": "STP",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/STP/ADM0/geoBoundaries-STP-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Suriname",
+    "boundaryISO": "SUR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SUR/ADM0/geoBoundaries-SUR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Slovakia",
+    "boundaryISO": "SVK",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SVK/ADM0/geoBoundaries-SVK-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Slovenia",
+    "boundaryISO": "SVN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SVN/ADM0/geoBoundaries-SVN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Sweden",
+    "boundaryISO": "SWE",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SWE/ADM0/geoBoundaries-SWE-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Eswatini",
+    "boundaryISO": "SWZ",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SWZ/ADM0/geoBoundaries-SWZ-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Seychelles",
+    "boundaryISO": "SYC",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SYC/ADM0/geoBoundaries-SYC-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Syrian Arab Republic",
+    "boundaryISO": "SYR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/SYR/ADM0/geoBoundaries-SYR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Turks and Caicos Islands",
+    "boundaryISO": "TCA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TCA/ADM0/geoBoundaries-TCA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Chad",
+    "boundaryISO": "TCD",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TCD/ADM0/geoBoundaries-TCD-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Togo",
+    "boundaryISO": "TGO",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TGO/ADM0/geoBoundaries-TGO-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Thailand",
+    "boundaryISO": "THA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/THA/ADM0/geoBoundaries-THA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Tajikistan",
+    "boundaryISO": "TJK",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TJK/ADM0/geoBoundaries-TJK-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Turkmenistan",
+    "boundaryISO": "TKM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TKM/ADM0/geoBoundaries-TKM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Timor-Leste",
+    "boundaryISO": "TLS",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TLS/ADM0/geoBoundaries-TLS-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Tonga",
+    "boundaryISO": "TON",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TON/ADM0/geoBoundaries-TON-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Trinidad and Tobago",
+    "boundaryISO": "TTO",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TTO/ADM0/geoBoundaries-TTO-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Tunisia",
+    "boundaryISO": "TUN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TUN/ADM0/geoBoundaries-TUN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Turkey",
+    "boundaryISO": "TUR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TUR/ADM0/geoBoundaries-TUR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Tuvalu",
+    "boundaryISO": "TUV",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TUV/ADM0/geoBoundaries-TUV-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Taiwan",
+    "boundaryISO": "TWN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TWN/ADM0/geoBoundaries-TWN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "United Republic of Tanzania",
+    "boundaryISO": "TZA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TZA/ADM0/geoBoundaries-TZA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Uganda",
+    "boundaryISO": "UGA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/UGA/ADM0/geoBoundaries-UGA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Ukraine",
+    "boundaryISO": "UKR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/UKR/ADM0/geoBoundaries-UKR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Uruguay",
+    "boundaryISO": "URY",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/URY/ADM0/geoBoundaries-URY-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "United States of America",
+    "boundaryISO": "USA",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/USA/ADM0/geoBoundaries-USA-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Uzbekistan",
+    "boundaryISO": "UZB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/UZB/ADM0/geoBoundaries-UZB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Holy See",
+    "boundaryISO": "VAT",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VAT/ADM0/geoBoundaries-VAT-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Saint Vincent and the Grenadines",
+    "boundaryISO": "VCT",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VCT/ADM0/geoBoundaries-VCT-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Venezuela (Bolivarian Republic of)",
+    "boundaryISO": "VEN",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VEN/ADM0/geoBoundaries-VEN-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "British Virgin Islands",
+    "boundaryISO": "VGB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VGB/ADM0/geoBoundaries-VGB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "United States Virgin Islands",
+    "boundaryISO": "VIR",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VIR/ADM0/geoBoundaries-VIR-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Viet Nam",
+    "boundaryISO": "VNM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VNM/ADM0/geoBoundaries-VNM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Vanuatu",
+    "boundaryISO": "VUT",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/VUT/ADM0/geoBoundaries-VUT-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Wallis and Futuna Islands",
+    "boundaryISO": "WLF",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/WLF/ADM0/geoBoundaries-WLF-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Samoa",
+    "boundaryISO": "WSM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/WSM/ADM0/geoBoundaries-WSM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Kosovo",
+    "boundaryISO": "XKX",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/XKX/ADM0/geoBoundaries-XKX-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Yemen",
+    "boundaryISO": "YEM",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/YEM/ADM0/geoBoundaries-YEM-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "South Africa",
+    "boundaryISO": "ZAF",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ZAF/ADM0/geoBoundaries-ZAF-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Zambia",
+    "boundaryISO": "ZMB",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ZMB/ADM0/geoBoundaries-ZMB-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Zimbabwe",
+    "boundaryISO": "ZWE",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ZWE/ADM0/geoBoundaries-ZWE-ADM0_simplified.geojson"
+  },
+  {
+    "boundaryName": "Tokelau",
+    "boundaryISO": "TKL",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TKL/ADM0/geoBoundaries-TKL-ADM0_simplified.geojson"
+  }
+]

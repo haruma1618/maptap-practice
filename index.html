@@ -43,7 +43,7 @@
             color: rgba(255, 255, 255, 1);
             border: 2px solid rgba(50, 0, 16, 0.4);
             font-family: 'Consolas';
-            font-size: 15px;
+            font-size: 14px;
         }
 
         #map {
@@ -93,13 +93,17 @@
         <div style="margin-bottom: 20px">
             <label for="map-select">Select map:</label>
             <select id="map-select" name="map-select">
-                <option value="usa">United States</option>
                 <option value="china">China</option>
                 <option value="india">India</option>
+                <option value="usa">United States</option>
                 <option value="brazil">Brazil</option>
                 <option value="indonesia">Indonesia</option>
                 <option value="russia">Russia</option>
                 <option value="canada">Canada</option>
+                <option value="japan">Japan</option>
+                <option value="mexico">Mexico</option>
+                <option value="w-europe">Western Europe</option>
+                <option value="e-europe">Eastern Europe</option>
                 <option value="custom">Custom map...</option>
             </select>
         </div>
@@ -111,15 +115,20 @@
             <label for="max-population">Max. population:</label>
             <input type="number" id="max-population" name="max-population" value="100000000" style="width: 70px;">
         </div>
-        <button style="margin-bottom: 20px" id="set-prefs">Set</button>
-        <div style="margin-bottom: 20px">Possible locations: <span id="num-locs"></span></div>
+        <div>
+            <label for="locs-before-repeat">Min. before repeat: </label>
+            <input type="number" id="locs-before-repeat" name="locs-before-repeat" value="10" style="width: 40px;">
+        </div>
+        <div style="margin-bottom: 20px"></div>
+        <div>Possible locations: <span id="num-locs"></span></div>
+        <div style="margin-bottom: 20px"></div>
         <div>
             <input type="checkbox" id="checkbox-outline">
             <span>Show country outline</span>
-        </div><br>
+        </div>
         <div><input type="checkbox" id="checkbox-division-name" checked>
             <span>Show subdivision name</span>
-        </div><br>
+        </div>
         <div>
             <input type="checkbox" id="checkbox-country-name">
             <span>Show country name</span>
@@ -140,17 +149,32 @@
         let currCitiesList = [];
         let currCity;
         let inTransition = false;
-        let currCountriesList;
+        let currCountriesList = ["US"];
+        let currCountryMap = "usa";
         let showDivision = $("#checkbox-division-name")[0].checked;
         let showCountry = $("#checkbox-country-name")[0].checked;
-        let minPopulation = 1000000;
-        let maxPopulation = 100000000;
+        let minPopulation = Number($("#min-population")[0].value);
+        let maxPopulation = Number($("#max-population")[0].value);
+        let minBeforeRepeat = Number($("#locs-before-repeat")[0].value);
+        let locHistory = [];
+
+        let valueToCountries = {"usa": ["US"], "china": ["CN"], "india": ["IN"], "brazil": ["BR"], "indonesia": ["ID"], "russia": ["RU"], "canada": ["CA"], "japan": ["JP"], "mexico": ["MX"], 
+        "w-europe": ["GB", "IE", "FR", "AD", "PT", "ES", "BE", "NL", "LU", "DE", "CH", "IT", "LI", "AT", "MC", "SM", "VA", "MT"],
+        "e-europe": ["CZ", "PL", "SK", "HU", "SI", "HR", "BA", "ME", "RS", "MK", "AL", "XK", "GR", "BG", "RO", "MD", "UA", "BY"],
+        "custom": ["CN"]};
 
         let cn_codes = {1:"Anhui",2:"Zhejiang",3:"Jiangxi",4:"Jiangsu",5:"Jilin",6:"Qinghai",7:"Fujian",8:"Heilongjiang",9:"Henan",10:"Hebei",11:"Hunan",12:"Hubei",13:"Xinjiang",14:"Tibet",15:"Gansu",16:"Guangxi",18:"Guizhou",19:"Liaoning",20:"Inner Mongolia",21:"Ningxia",22:"Beijing",23:"Shanghai",24:"Shanxi",25:"Shandong",26:"Shaanxi",28:"Tianjin",29:"Yunnan",30:"Guangdong",31:"Hainan",32:"Sichuan",33:"Chongqing"};
         let in_codes = {1:"Andaman and Nicobar",2:"Andhra Pradesh",3:"Assam",5:"Chandigarh",7:"Delhi",9:"Gujarat",10:"Haryana",11:"Himachal Pradesh",12:"Jammu and Kashmir",13:"Kerala",14:"Lakshadweep",16:"Maharashtra",17:"Manipur",18:"Meghalaya",19:"Karnataka",20:"Nagaland",21:"Odisha",22:"Puducherry",23:"Punjab",24:"Rajasthan",25:"Tamil Nadu",26:"Tripura",28:"West Bengal",29:"Sikkim",30:"Arunachal Pradesh",31:"Mizoram",33:"Goa",34:"Bihar",35:"Madhya Pradesh",36:"Uttar Pradesh",37:"Chhattisgarh",38:"Jharkhand",39:"Uttarakhand",40:"Telangana",41:"Ladakh"}
-        let br_codes = {1:"Acre",2:"Alagoas",3:"Amapa",4:"Amazonas",5:"Bahia",6:"Ceara",7:"Distrito Federal",8:"Espirito Santo",11:"Mato Grosso do Sul",13:"Maranhao",14:"Mato Grosso",15:"Minas Gerais",16:"Para",17:"Paraiba",18:"Parana",20:"Piaui",21:"Rio de Janeiro",22:"Rio Grande do Norte",23:"Rio Grande do Sul",24:"Rondonia",25:"Roraima",26:"Santa Catarina",27:"Sao Paulo",28:"Sergipe",29:"Goias",30:"Pernambuco",31:"Tocantins"};
+        let br_codes = {1:"Acre",2:"Alagoas",3:"Amapá",4:"Amazonas",5:"Bahia",6:"Ceará",7:"Distrito Federal",8:"Espírito Santo",11:"Mato Grosso do Sul",13:"Maranhão",14:"Mato Grosso",15:"Minas Gerais",16:"Pará",17:"Paraíba",18:"Paraná",20:"Piauí",21:"Rio de Janeiro",22:"Rio Grande do Norte",23:"Rio Grande do Sul",24:"Rondônia",25:"Roraima",26:"Santa Catarina",27:"São Paulo",28:"Sergipe",29:"Goiás",30:"Pernambuco",31:"Tocantins"};
         let us_codes = {"AL":"Alabama","AK":"Alaska","AS":"American Samoa","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District Of Columbia","FL":"Florida","GA":"Georgia","GU":"Guam","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","MP":"Northern Mariana Islands","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","PR":"Puerto Rico","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","VI":"Virgin Islands","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"}
         //let id_codes_f = {}
+
+        let iso_3_to_2;
+        $.getJSON("iso-3-to-2.json", (r)=>{iso_3_to_2 = r;})
+
+        let geojson_links;
+        $.getJSON("geojson_links.json", (r)=>{geojson_links = r;})
+
 
         let citiesLoaded = false;
         $.getJSON("all_cities_p10000.json", (cities)=>{
@@ -188,8 +212,6 @@
             }
 
             setCurrCountries();
-            setCurrCities();
-            selectRandCity();
             setMapSource();
             citiesLoaded = true;
         });
@@ -201,6 +223,7 @@
                     currCitiesList.push(o);
                 }
             }
+            locHistory = [];
             $("#num-locs")[0].innerText = currCitiesList.length;
         }
 
@@ -210,55 +233,115 @@
         })
 
         function setCurrCountries() {
-            let val = $("#map-select")[0].value;
+            let prevCountriesList = currCountriesList;
+            let prevCountryMap = currCountryMap;
 
-            let valueToCountries = {"usa": ["US"], "china": ["CN"], "india": ["IN"], "brazil": ["BR"], "indonesia": ["ID"], "russia": ["RU"], "canada": ["CA"]};
+            let val = $("#map-select")[0].value;
+            currCountryMap = val;
+
             if (valueToCountries[val] !== undefined) {
                 currCountriesList = valueToCountries[val];
             }
+
             setCurrCities();
+            if (currCitiesList.length == 0) {
+                alert("No cities match the given restrictions");
+                currCountriesList = prevCountriesList;
+                $("#map-select")[0].value = prevCountryMap;
+                setCurrCities();
+            } else if (currCitiesList.length < minBeforeRepeat) {
+                minBeforeRepeat = currCitiesList.length;
+                $("#locs-before-repeat")[0].value = currCitiesList.length;
+            }
+
             selectRandCity();
         }
 
-        $("#set-prefs")[0].addEventListener("click", (e)=>{
+        $("#min-population")[0].addEventListener("change", updateMapPreferences);
+        $("#max-population")[0].addEventListener("change", updateMapPreferences);
+        $("#locs-before-repeat")[0].addEventListener("change", updateMapPreferences);
+
+
+        function updateMapPreferences(e) {
             if (!citiesLoaded) return;
 
-            let minVal = Number($("#min-population")[0].value);
-            if (minVal === NaN) {
-                alert("Invalid minimum population");
+            let minVal = $("#min-population")[0].value;
+            if (Number(minVal) === NaN || minVal === "") {
+                alert("Invalid value for: Minimum population");
+                $("#min-population")[0].value = minPopulation.toString();
                 return;
             }
+            minVal = Number(minVal);
 
-            let maxVal = Number($("#max-population")[0].value);
-            if (maxVal === NaN) {
-                alert("Invalid maximum population");
+            let maxVal = $("#max-population")[0].value;
+            if (Number(maxVal) === NaN || maxVal === "") {
+                alert("Invalid value for: Maximum population");
+                $("#max-population")[0].value = maxPopulation.toString();
                 return;
             }
+            maxVal = Number(maxVal);
+
+            let minBeforeRepeatVal = $("#locs-before-repeat")[0].value;
+            if (Number(minBeforeRepeatVal) === NaN || minBeforeRepeatVal === "") {
+                alert("Invalid value for: Min # of cities before repeat");
+                $("#locs-before-repeat")[0].value = minBeforeRepeat.toString();
+                return;
+            }
+            minBeforeRepeatVal = Number(minBeforeRepeatVal);
 
             let prevMin = minPopulation;
             minPopulation = minVal;
             let prevMax = maxPopulation;
             maxPopulation = maxVal;
+            let prevMinBeforeRepeat = minBeforeRepeat;
+            minBeforeRepeat = minBeforeRepeatVal;
+
             setCurrCities();
+
+            let invalid = false;
 
             if (currCitiesList.length == 0) {
                 alert("No cities match the given restrictions");
+                invalid = true;
+            } else if (minBeforeRepeatVal > currCitiesList.length) {
+                alert("Min # of cities before repeat cannot be higher than total number of cities");
+                invalid = true;
+            }
+
+            if (invalid) {
                 minPopulation = prevMin;
                 maxPopulation = prevMax;
+                minBeforeRepeat = prevMinBeforeRepeat;
+                $("#min-population")[0].value = prevMin.toString();
+                $("#max-population")[0].value = prevMax.toString();
+                $("#locs-before-repeat")[0].value = prevMinBeforeRepeat.toString();
                 setCurrCities();
             }
-        })
+        }
         
         $("#top-display")[0].style.transition = "color " + fadeTime/1000 + "s";
+
         function selectRandCity() {
             let newCity;
             let i = 0;
-            while (newCity === currCity || newCity === undefined) {
+            let validCity = false;
+
+            while (!validCity) {
                 newCity = currCitiesList[Math.floor(Math.random()*currCitiesList.length)];
+                
+                validCity = true;
+                for (let i = 0; i < minBeforeRepeat-1; i++) {
+                    if (locHistory[i] === newCity) {
+                        validCity = false;
+                    }
+                }
+
                 i++;
                 if (i > 100) break;
             }
 
+            locHistory.unshift(newCity);
+            console.log(locHistory);
             currCity = newCity;
 
             let displayText = currCity.name;
@@ -318,16 +401,46 @@
                 map.removeSource("uploaded-source");
             }
 
-            $.getJSON("geojson_data/" + currCountriesList[0] + ".geojson", (gj)=>{
-                map.addSource('uploaded-source', {
-                    'type': 'geojson',
-                    'data': gj
-                });
+            if (currCountriesList.length === 1) {
+                $.getJSON("geojson_data/" + currCountriesList[0] + ".geojson", (gj)=>{
+                    map.addSource('uploaded-source', {
+                        'type': 'geojson',
+                        'data': gj
+                    });
 
-                if ($("#checkbox-outline")[0].checked) {
-                    map.addLayer(outlineLayer);
+                    if ($("#checkbox-outline")[0].checked) {
+                        map.addLayer(outlineLayer);
+                    }
+                })
+            } else {
+                let links = [];
+                let combinedFeatures = [];
+
+                for (let c2 of currCountriesList) {
+                    let l = geojson_links.find(o => iso_3_to_2[o["boundaryISO"]] === c2)["simplifiedGeometryGeoJSON"];
+                    links.push(l);
                 }
-            })
+
+                (function getNextCountryData(i) {
+                    if (i >= currCountriesList.length) {
+                        combinedFeatures.flat();
+                        map.addSource('uploaded-source', {
+                            'type': 'geojson',
+                            'data': {
+                                "type": "FeatureCollection",
+                                "features": combinedFeatures
+                            }
+                        });
+
+                        return;
+                    }
+                    $.getJSON(links[i], (gj)=>{
+                        combinedFeatures.push(gj["features"]);
+
+                        getNextCountryData(i+1);
+                    })
+                })(0);
+            }
         }
 
         map.on("load", (e)=> {
