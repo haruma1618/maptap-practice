@@ -104,6 +104,10 @@
                 <option value="mexico">Mexico</option>
                 <option value="w-europe">Western Europe</option>
                 <option value="e-europe">Eastern Europe</option>
+                <option value="n-europe">Northern Europe</option>
+                <option value="middle-east">Middle East</option>
+                <option value="central-asia">Central Asia</option>
+                <option value="se-asia">SE Asia (-Indo.)</option>
                 <option value="custom">Custom map...</option>
             </select>
         </div>
@@ -134,7 +138,7 @@
             <span>Show country name</span>
         </div>
         <div style="position: fixed; left: 0; bottom: 0; font-size: 14px;">
-            Country outlines by <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">geoboundaries</a>
+            Country outlines by: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">Geoboundaries</a>, <a href="https://datahub.io/core/geo-countries" target="_blank" rel="noopener noreferrer">Datahub</a>
         </div>
     </div>
 
@@ -158,9 +162,16 @@
         let minBeforeRepeat = Number($("#locs-before-repeat")[0].value);
         let locHistory = [];
 
+        let iso2ToCountryName = {"AF":"Afghanistan","AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CG":"Republic of the Congo","CD":"Democratic Republic of the Congo","CK":"Cook Islands","CR":"Costa Rica","CI":"Cote D'Ivoire","HR":"Croatia","CU":"Cuba","CY":"Cyprus","CZ":"Czech Republic","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","ET":"Ethiopia","FK":"Falkland Islands (Malvinas)","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"The Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KR":"Korea","XK":"Kosovo","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MK":"Macedonia","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","AN":"Netherlands Antilles","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","RE":"Reunion","RO":"Romania","RU":"Russia","RW":"Rwanda","BL":"Saint Barthelemy","SH":"Saint Helena","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SZ":"Eswatini","SE":"Sweden","SS":"South Sudan","CH":"Switzerland","SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"United Arab Emirates","GB":"United Kingdom","US":"United States","UM":"United States Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"}
+
+        let supportedADM1 = ["BR", "CA", "CN", "ID", "IN", "JP", "MX", "RU", "US"];
         let valueToCountries = {"usa": ["US"], "china": ["CN"], "india": ["IN"], "brazil": ["BR"], "indonesia": ["ID"], "russia": ["RU"], "canada": ["CA"], "japan": ["JP"], "mexico": ["MX"], 
         "w-europe": ["GB", "IE", "FR", "AD", "PT", "ES", "BE", "NL", "LU", "DE", "CH", "IT", "LI", "AT", "MC", "SM", "VA", "MT"],
         "e-europe": ["CZ", "PL", "SK", "HU", "SI", "HR", "BA", "ME", "RS", "MK", "AL", "XK", "GR", "BG", "RO", "MD", "UA", "BY"],
+        "n-europe": ["LT", "LV", "EE", "FI", "SE", "NO", "IS", "DK"],
+        "middle-east": ["BH", "CY", "EG", "IR", "IQ", "IL", "JO", "KW", "LB", "OM", "PS", "QA", "SA", "SY", "TR", "AE", "YE"],
+        "central-asia": ["KG", "TJ", "TM", "UZ", "KZ", "AF"],
+        "se-asia": ["BN", "KH", "LA", "MY", "MM", "PH", "SG", "TH", "TL", "VN"],
         "custom": ["CN"]};
 
         let cn_codes = {1:"Anhui",2:"Zhejiang",3:"Jiangxi",4:"Jiangsu",5:"Jilin",6:"Qinghai",7:"Fujian",8:"Heilongjiang",9:"Henan",10:"Hebei",11:"Hunan",12:"Hubei",13:"Xinjiang",14:"Tibet",15:"Gansu",16:"Guangxi",18:"Guizhou",19:"Liaoning",20:"Inner Mongolia",21:"Ningxia",22:"Beijing",23:"Shanghai",24:"Shanxi",25:"Shandong",26:"Shaanxi",28:"Tianjin",29:"Yunnan",30:"Guangdong",31:"Hainan",32:"Sichuan",33:"Chongqing"};
@@ -169,20 +180,13 @@
         let us_codes = {"AL":"Alabama","AK":"Alaska","AS":"American Samoa","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District Of Columbia","FL":"Florida","GA":"Georgia","GU":"Guam","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","MP":"Northern Mariana Islands","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","PR":"Puerto Rico","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","VI":"Virgin Islands","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"}
         //let id_codes_f = {}
 
-        let iso_3_to_2;
-        $.getJSON("iso-3-to-2.json", (r)=>{iso_3_to_2 = r;})
-
-        let geojson_links;
-        $.getJSON("geojson_links.json", (r)=>{geojson_links = r;})
-
-
         let citiesLoaded = false;
         $.getJSON("all_cities_p10000.json", (cities)=>{
             for (c of cities) {
                 let o = {
                     name: c.name,
                     country: c.country_code,
-                    country_name: c.cou_name_en,
+                    country_name: iso2ToCountryName[c.country_code],
                     population: c.population,
                     latitude: c.coordinates.lat,
                     longitude: c.coordinates.lon,
@@ -197,7 +201,7 @@
                     }
                     id_codes_f[o.region_code].push(o.name)
                 }*/
-               if (o.country == "US") {
+                if (o.country == "US") {
                     o.region = us_codes[o.region_code];
                 }
                 if (o.country == "IN") {
@@ -228,6 +232,22 @@
         }
 
         $("#map-select")[0].addEventListener("input", (e)=>{
+            if ($("#map-select")[0].value === "custom") {
+                console.log("c")
+                let countriesStr = prompt("Enter list of country codes (e.g. \"GB,FR,DE\")");
+
+                if (countriesStr !== null) {
+                    let countriesArr = countriesStr.split(",");
+                    for (let i = 0; i < countriesArr.length; i++) {
+                        countriesArr[i] = countriesArr[i].trim();
+                    }
+
+                    valueToCountries["custom"] = countriesArr;
+                } else {
+                    valueToCountries["custom"] = [];
+                }
+            }
+
             setCurrCountries();
             setMapSource();
         })
@@ -400,8 +420,8 @@
             if (map.getSource("uploaded-source")) {
                 map.removeSource("uploaded-source");
             }
-
-            if (currCountriesList.length === 1) {
+            
+            if (currCountriesList.length === 1 && supportedADM1.includes(currCountriesList[0])) {
                 $.getJSON("geojson_data/" + currCountriesList[0] + ".geojson", (gj)=>{
                     map.addSource('uploaded-source', {
                         'type': 'geojson',
@@ -413,33 +433,28 @@
                     }
                 })
             } else {
-                let links = [];
                 let combinedFeatures = [];
 
-                for (let c2 of currCountriesList) {
-                    let l = geojson_links.find(o => iso_3_to_2[o["boundaryISO"]] === c2)["simplifiedGeometryGeoJSON"];
-                    links.push(l);
-                }
-
-                (function getNextCountryData(i) {
-                    if (i >= currCountriesList.length) {
-                        combinedFeatures.flat();
-                        map.addSource('uploaded-source', {
-                            'type': 'geojson',
-                            'data': {
-                                "type": "FeatureCollection",
-                                "features": combinedFeatures
-                            }
-                        });
-
-                        return;
+                $.getJSON("all_countries.geojson", (data)=>{
+                    for (let f of data.features) {
+                        if (currCountriesList.includes(f.properties["ISO3166-1-Alpha-2"])) {
+                            console.log(f);
+                            combinedFeatures.push(f);
+                        }
                     }
-                    $.getJSON(links[i], (gj)=>{
-                        combinedFeatures.push(gj["features"]);
 
-                        getNextCountryData(i+1);
-                    })
-                })(0);
+                    map.addSource('uploaded-source', {
+                        'type': 'geojson',
+                        'data': {
+                            "type": "FeatureCollection",
+                            "features": combinedFeatures
+                        }
+                    });
+
+                    if ($("#checkbox-outline")[0].checked) {
+                        map.addLayer(outlineLayer);
+                    };
+                })
             }
         }
 
@@ -447,16 +462,18 @@
             map.doubleClickZoom.disable();
         });
         
-        $("#checkbox-outline")[0].addEventListener("change", (e)=>{
+        $("#checkbox-outline")[0].addEventListener("change", addCountryOutlines);
+
+        function addCountryOutlines() {
             if (!map.isStyleLoaded() || !map.getSource("uploaded-source")) return;
-            if (e.currentTarget.checked) {
+            if ($("#checkbox-outline")[0].checked) {
                 map.addLayer(outlineLayer);
             } else {
                 if (map.getLayer("polygons-stroke")) {
                     map.removeLayer("polygons-stroke");
                 }
             }
-        });
+        }
 
         $("#checkbox-division-name")[0].addEventListener("change", (e)=>{
             showDivision = e.currentTarget.checked;
