@@ -11,6 +11,8 @@
             margin: 0;
             padding: 0;
             height: 100%;
+            font-family: 'Consolas';
+            color: rgba(255, 255, 255, 1);
         }
 
         #top-display {
@@ -23,9 +25,7 @@
             align-items: center;
             justify-content: center;
             background-color: rgba(177, 0, 56, 0.6);
-            color: rgba(255, 255, 255, 1);
             border: 2px solid rgba(50, 0, 16, 0.6);
-            font-family: 'Consolas';
             font-size: 18px;
         }
 
@@ -40,10 +40,52 @@
             align-items: center;
             justify-content: center;
             background-color: rgba(177, 0, 56, 0.4);
-            color: rgba(255, 255, 255, 1);
             border: 2px solid rgba(50, 0, 16, 0.4);
-            font-family: 'Consolas';
             font-size: 14px;
+        }
+
+        #left-hide-btn {
+            position: fixed;
+            top: calc(50% - 285px);
+            left: 30px;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(177, 0, 56, 0.4);
+            border: 2px solid rgba(50, 0, 16, 0.4);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #right-panel {
+            position: fixed;
+            top: calc(50% - 250px);
+            right: 30px;
+            width: 250px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(177, 0, 56, 0.4);
+            border: 2px solid rgba(50, 0, 16, 0.4);
+            font-size: 14px;
+            overflow: auto;
+        }
+
+        .history-elem {
+            width: 90%;
+            margin-left: 10px;
+            margin-right: 10px;
+            margin-top: 5px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         #map {
@@ -89,6 +131,7 @@
 <body>
     <div id="map"></div>
     <div id="top-display"></div>
+    <div id="left-hide-btn">&lt;</div>
     <div id="left-panel">
         <div style="margin-bottom: 20px">
             <label for="map-select">Select map:</label>
@@ -137,9 +180,10 @@
             <input type="checkbox" id="checkbox-country-name">
             <span>Show country name</span>
         </div>
-        <div style="position: fixed; left: 0; bottom: 0; font-size: 14px;">
-            Country outlines by: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">Geoboundaries</a>, <a href="https://datahub.io/core/geo-countries" target="_blank" rel="noopener noreferrer">Datahub</a>
-        </div>
+    </div>
+    <div id="right-panel"></div>
+    <div style="position: fixed; left: 0; bottom: 0; font-size: 14px;">
+        Country outlines by: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">Geoboundaries</a>, <a href="https://datahub.io/core/geo-countries" target="_blank" rel="noopener noreferrer">Datahub</a>
     </div>
 
     <script>
@@ -161,14 +205,17 @@
         let maxPopulation = Number($("#max-population")[0].value);
         let minBeforeRepeat = Number($("#locs-before-repeat")[0].value);
         let locHistory = [];
+        let pastMarkerCoords = [];
+        let showingClickMarker;
+        let showingLocMarker;
 
         let iso2ToCountryName = {"AF":"Afghanistan","AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CG":"Republic of the Congo","CD":"Democratic Republic of the Congo","CK":"Cook Islands","CR":"Costa Rica","CI":"Cote D'Ivoire","HR":"Croatia","CU":"Cuba","CY":"Cyprus","CZ":"Czech Republic","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","ET":"Ethiopia","FK":"Falkland Islands (Malvinas)","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"The Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KR":"Korea","XK":"Kosovo","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MK":"Macedonia","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","AN":"Netherlands Antilles","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","RE":"Reunion","RO":"Romania","RU":"Russia","RW":"Rwanda","BL":"Saint Barthelemy","SH":"Saint Helena","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SZ":"Eswatini","SE":"Sweden","SS":"South Sudan","CH":"Switzerland","SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"United Arab Emirates","GB":"United Kingdom","US":"United States","UM":"United States Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"}
 
         let supportedADM1 = ["BR", "CA", "CN", "ID", "IN", "JP", "MX", "RU", "US"];
         let valueToCountries = {"usa": ["US"], "china": ["CN"], "india": ["IN"], "brazil": ["BR"], "indonesia": ["ID"], "russia": ["RU"], "canada": ["CA"], "japan": ["JP"], "mexico": ["MX"], 
         "w-europe": ["GB", "IE", "FR", "AD", "PT", "ES", "BE", "NL", "LU", "DE", "CH", "IT", "LI", "AT", "MC", "SM", "VA", "MT"],
-        "e-europe": ["CZ", "PL", "SK", "HU", "SI", "HR", "BA", "ME", "RS", "MK", "AL", "XK", "GR", "BG", "RO", "MD", "UA", "BY"],
-        "n-europe": ["LT", "LV", "EE", "FI", "SE", "NO", "IS", "DK"],
+        "e-europe": ["CZ", "PL", "LT", "SK", "HU", "SI", "HR", "BA", "ME", "RS", "MK", "AL", "XK", "GR", "BG", "RO", "MD", "UA", "BY"],
+        "n-europe": ["LV", "EE", "FI", "SE", "NO", "IS", "DK"],
         "middle-east": ["BH", "CY", "EG", "IR", "IQ", "IL", "JO", "KW", "LB", "OM", "PS", "QA", "SA", "SY", "TR", "AE", "YE"],
         "central-asia": ["KG", "TJ", "TM", "UZ", "KZ", "AF"],
         "se-asia": ["BN", "KH", "LA", "MY", "MM", "PH", "SG", "TH", "TL", "VN"],
@@ -179,6 +226,11 @@
         let br_codes = {1:"Acre",2:"Alagoas",3:"Amapá",4:"Amazonas",5:"Bahia",6:"Ceará",7:"Distrito Federal",8:"Espírito Santo",11:"Mato Grosso do Sul",13:"Maranhão",14:"Mato Grosso",15:"Minas Gerais",16:"Pará",17:"Paraíba",18:"Paraná",20:"Piauí",21:"Rio de Janeiro",22:"Rio Grande do Norte",23:"Rio Grande do Sul",24:"Rondônia",25:"Roraima",26:"Santa Catarina",27:"São Paulo",28:"Sergipe",29:"Goiás",30:"Pernambuco",31:"Tocantins"};
         let us_codes = {"AL":"Alabama","AK":"Alaska","AS":"American Samoa","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District Of Columbia","FL":"Florida","GA":"Georgia","GU":"Guam","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","MP":"Northern Mariana Islands","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","PR":"Puerto Rico","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","VI":"Virgin Islands","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"}
         //let id_codes_f = {}
+
+        $("#left-hide-btn")[0].addEventListener("click", (e)=>{
+            $("#left-hide-btn")[0].innerHTML = ($("#left-hide-btn")[0].innerHTML != "&lt;" ? "&lt;" : "&gt;");
+            $("#left-panel")[0].style.display = ($("#left-panel")[0].style.display != "none" ? "none" : "flex");
+        })
 
         let citiesLoaded = false;
         $.getJSON("all_cities_p10000.json", (cities)=>{
@@ -498,13 +550,14 @@
 
             clickMarker = new maplibregl.Marker({color: "#FF0000"}).setLngLat([e.lngLat.lng, e.lngLat.lat]).addTo(map);
             locMarker = new maplibregl.Marker({color: "#00FF00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
-            $("#top-display")[0].style.color = "rgba(255, 255, 255, 0)"
+            $("#top-display")[0].style.color = "rgba(255, 255, 255, 0)";
+
+            pastMarkerCoords.push([[e.lngLat.lng, e.lngLat.lat], [currCity.longitude, currCity.latitude]]);
 
             let distFromClick = distanceKm(e.lngLat.lat, currCity.latitude, e.lngLat.lng, currCity.longitude);
             let score = 1000*Math.exp(-(distFromClick / 16250) * 3.5);
 
             let distPopup = document.createElement("div");
-            distPopup.innerHTML = ""
             distPopup.classList.add("dist-popup");
             distPopup.style.animation = "move-popup-text " + 1.5*fadeTime/1000 + "s";
             distPopup.innerHTML = Math.round(score) + "/1000" + "<br>" + distFromClick.toFixed(2) + " km";
@@ -512,9 +565,47 @@
             distPopup.style.left = mouseX - 100 + "px";
             distPopup.style.top = mouseY - 50 + "px";
             distPopup.addEventListener('animationend', distPopup.remove);
-            distPopup.style.color = "hsl(" + (180 - 180*score/1000) + ", 100%, 60%)";
-            distPopup.style["-webkit-text-stroke"] = "0.75px hsl(" + (180 - 180*score/1000) + ", 100%, 20%)";
+            distPopup.style.color = "hsl(" + (240 * (1-score/1000)) + ", 100%, 60%)";
+            distPopup.style["-webkit-text-stroke"] = "0.75px hsl(" + (240 * (1-score/1000)) + ", 100%, 20%)";
             $("body")[0].appendChild(distPopup);
+
+            let historyElem = document.createElement("div");
+            historyElem.classList.add("history-elem");
+            let locationNameElem = document.createElement("div");
+            locationNameElem.innerText = $("#top-display")[0].innerText;
+            historyElem.appendChild(locationNameElem);
+            let scoreElem = document.createElement("div");
+            scoreElem.innerText = Math.round(score) + "/1000" + " (" + distFromClick.toFixed(2) + " km)";
+            scoreElem.style.color = "hsl(" + (240 * (1-score/1000)) + ", 100%, 85%)";
+            //scoreElem.style["-webkit-text-stroke"] = "0.75px hsl(" + (180 - 180*score/1000) + ", 100%, 40%)";
+            historyElem.appendChild(scoreElem);
+            historyElem.setAttribute("data-marker-ind", pastMarkerCoords.length-1)
+
+            historyElem.addEventListener("mouseenter", (e)=>{
+                let markerPositions = pastMarkerCoords[e.currentTarget.getAttribute("data-marker-ind")];
+
+                showingClickMarker = new maplibregl.Marker({color: "#800000"}).setLngLat(markerPositions[0]).addTo(map);
+                showingLocMarker = new maplibregl.Marker({color: "#008000"}).setLngLat(markerPositions[1]).addTo(map);
+            });
+
+            historyElem.addEventListener("mouseleave", (e)=>{
+                if (showingClickMarker) {showingClickMarker.remove();}
+                if (showingLocMarker) {showingLocMarker.remove();}
+            });
+
+            $("#right-panel")[0].prepend(historyElem);
+            if ($("#right-panel")[0].children.length > 50) {
+                $("#right-panel")[0].removeChild($("#right-panel")[0].lastElementChild);
+            }
+
+            let historyElems = $("#right-panel")[0].children
+            for (let i = 0; i < historyElems.length; i++) {
+                if (i !== 0) {
+                    historyElems[i].style.backgroundColor = "rgba(177, 0, 0, 0.4)";
+                } else {
+                    historyElems[i].style.backgroundColor = "rgba(255, 90, 90, 0.4)";
+                }
+            };
 
             if (autoStart) {
                 opacityInterval = setInterval(() => {
