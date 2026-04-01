@@ -75,10 +75,16 @@
             overflow: auto;
         }
 
-        .history-elem {
+        #loc-history {
+            position: relative;
             width: 90%;
-            margin-left: 10px;
-            margin-right: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .history-elem {
+            width: 100%;
             margin-top: 5px;
             padding-top: 10px;
             padding-bottom: 10px;
@@ -181,7 +187,9 @@
             <span>Show country name</span>
         </div>
     </div>
-    <div id="right-panel"></div>
+    <div id="right-panel">
+        <div id="loc-history"></div>
+    </div>
     <div style="position: fixed; left: 0; bottom: 0; font-size: 14px;">
         Country outlines by: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">Geoboundaries</a>, <a href="https://datahub.io/core/geo-countries" target="_blank" rel="noopener noreferrer">Datahub</a>
     </div>
@@ -593,12 +601,12 @@
                 if (showingLocMarker) {showingLocMarker.remove();}
             });
 
-            $("#right-panel")[0].prepend(historyElem);
-            if ($("#right-panel")[0].children.length > 50) {
-                $("#right-panel")[0].removeChild($("#right-panel")[0].lastElementChild);
+            $("#loc-history")[0].prepend(historyElem);
+            if ($("#loc-history")[0].children.length > 50) {
+                $("#loc-history")[0].removeChild($("#loc-history")[0].lastElementChild);
             }
 
-            let historyElems = $("#right-panel")[0].children
+            let historyElems = $("#loc-history")[0].children
             for (let i = 0; i < historyElems.length; i++) {
                 if (i !== 0) {
                     historyElems[i].style.backgroundColor = "rgba(177, 0, 0, 0.4)";
