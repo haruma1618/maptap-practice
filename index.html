@@ -11,7 +11,7 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            font-family: 'Consolas';
+            font-family: "Consolas";
             color: rgba(255, 255, 255, 1);
         }
 
@@ -102,7 +102,7 @@
         }
 
         .dist-popup {
-            font-family: 'Consolas';
+            font-family: "Consolas";
             font-size: 20px;
             text-align: center;
             opacity: 1;
@@ -110,7 +110,7 @@
         }
 
         input[type="number"] {
-            font-family: 'Consolas';
+            font-family: "Consolas";
             border-radius: 0;
             border: 1px solid rgb(0, 0, 0);
             background-color: rgb(50, 0, 16);
@@ -119,7 +119,7 @@
         }
 
         button, select {
-            font-family: 'Consolas';
+            font-family: "Consolas";
             border-radius: 0;
             border: 1px solid rgb(0, 0, 0);
             background-color: rgb(50, 0, 16);
@@ -293,7 +293,6 @@
 
         $("#map-select")[0].addEventListener("input", (e)=>{
             if ($("#map-select")[0].value === "custom") {
-                console.log("c")
                 let countriesStr = prompt("Enter list of country codes (e.g. \"GB,FR,DE\")");
 
                 if (countriesStr !== null) {
@@ -421,7 +420,6 @@
             }
 
             locHistory.unshift(newCity);
-            console.log(locHistory);
             currCity = newCity;
 
             let displayText = currCity.name;
@@ -439,17 +437,17 @@
         let style = {
             version: 8,
             sources: {
-                'satellite-tiles': {
-                    type: 'raster',
-                    tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+                "satellite-tiles": {
+                    type: "raster",
+                    tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
                     tileSize: 256,
-                    attribution: 'Tiles &copy; Esri'
+                    attribution: "Tiles &copy; Esri"
                 }
             },
             layers: [{
-                id: 'satellite-layer',
-                type: 'raster',
-                source: 'satellite-tiles'
+                id: "satellite-layer",
+                type: "raster",
+                source: "satellite-tiles"
             }],
             projection: { type: "globe" }
         }
@@ -464,18 +462,18 @@
         })
 
         let outlineLayer = {
-            'id': 'polygons-stroke',
-            'type': 'line',
-            'source': 'uploaded-source',
-            'paint': {
-                'line-color': '#A00000',
-                'line-width': 1.5
+            "id": "polygons-stroke",
+            "type": "line",
+            "source": "uploaded-source",
+            "paint": {
+                "line-color": "#A00000",
+                "line-width": 1.5
             }
         };
 
         function setMapSource() {
-            if (map.getLayer('polygons-stroke')) {
-                map.removeLayer('polygons-stroke');
+            if (map.getLayer("polygons-stroke")) {
+                map.removeLayer("polygons-stroke");
             }
             if (map.getSource("uploaded-source")) {
                 map.removeSource("uploaded-source");
@@ -483,9 +481,9 @@
             
             if (currCountriesList.length === 1 && supportedADM1.includes(currCountriesList[0])) {
                 $.getJSON("geojson_data/" + currCountriesList[0] + ".geojson", (gj)=>{
-                    map.addSource('uploaded-source', {
-                        'type': 'geojson',
-                        'data': gj
+                    map.addSource("uploaded-source", {
+                        "type": "geojson",
+                        "data": gj
                     });
 
                     if ($("#checkbox-outline")[0].checked) {
@@ -498,14 +496,13 @@
                 $.getJSON("all_countries.geojson", (data)=>{
                     for (let f of data.features) {
                         if (currCountriesList.includes(f.properties["ISO3166-1-Alpha-2"])) {
-                            console.log(f);
                             combinedFeatures.push(f);
                         }
                     }
 
-                    map.addSource('uploaded-source', {
-                        'type': 'geojson',
-                        'data': {
+                    map.addSource("uploaded-source", {
+                        "type": "geojson",
+                        "data": {
                             "type": "FeatureCollection",
                             "features": combinedFeatures
                         }
@@ -520,6 +517,7 @@
 
         map.on("load", (e)=> {
             map.doubleClickZoom.disable();
+            map.dragRotate.disable();
         });
         
         $("#checkbox-outline")[0].addEventListener("change", addCountryOutlines);
@@ -572,7 +570,7 @@
             distPopup.style.width = 200 + "px";
             distPopup.style.left = mouseX - 100 + "px";
             distPopup.style.top = mouseY - 50 + "px";
-            distPopup.addEventListener('animationend', distPopup.remove);
+            distPopup.addEventListener("animationend", distPopup.remove);
             distPopup.style.color = "hsl(" + (240 * (1-score/1000)) + ", 100%, 60%)";
             distPopup.style["-webkit-text-stroke"] = "0.75px hsl(" + (240 * (1-score/1000)) + ", 100%, 20%)";
             $("body")[0].appendChild(distPopup);
@@ -613,6 +611,12 @@
                 } else {
                     historyElems[i].style.backgroundColor = "rgba(255, 90, 90, 0.4)";
                 }
+
+                if (!currCitiesList.includes(locHistory[i])) {
+                    historyElems[i].style.color = "#d2acac";
+                } else {
+                    historyElems[i].style.color = "#ffffff";
+                }
             };
 
             if (autoStart) {
@@ -636,6 +640,36 @@
             mouseX = e.clientX;
             mouseY = e.clientY;
         })
+
+        function currCitiesRemove(city) {
+            let newCitiesList = [];
+            for (let c of currCitiesList) {
+                if (JSON.stringify(c) != JSON.stringify(city)) {
+                    newCitiesList.push(c);
+                }
+            }
+            currCitiesList = newCitiesList;
+            $("#num-locs")[0].innerText = currCitiesList.length;
+        }
+
+        document.addEventListener("auxclick", (e) => {
+            if (e.button === 2) {
+                let cityToRemove = inTransition ? locHistory[0] : locHistory[1];
+                currCitiesRemove(cityToRemove);
+
+                let popup = document.createElement("div");
+                popup.style.position = "fixed";
+                popup.style.top = "0";
+                popup.style.right = "0";
+                popup.style.color = "#ffcfcf";
+                popup.innerText = "Removed " + cityToRemove.name + " from cities list";
+                popup.style.transition = "opacity 3s";
+                popup.addEventListener("transitionend", popup.remove);
+                $("body")[0].appendChild(popup);
+
+                setTimeout(()=>{popup.style.opacity = "0"}, 30);
+            }
+        });
 
         // Haversine formula https://www.geeksforgeeks.org/dsa/program-distance-two-points-earth/
         function distanceKm(lat1, lat2, lon1, lon2) {
