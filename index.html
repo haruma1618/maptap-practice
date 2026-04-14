@@ -685,6 +685,7 @@
                 createTopRightPopup("#ffcfcf", "Removed " + cityToRemove.name + " from cities list");
             } else if (e.key === "b") {
                 let prevCitiesLen = currCitiesList.length;
+                removedCities = [];
                 setCurrCities();
                 let newCitiesLen = currCitiesList.length;
                 createTopRightPopup("#cfcfff", "Restored " + (newCitiesLen-prevCitiesLen) + " removed cities to cities list");
