@@ -211,11 +211,11 @@
         let inTransition = false;
         let currCountriesList = ["US"];
         let currCountryMap = "usa";
-        let showDivision = $("#checkbox-division-name")[0].checked;
-        let showCountry = $("#checkbox-country-name")[0].checked;
-        let minPopulation = Number($("#min-population")[0].value);
-        let maxPopulation = Number($("#max-population")[0].value);
-        let minBeforeRepeat = Number($("#locs-before-repeat")[0].value);
+        let showDivision = document.getElementById("checkbox-division-name").checked;
+        let showCountry = document.getElementById("checkbox-country-name").checked;
+        let minPopulation = Number(document.getElementById("min-population").value);
+        let maxPopulation = Number(document.getElementById("max-population").value);
+        let minBeforeRepeat = Number(document.getElementById("locs-before-repeat").value);
         let removedCities = [];
         let locHistory = [];
         let pastMarkerCoords = [];
@@ -240,9 +240,9 @@
         let us_codes = {"AL":"Alabama","AK":"Alaska","AS":"American Samoa","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District Of Columbia","FL":"Florida","GA":"Georgia","GU":"Guam","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","MP":"Northern Mariana Islands","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","PR":"Puerto Rico","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","VI":"Virgin Islands","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"}
         //let id_codes_f = {}
 
-        $("#left-hide-btn")[0].addEventListener("click", (e)=>{
-            $("#left-hide-btn")[0].innerHTML = ($("#left-hide-btn")[0].innerHTML != "&lt;" ? "&lt;" : "&gt;");
-            $("#left-panel")[0].style.display = ($("#left-panel")[0].style.display != "none" ? "none" : "flex");
+        document.getElementById("left-hide-btn").addEventListener("click", (e)=>{
+            document.getElementById("left-hide-btn").innerHTML = (document.getElementById("left-hide-btn").innerHTML != "&lt;" ? "&lt;" : "&gt;");
+            document.getElementById("left-panel").style.display = (document.getElementById("left-panel").style.display != "none" ? "none" : "flex");
         })
 
         let citiesLoaded = false;
@@ -292,15 +292,15 @@
                     currCitiesList.push(c);
                 }
             }
-            $("#num-locs")[0].innerText = currCitiesList.length;
+            document.getElementById("num-locs").innerText = currCitiesList.length;
             if (minBeforeRepeat > currCitiesList.length) {
                 minBeforeRepeat = currCitiesList.length;
-                $("#locs-before-repeat")[0].value = minBeforeRepeat.toString();
+                document.getElementById("locs-before-repeat").value = minBeforeRepeat.toString();
             }
         }
 
-        $("#map-select")[0].addEventListener("input", (e)=>{
-            if ($("#map-select")[0].value === "custom") {
+        document.getElementById("map-select").addEventListener("input", (e)=>{
+            if (document.getElementById("map-select").value === "custom") {
                 let countriesStr = prompt("Enter list of country codes (e.g. \"GB,FR,DE\")");
 
                 if (countriesStr !== null) {
@@ -323,7 +323,7 @@
             let prevCountriesList = currCountriesList;
             let prevCountryMap = currCountryMap;
 
-            let val = $("#map-select")[0].value;
+            let val = document.getElementById("map-select").value;
             currCountryMap = val;
 
             if (valueToCountries[val] !== undefined) {
@@ -335,44 +335,44 @@
             if (currCitiesList.length == 0) {
                 alert("No cities match the given restrictions");
                 currCountriesList = prevCountriesList;
-                $("#map-select")[0].value = prevCountryMap;
+                document.getElementById("map-select").value = prevCountryMap;
                 setCurrCities();
             } else if (currCitiesList.length < minBeforeRepeat) {
                 minBeforeRepeat = currCitiesList.length;
-                $("#locs-before-repeat")[0].value = currCitiesList.length;
+                document.getElementById("locs-before-repeat").value = currCitiesList.length;
             }
 
             selectRandCity();
         }
 
-        $("#min-population")[0].addEventListener("change", updateMapPreferences);
-        $("#max-population")[0].addEventListener("change", updateMapPreferences);
-        $("#locs-before-repeat")[0].addEventListener("change", updateMapPreferences);
+        document.getElementById("min-population").addEventListener("change", updateMapPreferences);
+        document.getElementById("max-population").addEventListener("change", updateMapPreferences);
+        document.getElementById("locs-before-repeat").addEventListener("change", updateMapPreferences);
 
 
         function updateMapPreferences(e) {
             if (!citiesLoaded) return;
 
-            let minVal = $("#min-population")[0].value;
+            let minVal = document.getElementById("min-population").value;
             if (Number(minVal) === NaN || minVal === "") {
                 alert("Invalid value for: Minimum population");
-                $("#min-population")[0].value = minPopulation.toString();
+                document.getElementById("min-population").value = minPopulation.toString();
                 return;
             }
             minVal = Number(minVal);
 
-            let maxVal = $("#max-population")[0].value;
+            let maxVal = document.getElementById("max-population").value;
             if (Number(maxVal) === NaN || maxVal === "") {
                 alert("Invalid value for: Maximum population");
-                $("#max-population")[0].value = maxPopulation.toString();
+                document.getElementById("max-population").value = maxPopulation.toString();
                 return;
             }
             maxVal = Number(maxVal);
 
-            let minBeforeRepeatVal = $("#locs-before-repeat")[0].value;
+            let minBeforeRepeatVal = document.getElementById("locs-before-repeat").value;
             if (Number(minBeforeRepeatVal) === NaN || minBeforeRepeatVal === "") {
                 alert("Invalid value for: Min # of cities before repeat");
-                $("#locs-before-repeat")[0].value = minBeforeRepeat.toString();
+                document.getElementById("locs-before-repeat").value = minBeforeRepeat.toString();
                 return;
             }
             minBeforeRepeatVal = Number(minBeforeRepeatVal);
@@ -393,21 +393,21 @@
                 invalid = true;
             } else if (minBeforeRepeatVal > currCitiesList.length) {
                 minBeforeRepeatVal = currCitiesList.length;
-                $("#locs-before-repeat")[0].value = minBeforeRepeatVal.toString();
+                document.getElementById("locs-before-repeat").value = minBeforeRepeatVal.toString();
             }
 
             if (invalid) {
                 minPopulation = prevMin;
                 maxPopulation = prevMax;
                 minBeforeRepeat = prevMinBeforeRepeat;
-                $("#min-population")[0].value = prevMin.toString();
-                $("#max-population")[0].value = prevMax.toString();
-                $("#locs-before-repeat")[0].value = prevMinBeforeRepeat.toString();
+                document.getElementById("min-population").value = prevMin.toString();
+                document.getElementById("max-population").value = prevMax.toString();
+                document.getElementById("locs-before-repeat").value = prevMinBeforeRepeat.toString();
                 setCurrCities();
             }
         }
         
-        $("#top-display")[0].style.transition = "color " + fadeTime/1000 + "s";
+        document.getElementById("top-display").style.transition = "color " + fadeTime/1000 + "s";
 
         function selectRandCity() {
             let newCity;
@@ -440,7 +440,7 @@
                 displayText += ", " + currCity.country_name;
             }
 
-            $("#top-display")[0].innerText = displayText;
+            document.getElementById("top-display").innerText = displayText;
         }
 
         let style = {
@@ -471,14 +471,14 @@
         });
 
         function getTileSource() {
-            if ($("#checkbox-topo-map")[0].checked) {
+            if (document.getElementById("checkbox-topo-map").checked) {
                 return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}";
             } else {
                 return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
             }
         }
 
-        $("#checkbox-topo-map")[0].addEventListener("change", (e)=>{
+        document.getElementById("checkbox-topo-map").addEventListener("change", (e)=>{
             map.getSource("satellite-tiles").setTiles([getTileSource()]);
         })
 
@@ -507,7 +507,7 @@
                         "data": gj
                     });
 
-                    if ($("#checkbox-outline")[0].checked) {
+                    if (document.getElementById("checkbox-outline").checked) {
                         map.addLayer(outlineLayer);
                     }
                 })
@@ -529,7 +529,7 @@
                         }
                     });
 
-                    if ($("#checkbox-outline")[0].checked) {
+                    if (document.getElementById("checkbox-outline").checked) {
                         map.addLayer(outlineLayer);
                     };
                 })
@@ -541,11 +541,11 @@
             map.dragRotate.disable();
         });
         
-        $("#checkbox-outline")[0].addEventListener("change", addCountryOutlines);
+        document.getElementById("checkbox-outline").addEventListener("change", addCountryOutlines);
 
         function addCountryOutlines() {
             if (!map.isStyleLoaded() || !map.getSource("uploaded-source")) return;
-            if ($("#checkbox-outline")[0].checked) {
+            if (document.getElementById("checkbox-outline").checked) {
                 map.addLayer(outlineLayer);
             } else {
                 if (map.getLayer("polygons-stroke")) {
@@ -554,10 +554,10 @@
             }
         }
 
-        $("#checkbox-division-name")[0].addEventListener("change", (e)=>{
+        document.getElementById("checkbox-division-name").addEventListener("change", (e)=>{
             showDivision = e.currentTarget.checked;
         })
-        $("#checkbox-country-name")[0].addEventListener("change", (e)=>{
+        document.getElementById("checkbox-country-name").addEventListener("change", (e)=>{
             showCountry = e.currentTarget.checked;
         })
 
@@ -577,7 +577,7 @@
 
             clickMarker = new maplibregl.Marker({color: "#FF0000"}).setLngLat([e.lngLat.lng, e.lngLat.lat]).addTo(map);
             locMarker = new maplibregl.Marker({color: "#00FF00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
-            $("#top-display")[0].style.color = "rgba(255, 255, 255, 0)";
+            document.getElementById("top-display").style.color = "rgba(255, 255, 255, 0)";
 
             pastMarkerCoords.push([[e.lngLat.lng, e.lngLat.lat], [currCity.longitude, currCity.latitude]]);
 
@@ -594,12 +594,12 @@
             distPopup.addEventListener("animationend", distPopup.remove);
             distPopup.style.color = "hsl(" + (240 * (1-score/1000)) + ", 100%, 60%)";
             distPopup.style["-webkit-text-stroke"] = "0.75px hsl(" + (240 * (1-score/1000)) + ", 100%, 20%)";
-            $("body")[0].appendChild(distPopup);
+            document.body.appendChild(distPopup);
 
             let historyElem = document.createElement("div");
             historyElem.classList.add("history-elem");
             let locationNameElem = document.createElement("div");
-            locationNameElem.innerText = $("#top-display")[0].innerText;
+            locationNameElem.innerText = document.getElementById("top-display").innerText;
             historyElem.appendChild(locationNameElem);
             let secondRow = document.createElement("div");
             let scoreElem = document.createElement("span");
@@ -622,12 +622,12 @@
                 if (showingLocMarker) {showingLocMarker.remove();}
             });
 
-            $("#loc-history")[0].prepend(historyElem);
-            if ($("#loc-history")[0].children.length > 50) {
-                $("#loc-history")[0].removeChild($("#loc-history")[0].lastElementChild);
+            document.getElementById("loc-history").prepend(historyElem);
+            if (document.getElementById("loc-history").children.length > 50) {
+                document.getElementById("loc-history").removeChild(document.getElementById("loc-history").lastElementChild);
             }
 
-            let historyElems = $("#loc-history")[0].children
+            let historyElems = document.getElementById("loc-history").children
             for (let i = 0; i < historyElems.length; i++) {
                 if (i !== 0) {
                     historyElems[i].style.backgroundColor = "rgba(177, 0, 0, 0.4)";
@@ -651,7 +651,7 @@
 
                 setTimeout(() => {
                     selectRandCity();
-                    $("#top-display")[0].style.color = "rgba(255, 255, 255, 1)";
+                    document.getElementById("top-display").style.color = "rgba(255, 255, 255, 1)";
                     clearInterval(opacityInterval);
                     markerOpacity = 1;
                     inTransition = false;
@@ -673,7 +673,7 @@
             popup.innerText = text;
             popup.style.transition = "opacity 2.5s";
             popup.addEventListener("transitionend", popup.remove);
-            $("body")[0].appendChild(popup);
+            document.body.appendChild(popup);
             setTimeout(()=>{popup.style.opacity = "0"}, 30);
         }
 
