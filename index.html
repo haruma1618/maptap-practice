@@ -187,6 +187,10 @@
             <span>Show country name</span>
         </div>
         <div>
+            <input type="checkbox" id="checkbox-city-pop">
+            <span>Show city population</span>
+        </div>
+        <div>
             <input type="checkbox" id="checkbox-topo-map">
             <span>Topological map only</span>
         </div>
@@ -213,6 +217,7 @@
         let currCountryMap = "usa";
         let showDivision = document.getElementById("checkbox-division-name").checked;
         let showCountry = document.getElementById("checkbox-country-name").checked;
+        let showPopulation = document.getElementById("checkbox-city-pop").checked;
         let minPopulation = Number(document.getElementById("min-population").value);
         let maxPopulation = Number(document.getElementById("max-population").value);
         let minBeforeRepeat = Number(document.getElementById("locs-before-repeat").value);
@@ -439,8 +444,17 @@
             if (showCountry && currCity.country_name) {
                 displayText += ", " + currCity.country_name;
             }
+            if (showPopulation && currCity.population) {
+                displayText += "&nbsp;<span style='font-size:13px;'>";
+                if (currCity.population > 1e6) {
+                    displayText += "(" + Math.floor(currCity.population/1e5)/10 + "M)";
+                } else {
+                    displayText += "(" + Math.floor(currCity.population/1e3) + "K)";
+                }
+                displayText += "</span>";
+            }
 
-            document.getElementById("top-display").innerText = displayText;
+            document.getElementById("top-display").innerHTML = displayText;
         }
 
         let style = {
@@ -560,6 +574,9 @@
         document.getElementById("checkbox-country-name").addEventListener("change", (e)=>{
             showCountry = e.currentTarget.checked;
         })
+        document.getElementById("checkbox-city-pop").addEventListener("change", (e)=>{
+            showPopulation = e.currentTarget.checked;
+        })
 
         let clickMarker;
         let locMarker;
@@ -599,7 +616,7 @@
             let historyElem = document.createElement("div");
             historyElem.classList.add("history-elem");
             let locationNameElem = document.createElement("div");
-            locationNameElem.innerText = document.getElementById("top-display").innerText;
+            locationNameElem.innerHTML = document.getElementById("top-display").innerHTML;
             historyElem.appendChild(locationNameElem);
             let secondRow = document.createElement("div");
             let scoreElem = document.createElement("span");
