@@ -593,7 +593,7 @@
             if (locMarker) {locMarker.remove()}
 
             clickMarker = new maplibregl.Marker({color: "#FF0000"}).setLngLat([e.lngLat.lng, e.lngLat.lat]).addTo(map);
-            locMarker = new maplibregl.Marker({color: "#00FF00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
+            locMarker = new maplibregl.Marker({color: "#00CC00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
             document.getElementById("top-display").style.color = "rgba(255, 255, 255, 0)";
 
             pastMarkerCoords.push([[e.lngLat.lng, e.lngLat.lat], [currCity.longitude, currCity.latitude]]);
@@ -718,6 +718,7 @@
                 if (locMarker) {locMarker.remove()}
 
                 pastMarkerCoords.push([[null, null], [currCity.longitude, currCity.latitude]]);
+                locMarker = new maplibregl.Marker({color: "#00CC00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
                 document.getElementById("top-display").style.color = "rgba(255, 255, 255, 0)";
 
                 let historyElem = document.createElement("div");
@@ -749,12 +750,20 @@
 
                 setHistoryElemStyle();
 
-                setTimeout(() => {
-                    selectRandCity();
-                    document.getElementById("top-display").style.color = "rgba(255, 255, 255, 1)";
-                    markerOpacity = 1;
-                    inTransition = false;
-                }, fadeTime);
+                if (autoStart) {
+                    opacityInterval = setInterval(() => {
+                        markerOpacity = Math.max(0, markerOpacity-1/(fadeTime/20));
+                        locMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
+                    })
+
+                    setTimeout(() => {
+                        selectRandCity();
+                        document.getElementById("top-display").style.color = "rgba(255, 255, 255, 1)";
+                        clearInterval(opacityInterval);
+                        markerOpacity = 1;
+                        inTransition = false;
+                    }, fadeTime);
+                }
             }
         });
 
