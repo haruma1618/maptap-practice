@@ -644,20 +644,7 @@
                 document.getElementById("loc-history").removeChild(document.getElementById("loc-history").lastElementChild);
             }
 
-            let historyElems = document.getElementById("loc-history").children
-            for (let i = 0; i < historyElems.length; i++) {
-                if (i !== 0) {
-                    historyElems[i].style.backgroundColor = "rgba(177, 0, 0, 0.4)";
-                } else {
-                    historyElems[i].style.backgroundColor = "rgba(255, 90, 90, 0.4)";
-                }
-
-                if (removedCities.includes(locHistory[i])) {
-                    historyElems[i].style.color = "#d2acac";
-                } else {
-                    historyElems[i].style.color = "#ffffff";
-                }
-            };
+            setHistoryElemStyle();
 
             if (autoStart) {
                 opacityInterval = setInterval(() => {
@@ -675,6 +662,23 @@
                 }, fadeTime);
             }
         })
+
+        function setHistoryElemStyle() {
+            let historyElems = document.getElementById("loc-history").children;
+            for (let i = 0; i < historyElems.length; i++) {
+                if (i !== 0) {
+                    historyElems[i].style.backgroundColor = "rgba(177, 0, 0, 0.4)";
+                } else {
+                    historyElems[i].style.backgroundColor = "rgba(255, 90, 90, 0.4)";
+                }
+
+                if (removedCities.includes(locHistory[i])) {
+                    historyElems[i].style.color = "#d2acac";
+                } else {
+                    historyElems[i].style.color = "#ffffff";
+                }
+            };
+        }
 
         document.addEventListener("mousemove", (e) => {
             mouseX = e.clientX;
@@ -706,6 +710,51 @@
                 setCurrCities();
                 let newCitiesLen = currCitiesList.length;
                 createTopRightPopup("#cfcfff", "Restored " + (newCitiesLen-prevCitiesLen) + " removed cities to cities list");
+            } else if (e.key === " ") {
+                if (inTransition) return;
+
+                inTransition = true;
+                if (clickMarker) {clickMarker.remove()}
+                if (locMarker) {locMarker.remove()}
+
+                pastMarkerCoords.push([[null, null], [currCity.longitude, currCity.latitude]]);
+                document.getElementById("top-display").style.color = "rgba(255, 255, 255, 0)";
+
+                let historyElem = document.createElement("div");
+                historyElem.classList.add("history-elem");
+                let locationNameElem = document.createElement("div");
+                locationNameElem.innerHTML = document.getElementById("top-display").innerHTML;
+                historyElem.appendChild(locationNameElem);
+                let secondRow = document.createElement("div");
+                let scoreElem = document.createElement("span");
+                scoreElem.innerText = "Didn't know";
+                scoreElem.style.color = "#cad";
+                secondRow.appendChild(scoreElem);
+                historyElem.appendChild(secondRow);
+                historyElem.setAttribute("data-marker-ind", pastMarkerCoords.length-1)
+
+                historyElem.addEventListener("mouseenter", (e)=>{
+                    let markerPositions = pastMarkerCoords[e.currentTarget.getAttribute("data-marker-ind")];
+                    showingLocMarker = new maplibregl.Marker({color: "#008000"}).setLngLat(markerPositions[1]).addTo(map);
+                });
+
+                historyElem.addEventListener("mouseleave", (e)=>{
+                    if (showingLocMarker) {showingLocMarker.remove();}
+                });
+
+                document.getElementById("loc-history").prepend(historyElem);
+                if (document.getElementById("loc-history").children.length > 50) {
+                    document.getElementById("loc-history").removeChild(document.getElementById("loc-history").lastElementChild);
+                }
+
+                setHistoryElemStyle();
+
+                setTimeout(() => {
+                    selectRandCity();
+                    document.getElementById("top-display").style.color = "rgba(255, 255, 255, 1)";
+                    markerOpacity = 1;
+                    inTransition = false;
+                }, fadeTime);
             }
         });
 
