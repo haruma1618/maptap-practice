@@ -19,7 +19,7 @@
             position: fixed;
             top: 40px;
             left: calc(50% - 175px);
-            width: 350px;
+            width: 400px;
             height: 50px;
             display: flex;
             align-items: center;
@@ -58,6 +58,22 @@
             border: 2px solid rgba(50, 0, 16, 0.4);
             font-size: 14px;
             cursor: pointer;
+        }
+
+        #map-select-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(177, 0, 56, 0.6);
+            border: 2px solid rgba(50, 0, 16, 0.6);
+            padding: 10px;
         }
 
         #right-panel {
@@ -127,6 +143,19 @@
             cursor: pointer;
         }
 
+        .btn-blue {
+            background-color: rgb(12, 0, 60);
+        }
+
+        #map-select-buttons > button {
+            margin-bottom: 4px;
+        }
+
+        input::placeholder {
+            font-style: italic;
+            font-family: "Consolas";
+        }
+
         @keyframes move-popup-text {
             0% {transform: translate(0, 0); opacity: 1;}
             100% {transform: translate(0, -50px); opacity: 0;}
@@ -140,25 +169,7 @@
     <div id="left-hide-btn">&lt;</div>
     <div id="left-panel">
         <div style="margin-bottom: 20px">
-            <label for="map-select">Select map:</label>
-            <select id="map-select" name="map-select">
-                <option value="china">China</option>
-                <option value="india">India</option>
-                <option value="usa">United States</option>
-                <option value="brazil">Brazil</option>
-                <option value="indonesia">Indonesia</option>
-                <option value="russia">Russia</option>
-                <option value="canada">Canada</option>
-                <option value="japan">Japan</option>
-                <option value="mexico">Mexico</option>
-                <option value="w-europe">Western Europe</option>
-                <option value="e-europe">Eastern Europe</option>
-                <option value="n-europe">Northern Europe</option>
-                <option value="middle-east">Middle East</option>
-                <option value="central-asia">Central Asia</option>
-                <option value="se-asia">SE Asia (-Indo.)</option>
-                <option value="custom">Custom map...</option>
-            </select>
+            <button id="select-map-btn" style="font-size: 16px">Select map</button>
         </div>
         <div>
             <label for="min-population">Min. population:</label>
@@ -176,7 +187,7 @@
         <div>Possible locations: <span id="num-locs"></span></div>
         <div style="margin-bottom: 20px"></div>
         <div>
-            <input type="checkbox" id="checkbox-outline">
+            <input type="checkbox" id="checkbox-outline" checked>
             <span>Show country outline</span>
         </div>
         <div><input type="checkbox" id="checkbox-division-name" checked>
@@ -198,8 +209,50 @@
     <div id="right-panel">
         <div id="loc-history"></div>
     </div>
-    <div style="position: fixed; left: 0; bottom: 0; font-size: 14px;">
-        Country outlines by: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">Geoboundaries</a>, <a href="https://datahub.io/core/geo-countries" target="_blank" rel="noopener noreferrer">Datahub</a>
+
+    <div style="position: fixed; left: 5px; top: 5px; font-size: 14px; color: #bbb">
+        R: Remove previous loc.<br>
+        B: Restore removed locs.<br>
+        Space: Mark loc. as unknown
+    </div>
+    <div style="position: fixed; left: 5px; bottom: 25px; font-size: 14px; color: #bbb">
+        City data from: <a href="https://public.opendatasoft.com/explore/assets/geonames-all-cities-with-a-population-1000/view" target="_blank" rel="noopener noreferrer">Geonames (Huwise)</a>
+    </div>
+    <div style="position: fixed; left: 5px; bottom: 5px; font-size: 14px; color: #bbb">
+        Country outlines by: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">Geoboundaries</a>
+        , <a href="https://datahub.io/core/geo-countries" target="_blank" rel="noopener noreferrer">Datahub</a>
+    </div>
+
+
+    <div id="map-select-popup" style="display: none">
+        <button id="map-select-exit" style="position: absolute; top: 10px; right: 10px">X</button>
+        <h3 style="text-align: center">Select map:</h3>
+        <div id="map-select-buttons">
+            <button value="china">China</button>
+            <button value="india">India</button>
+            <button value="usa">United States</button>
+            <button value="brazil">Brazil</button>
+            <button value="indonesia">Indonesia</button>
+            <button value="russia">Russia</button>
+            <button value="canada">Canada</button>
+            <button value="japan">Japan</button>
+            <button value="mexico">Mexico</button><br>
+            <button value="w-europe" class="btn-blue">Western Europe</button>
+            <button value="e-europe" class="btn-blue">Eastern Europe</button>
+            <button value="n-europe" class="btn-blue">Northern Europe</button>
+            <button value="middle-east" class="btn-blue">Middle East</button>
+            <button value="central-asia" class="btn-blue">Central Asia</button>
+            <button value="se-asia" class="btn-blue">Southeast Asia</button>
+        </div><br>
+        <div style="font-size: 14px; text-align: center; margin-bottom: 5px;">Custom map - Enter list of country codes</div>
+        <input type="text" id="custom-map-input" style="width: 100%; margin-bottom: 7px" placeholder="GB,FR,DE">
+        <div id="custom-map-countries" style="font-size: 12px; font-style: italic; text-align: center; color:#eee"></div>
+        <div style="margin-bottom: 20px"></div>
+        <div style="margin-bottom: 5px">
+            <button id="use-custom">Use custom map</button>
+            <button id="load-curr-code">Load curr. map code</button>
+        </div>
+        <a href="iso2_codes.txt" target="_blank" rel="noopener noreferrer" style="font-size:12px; color:#ddd">Country Codes List</a>
     </div>
 
     <script>
@@ -226,8 +279,9 @@
         let pastMarkerCoords = [];
         let showingClickMarker;
         let showingLocMarker;
+        let countryMapVal = "china";
 
-        let iso2ToCountryName = {"AF":"Afghanistan","AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CG":"Republic of the Congo","CD":"Democratic Republic of the Congo","CK":"Cook Islands","CR":"Costa Rica","CI":"Cote D'Ivoire","HR":"Croatia","CU":"Cuba","CY":"Cyprus","CZ":"Czech Republic","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","ET":"Ethiopia","FK":"Falkland Islands (Malvinas)","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"The Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KR":"Korea","XK":"Kosovo","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MK":"Macedonia","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","AN":"Netherlands Antilles","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","RE":"Reunion","RO":"Romania","RU":"Russia","RW":"Rwanda","BL":"Saint Barthelemy","SH":"Saint Helena","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SZ":"Eswatini","SE":"Sweden","SS":"South Sudan","CH":"Switzerland","SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"United Arab Emirates","GB":"United Kingdom","US":"United States","UM":"United States Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"}
+        let iso2ToCountryName = {"AF":"Afghanistan","AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CG":"Republic of the Congo","CD":"Democratic Republic of the Congo","CK":"Cook Islands","CR":"Costa Rica","CI":"Cote D'Ivoire","HR":"Croatia","CU":"Cuba","CY":"Cyprus","CZ":"Czech Republic","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","ET":"Ethiopia","FK":"Falkland Islands (Malvinas)","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"The Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KR":"Korea","XK":"Kosovo","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MK":"North Macedonia","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","AN":"Netherlands Antilles","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","RE":"Reunion","RO":"Romania","RU":"Russia","RW":"Rwanda","BL":"Saint Barthelemy","SH":"Saint Helena","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SZ":"Eswatini","SE":"Sweden","SS":"South Sudan","CH":"Switzerland","SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"United Arab Emirates","GB":"United Kingdom","US":"United States","UM":"United States Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"}
 
         let supportedADM1 = ["BR", "CA", "CN", "ID", "IN", "JP", "MX", "RU", "US"];
         let valueToCountries = {"usa": ["US"], "china": ["CN"], "india": ["IN"], "brazil": ["BR"], "indonesia": ["ID"], "russia": ["RU"], "canada": ["CA"], "japan": ["JP"], "mexico": ["MX"], 
@@ -236,7 +290,7 @@
         "n-europe": ["LV", "EE", "FI", "SE", "NO", "IS", "DK"],
         "middle-east": ["BH", "CY", "EG", "IR", "IQ", "IL", "JO", "KW", "LB", "OM", "PS", "QA", "SA", "SY", "TR", "AE", "YE"],
         "central-asia": ["KG", "TJ", "TM", "UZ", "KZ", "AF"],
-        "se-asia": ["BN", "KH", "LA", "MY", "MM", "PH", "SG", "TH", "TL", "VN"],
+        "se-asia": ["BN", "KH", "ID", "LA", "MY", "MM", "PH", "SG", "TH", "TL", "VN"],
         "custom": ["CN"]};
 
         let cn_codes = {1:"Anhui",2:"Zhejiang",3:"Jiangxi",4:"Jiangsu",5:"Jilin",6:"Qinghai",7:"Fujian",8:"Heilongjiang",9:"Henan",10:"Hebei",11:"Hunan",12:"Hubei",13:"Xinjiang",14:"Tibet",15:"Gansu",16:"Guangxi",18:"Guizhou",19:"Liaoning",20:"Inner Mongolia",21:"Ningxia",22:"Beijing",23:"Shanghai",24:"Shanxi",25:"Shandong",26:"Shaanxi",28:"Tianjin",29:"Yunnan",30:"Guangdong",31:"Hainan",32:"Sichuan",33:"Chongqing"};
@@ -248,7 +302,15 @@
         document.getElementById("left-hide-btn").addEventListener("click", (e)=>{
             document.getElementById("left-hide-btn").innerHTML = (document.getElementById("left-hide-btn").innerHTML != "&lt;" ? "&lt;" : "&gt;");
             document.getElementById("left-panel").style.display = (document.getElementById("left-panel").style.display != "none" ? "none" : "flex");
-        })
+        });
+
+        document.getElementById("select-map-btn").addEventListener("click", (e)=>{
+            document.getElementById("map-select-popup").style.display = "block";
+        });
+
+        document.getElementById("map-select-exit").addEventListener("click", (e)=>{
+            document.getElementById("map-select-popup").style.display = "none";
+        });
 
         let citiesLoaded = false;
         $.getJSON("all_cities_p10000.json", (cities)=>{
@@ -290,7 +352,7 @@
             citiesLoaded = true;
         });
 
-        function setCurrCities() {
+        function setCurrCities(repeat=false) {
             currCitiesList = [];
             for (let c of allCities) {
                 if (currCountriesList.includes(c.country) && c.population >= minPopulation && c.population <= maxPopulation && !removedCities.includes(c)) {
@@ -298,41 +360,114 @@
                 }
             }
             document.getElementById("num-locs").innerText = currCitiesList.length;
-            if (minBeforeRepeat > currCitiesList.length) {
+            /*if (minBeforeRepeat > currCitiesList.length) {
                 minBeforeRepeat = currCitiesList.length;
                 document.getElementById("locs-before-repeat").value = minBeforeRepeat.toString();
-            }
+            }*/
+            
+
+            // If there are no cities, likely because min population is too high
+            /*if (currCitiesList.length == 0 && !repeat) {
+                let maxPop = 0;
+                for (let c of allCities) {
+                    if (currCountriesList.includes(c.country) && c.population <= maxPopulation && !removedCities.includes(c)) {
+                        if (c.population > maxPop) {
+                            maxPop = c.population;
+                        }
+                    }
+                }
+                minPopulation = maxPop;
+                document.getElementById("min-population").value = maxPop;
+                setCurrCities(true);
+            }*/
         }
 
-        document.getElementById("map-select").addEventListener("input", (e)=>{
-            if (document.getElementById("map-select").value === "custom") {
-                let countriesStr = prompt("Enter list of country codes (e.g. \"GB,FR,DE\")");
+        for (let btn of document.getElementById("map-select-buttons").children) {
+            btn.addEventListener("click", (e)=>{
+                setCurrCountries(e.target.value);
+                setMapSource();
+            });
+        }
 
-                if (countriesStr !== null) {
-                    let countriesArr = countriesStr.split(",");
-                    for (let i = 0; i < countriesArr.length; i++) {
-                        countriesArr[i] = countriesArr[i].trim();
-                    }
+        document.getElementById("use-custom").addEventListener("click", (e)=>{
+            let countriesStr = document.getElementById("custom-map-input").value;
 
-                    valueToCountries["custom"] = countriesArr;
-                } else {
-                    valueToCountries["custom"] = [];
+            if (countriesStr) {
+                let countriesArr = countriesStr.split(",");
+                for (let i = 0; i < countriesArr.length; i++) {
+                    countriesArr[i] = countriesArr[i].trim().toUpperCase();
+                }
+
+                valueToCountries["custom"] = countriesArr;
+            }
+
+            setCurrCountries("custom");
+            setMapSource();
+        });
+
+        document.getElementById("load-curr-code").addEventListener("click", (e)=>{
+            let mapCode = currCountriesList.join(",");
+            document.getElementById("custom-map-input").value = mapCode;
+            updateCustomMapCountryText();
+        });
+
+        function updateCustomMapCountryText() {
+            let displayStr = "(";
+            let countriesStr = document.getElementById("custom-map-input").value;
+
+            let countriesArr = [];
+            if (countriesStr) {
+                countriesArr = countriesStr.split(",");
+                for (let i = 0; i < countriesArr.length; i++) {
+                    countriesArr[i] = countriesArr[i].trim().toUpperCase();
                 }
             }
 
-            setCurrCountries();
-            setMapSource();
-        })
+            let invalidCodes = [];
+            for (let i = 0; i < countriesArr.length; i++) {
+                let cname = iso2ToCountryName[countriesArr[i]];
+                if (cname === undefined) {
+                    invalidCodes.push(countriesArr[i]);
+                }
 
-        function setCurrCountries() {
+                displayStr += cname;
+                if (i < countriesArr.length-1) {
+                    displayStr += ", "
+                } else {
+                    displayStr += ")";
+                }
+            }
+
+            if (invalidCodes.length > 0) {
+                displayStr = "<span style='color: #f8a'>Error - Invalid codes: "
+
+                for (let i = 0; i < invalidCodes.length; i++) {
+                    displayStr += invalidCodes[i];
+                    if (i < invalidCodes.length-1) {
+                        displayStr += ", "
+                    } else {
+                        displayStr += "</span>";
+                    }
+                } 
+            }
+
+            document.getElementById("custom-map-countries").innerHTML = displayStr;
+        }
+        updateCustomMapCountryText();
+
+        document.getElementById("custom-map-input").addEventListener("change", updateCustomMapCountryText);
+
+        function setCurrCountries(mapVal=null) {
             let prevCountriesList = currCountriesList;
             let prevCountryMap = currCountryMap;
 
-            let val = document.getElementById("map-select").value;
-            currCountryMap = val;
+            if (mapVal) {
+                countryMapVal = mapVal;
+            }
+            currCountryMap = countryMapVal;
 
-            if (valueToCountries[val] !== undefined) {
-                currCountriesList = valueToCountries[val];
+            if (valueToCountries[countryMapVal] !== undefined) {
+                currCountriesList = valueToCountries[countryMapVal];
             }
 
             setCurrCities();
@@ -340,7 +475,7 @@
             if (currCitiesList.length == 0) {
                 alert("No cities match the given restrictions");
                 currCountriesList = prevCountriesList;
-                document.getElementById("map-select").value = prevCountryMap;
+                currCountryMap = prevCountryMap;
                 setCurrCities();
             } else if (currCitiesList.length < minBeforeRepeat) {
                 minBeforeRepeat = currCitiesList.length;
