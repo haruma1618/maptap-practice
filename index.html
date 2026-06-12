@@ -102,12 +102,12 @@
         .history-elem {
             width: 100%;
             margin-top: 5px;
-            padding-top: 10px;
-            padding-bottom: 10px;
+            padding: 10px 3px 10px 3px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
         }
 
         #map {
@@ -204,6 +204,13 @@
         <div>
             <input type="checkbox" id="checkbox-topo-map">
             <span>Topological map only</span>
+        </div>
+        <div style="margin-bottom: 20px"></div>
+        <div style="display: flex; flex-direction: column; width: 220px">
+            <label for="scoring-diff-mult">
+                Scoring harshness mult.: <span id="scoring-diff-value"></span>
+            </label>
+            <input type="range" id="scoring-diff-slider" min="1" max="5" value="1" step="0.1">
         </div>
     </div>
     <div id="right-panel">
@@ -713,6 +720,12 @@
             showPopulation = e.currentTarget.checked;
         })
 
+        function updateScoringDiffSlider() {
+            document.getElementById("scoring-diff-value").innerText = document.getElementById("scoring-diff-slider").value;
+        }
+        updateScoringDiffSlider();
+        document.getElementById("scoring-diff-slider").addEventListener("input", updateScoringDiffSlider);
+
         let clickMarker;
         let locMarker;
         let opacityInterval;
@@ -734,7 +747,9 @@
             pastMarkerCoords.push([[e.lngLat.lng, e.lngLat.lat], [currCity.longitude, currCity.latitude]]);
 
             let distFromClick = distanceKm(e.lngLat.lat, currCity.latitude, e.lngLat.lng, currCity.longitude);
-            let score = 1000*Math.exp(-(distFromClick / 16250) * 3.5);
+
+            let scoringDiffMult = Number(document.getElementById("scoring-diff-slider").value);
+            let score = 1000*Math.exp(-(distFromClick / 16250) * (3.5*scoringDiffMult));
 
             let distPopup = document.createElement("div");
             distPopup.classList.add("dist-popup");
@@ -748,36 +763,10 @@
             distPopup.style["-webkit-text-stroke"] = "0.75px hsl(" + (240 * (1-score/1000)) + ", 100%, 20%)";
             document.body.appendChild(distPopup);
 
-            let historyElem = document.createElement("div");
-            historyElem.classList.add("history-elem");
-            let locationNameElem = document.createElement("div");
-            locationNameElem.innerHTML = document.getElementById("top-display").innerHTML;
-            historyElem.appendChild(locationNameElem);
-            let secondRow = document.createElement("div");
-            let scoreElem = document.createElement("span");
-            scoreElem.innerText = Math.round(score) + "/1000" + " (" + distFromClick.toFixed(2) + " km)";
-            scoreElem.style.color = "hsl(" + (240 * (1-score/1000)) + ", 100%, 85%)";
-            //scoreElem.style["-webkit-text-stroke"] = "0.75px hsl(" + (180 - 180*score/1000) + ", 100%, 40%)";
-            secondRow.appendChild(scoreElem);
-            historyElem.appendChild(secondRow);
-            historyElem.setAttribute("data-marker-ind", pastMarkerCoords.length-1)
+            let scoreText = Math.round(score) + "/1000" + " (" + distFromClick.toFixed(2) + " km)";
+            let scoreColor = "hsl(" + (240 * (1-score/1000)) + ", 100%, 85%)";
 
-            historyElem.addEventListener("mouseenter", (e)=>{
-                let markerPositions = pastMarkerCoords[e.currentTarget.getAttribute("data-marker-ind")];
-
-                showingClickMarker = new maplibregl.Marker({color: "#800000"}).setLngLat(markerPositions[0]).addTo(map);
-                showingLocMarker = new maplibregl.Marker({color: "#008000"}).setLngLat(markerPositions[1]).addTo(map);
-            });
-
-            historyElem.addEventListener("mouseleave", (e)=>{
-                if (showingClickMarker) {showingClickMarker.remove();}
-                if (showingLocMarker) {showingLocMarker.remove();}
-            });
-
-            document.getElementById("loc-history").prepend(historyElem);
-            if (document.getElementById("loc-history").children.length > 50) {
-                document.getElementById("loc-history").removeChild(document.getElementById("loc-history").lastElementChild);
-            }
+            let historyElem = addHistoryElem(scoreText, scoreColor, true);
 
             setHistoryElemStyle();
 
@@ -797,6 +786,44 @@
                 }, fadeTime);
             }
         })
+
+        function addHistoryElem(scoreText, scoreColor, addClickMarker) {
+            let historyElem = document.createElement("div");
+            historyElem.classList.add("history-elem");
+            let locationNameElem = document.createElement("div");
+            locationNameElem.innerHTML = document.getElementById("top-display").innerHTML;
+            historyElem.appendChild(locationNameElem);
+            let secondRow = document.createElement("div");
+            let scoreElem = document.createElement("span");
+            scoreElem.innerText = scoreText;
+            scoreElem.style.color = scoreColor;
+            secondRow.appendChild(scoreElem);
+            historyElem.appendChild(secondRow);
+            historyElem.setAttribute("data-marker-ind", pastMarkerCoords.length-1);
+
+            historyElem.addEventListener("mouseenter", (e)=>{
+                let markerPositions = pastMarkerCoords[e.currentTarget.getAttribute("data-marker-ind")];
+
+                if (addClickMarker) {
+                    showingClickMarker = new maplibregl.Marker({color: "#800000"}).setLngLat(markerPositions[0]).addTo(map);
+                }
+                showingLocMarker = new maplibregl.Marker({color: "#008000"}).setLngLat(markerPositions[1]).addTo(map);
+            });
+
+            historyElem.addEventListener("mouseleave", (e)=>{
+                if (addClickMarker) {
+                    if (showingClickMarker) {showingClickMarker.remove();}
+                }
+                if (showingLocMarker) {showingLocMarker.remove();}
+            });
+
+            document.getElementById("loc-history").prepend(historyElem);
+            if (document.getElementById("loc-history").children.length > 50) {
+                document.getElementById("loc-history").removeChild(document.getElementById("loc-history").lastElementChild);
+            }
+
+            return historyElem;
+        }
 
         function setHistoryElemStyle() {
             let historyElems = document.getElementById("loc-history").children;
@@ -856,32 +883,7 @@
                 locMarker = new maplibregl.Marker({color: "#00CC00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
                 document.getElementById("top-display").style.color = "rgba(255, 255, 255, 0)";
 
-                let historyElem = document.createElement("div");
-                historyElem.classList.add("history-elem");
-                let locationNameElem = document.createElement("div");
-                locationNameElem.innerHTML = document.getElementById("top-display").innerHTML;
-                historyElem.appendChild(locationNameElem);
-                let secondRow = document.createElement("div");
-                let scoreElem = document.createElement("span");
-                scoreElem.innerText = "Didn't know";
-                scoreElem.style.color = "#cad";
-                secondRow.appendChild(scoreElem);
-                historyElem.appendChild(secondRow);
-                historyElem.setAttribute("data-marker-ind", pastMarkerCoords.length-1)
-
-                historyElem.addEventListener("mouseenter", (e)=>{
-                    let markerPositions = pastMarkerCoords[e.currentTarget.getAttribute("data-marker-ind")];
-                    showingLocMarker = new maplibregl.Marker({color: "#008000"}).setLngLat(markerPositions[1]).addTo(map);
-                });
-
-                historyElem.addEventListener("mouseleave", (e)=>{
-                    if (showingLocMarker) {showingLocMarker.remove();}
-                });
-
-                document.getElementById("loc-history").prepend(historyElem);
-                if (document.getElementById("loc-history").children.length > 50) {
-                    document.getElementById("loc-history").removeChild(document.getElementById("loc-history").lastElementChild);
-                }
+                let historyElem = addHistoryElem("Didn't know", "#cad", false);
 
                 setHistoryElemStyle();
 
