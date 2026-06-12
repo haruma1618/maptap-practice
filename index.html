@@ -296,7 +296,7 @@
         let cn_codes = {1:"Anhui",2:"Zhejiang",3:"Jiangxi",4:"Jiangsu",5:"Jilin",6:"Qinghai",7:"Fujian",8:"Heilongjiang",9:"Henan",10:"Hebei",11:"Hunan",12:"Hubei",13:"Xinjiang",14:"Tibet",15:"Gansu",16:"Guangxi",18:"Guizhou",19:"Liaoning",20:"Inner Mongolia",21:"Ningxia",22:"Beijing",23:"Shanghai",24:"Shanxi",25:"Shandong",26:"Shaanxi",28:"Tianjin",29:"Yunnan",30:"Guangdong",31:"Hainan",32:"Sichuan",33:"Chongqing"};
         let in_codes = {1:"Andaman and Nicobar",2:"Andhra Pradesh",3:"Assam",5:"Chandigarh",7:"Delhi",9:"Gujarat",10:"Haryana",11:"Himachal Pradesh",12:"Jammu and Kashmir",13:"Kerala",14:"Lakshadweep",16:"Maharashtra",17:"Manipur",18:"Meghalaya",19:"Karnataka",20:"Nagaland",21:"Odisha",22:"Puducherry",23:"Punjab",24:"Rajasthan",25:"Tamil Nadu",26:"Tripura",28:"West Bengal",29:"Sikkim",30:"Arunachal Pradesh",31:"Mizoram",33:"Goa",34:"Bihar",35:"Madhya Pradesh",36:"Uttar Pradesh",37:"Chhattisgarh",38:"Jharkhand",39:"Uttarakhand",40:"Telangana",41:"Ladakh"}
         let br_codes = {1:"Acre",2:"Alagoas",3:"Amapá",4:"Amazonas",5:"Bahia",6:"Ceará",7:"Distrito Federal",8:"Espírito Santo",11:"Mato Grosso do Sul",13:"Maranhão",14:"Mato Grosso",15:"Minas Gerais",16:"Pará",17:"Paraíba",18:"Paraná",20:"Piauí",21:"Rio de Janeiro",22:"Rio Grande do Norte",23:"Rio Grande do Sul",24:"Rondônia",25:"Roraima",26:"Santa Catarina",27:"São Paulo",28:"Sergipe",29:"Goiás",30:"Pernambuco",31:"Tocantins"};
-        let us_codes = {"AL":"Alabama","AK":"Alaska","AS":"American Samoa","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District Of Columbia","FL":"Florida","GA":"Georgia","GU":"Guam","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","MP":"Northern Mariana Islands","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","PR":"Puerto Rico","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","VI":"Virgin Islands","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"}
+        let us_codes = {"AL":"Alabama","AK":"Alaska","AS":"American Samoa","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"D.C.","FL":"Florida","GA":"Georgia","GU":"Guam","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","MP":"Northern Mariana Islands","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","PR":"Puerto Rico","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","VI":"Virgin Islands","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"}
         //let id_codes_f = {}
 
         document.getElementById("left-hide-btn").addEventListener("click", (e)=>{
@@ -360,10 +360,10 @@
                 }
             }
             document.getElementById("num-locs").innerText = currCitiesList.length;
-            /*if (minBeforeRepeat > currCitiesList.length) {
+            if (minBeforeRepeat > currCitiesList.length) {
                 minBeforeRepeat = currCitiesList.length;
                 document.getElementById("locs-before-repeat").value = minBeforeRepeat.toString();
-            }*/
+            }
             
 
             // If there are no cities, likely because min population is too high
@@ -531,9 +531,9 @@
             if (currCitiesList.length == 0) {
                 alert("No cities match the given restrictions");
                 invalid = true;
-            } else if (minBeforeRepeatVal > currCitiesList.length) {
-                minBeforeRepeatVal = currCitiesList.length;
-                document.getElementById("locs-before-repeat").value = minBeforeRepeatVal.toString();
+            } else if (minBeforeRepeat > currCitiesList.length) {
+                minBeforeRepeat = currCitiesList.length;
+                document.getElementById("locs-before-repeat").value = minBeforeRepeat.toString();
             }
 
             if (invalid) {
