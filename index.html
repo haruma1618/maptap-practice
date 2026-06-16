@@ -160,6 +160,13 @@
             0% {transform: translate(0, 0); opacity: 1;}
             100% {transform: translate(0, -50px); opacity: 0;}
         }
+
+        .maplibregl-popup-content {
+            height: 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 
@@ -168,9 +175,13 @@
     <div id="top-display"></div>
     <div id="left-hide-btn">&lt;</div>
     <div id="left-panel">
-        <div style="margin-bottom: 20px">
+        <div style="margin-bottom: 5px">
             <button id="select-map-btn" style="font-size: 16px">Select map</button>
         </div>
+        <div>
+            <button id="show-all-locs-btn" style="font-size: 16px">Show all locations</button>
+        </div>
+        <div style="margin-bottom: 20px"></div>
         <div>
             <label for="min-population">Min. population:</label>
             <input type="number" id="min-population" name="min-population" value="1000000" style="width: 70px;">
@@ -287,6 +298,9 @@
         let showingClickMarker;
         let showingLocMarker;
         let countryMapVal = "china";
+        //let showAllLocs = false;
+        let allLocMarkers = [];
+        let regionColorsDict = {};
 
         let iso2ToCountryName = {"AF":"Afghanistan","AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CG":"Republic of the Congo","CD":"Democratic Republic of the Congo","CK":"Cook Islands","CR":"Costa Rica","CI":"Cote D'Ivoire","HR":"Croatia","CU":"Cuba","CY":"Cyprus","CZ":"Czech Republic","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","ET":"Ethiopia","FK":"Falkland Islands (Malvinas)","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"The Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KR":"Korea","XK":"Kosovo","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MK":"North Macedonia","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","AN":"Netherlands Antilles","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","RE":"Reunion","RO":"Romania","RU":"Russia","RW":"Rwanda","BL":"Saint Barthelemy","SH":"Saint Helena","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SZ":"Eswatini","SE":"Sweden","SS":"South Sudan","CH":"Switzerland","SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"United Arab Emirates","GB":"United Kingdom","US":"United States","UM":"United States Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"}
 
@@ -313,6 +327,14 @@
 
         document.getElementById("select-map-btn").addEventListener("click", (e)=>{
             document.getElementById("map-select-popup").style.display = "block";
+        });
+
+        document.getElementById("show-all-locs-btn").addEventListener("click", (e)=>{
+            if (allLocMarkers.length === 0) {
+                addAllLocMarkers();
+            } else {
+                removeAllLocMarkers();
+            }
         });
 
         document.getElementById("map-select-exit").addEventListener("click", (e)=>{
@@ -387,6 +409,52 @@
                 document.getElementById("min-population").value = maxPop;
                 setCurrCities(true);
             }*/
+        }
+
+        function addAllLocMarkers() {
+            if (currCitiesList.length === 0) return;
+
+            removeAllLocMarkers();
+            allLocMarkers.length = 0;
+            let maxPop = currCitiesList[0].population;
+            for (let i = 1; i < currCitiesList.length; i++) {
+                if (currCitiesList[i].population > maxPop) {
+                    maxPop = currCitiesList[i].population;
+                }
+            }
+
+            for (let c of currCitiesList) {
+                if (regionColorsDict[c.region_code] === undefined) {
+                    let gen = true;
+                    let color;
+        
+                    while (gen) {
+                        color = "#" + Math.floor(Math.random()*(2**23-1)).toString(16).padStart(6,"0");
+                        if (Math.max(parseInt(color[1], 16), parseInt(color[3], 16), parseInt(color[5], 16)) >= 8) {
+                            gen = false;
+                        }
+                    }
+                    regionColorsDict[c.region_code] = color;
+                }
+
+                let popup = new maplibregl.Popup({closeButton: false, closeOnClick: false, offset: 25})
+                            .setHTML("<span style='color:#000'>" + getCityText(c, false, true, showCountry, true) + "</span>");
+                let marker = new maplibregl.Marker({color: regionColorsDict[c.region_code], scale: 2/3*Math.pow(2, 1/2*Math.log10(c.population/maxPop))})
+                            .setLngLat([c.longitude, c.latitude]).setPopup(popup).addTo(map);
+
+                marker.getElement().addEventListener("mouseenter", ()=>{if (!popup.isOpen()) marker.togglePopup()});
+                marker.getElement().addEventListener("mouseleave", ()=>{if (popup.isOpen()) marker.togglePopup()});
+                allLocMarkers.push(marker);
+            }
+        }
+
+        function removeAllLocMarkers() {
+            for (let m of allLocMarkers) {
+                if (m) {
+                    m.remove();
+                }
+            }
+            allLocMarkers.length = 0;
         }
 
         for (let btn of document.getElementById("map-select-buttons").children) {
@@ -490,6 +558,11 @@
             }
 
             selectRandCity();
+
+            regionColorsDict = {}; // only reset colors when countries are changed
+            if (allLocMarkers.length > 0) {
+                addAllLocMarkers();
+            }
         }
 
         document.getElementById("min-population").addEventListener("change", updateMapPreferences);
@@ -552,6 +625,10 @@
                 document.getElementById("locs-before-repeat").value = prevMinBeforeRepeat.toString();
                 setCurrCities();
             }
+            
+            if (allLocMarkers.length > 0) {
+                addAllLocMarkers();
+            }
         }
         
         document.getElementById("top-display").style.transition = "color " + fadeTime/1000 + "s";
@@ -578,25 +655,35 @@
             locHistory.unshift(newCity);
             currCity = newCity;
 
-            let displayText = currCity.name;
+            document.getElementById("top-display").innerHTML = getCityText(currCity, true, showDivision, showCountry, showPopulation);
+        }
 
-            if (showDivision && currCity.region) {
-                displayText += ", " + currCity.region;
+        function getCityText(city, useHtml, showDivision, showCountry, showPopulation) {
+            let displayText = city.name;
+
+            if (showDivision && city.region) {
+                displayText += ", " + city.region;
             };
-            if (showCountry && currCity.country_name) {
-                displayText += ", " + currCity.country_name;
+            if (showCountry && city.country_name) {
+                displayText += ", " + city.country_name;
             }
-            if (showPopulation && currCity.population) {
-                displayText += "&nbsp;<span style='font-size:13px;'>";
-                if (currCity.population > 1e6) {
-                    displayText += "(" + Math.floor(currCity.population/1e5)/10 + "M)";
+         
+            if (showPopulation && city.population) {
+                if (useHtml) {
+                    displayText += "&nbsp;<span style='font-size:13px;'>";
                 } else {
-                    displayText += "(" + Math.floor(currCity.population/1e3) + "K)";
+                    displayText += " ";
                 }
-                displayText += "</span>";
+                if (city.population > 1e6) {
+                    displayText += "(" + Math.floor(city.population/1e5)/10 + "M)";
+                } else {
+                    displayText += "(" + Math.floor(city.population/1e3) + "K)";
+                }
+                if (useHtml) {
+                    displayText += "</span>";
+                }
             }
-
-            document.getElementById("top-display").innerHTML = displayText;
+            return displayText;
         }
 
         let style = {
@@ -769,22 +856,6 @@
             let historyElem = addHistoryElem(scoreText, scoreColor, true);
 
             setHistoryElemStyle();
-
-            if (autoStart) {
-                opacityInterval = setInterval(() => {
-                    markerOpacity = Math.max(0, markerOpacity-1/(fadeTime/20));
-                    clickMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
-                    locMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
-                })
-
-                setTimeout(() => {
-                    selectRandCity();
-                    document.getElementById("top-display").style.color = "rgba(255, 255, 255, 1)";
-                    clearInterval(opacityInterval);
-                    markerOpacity = 1;
-                    inTransition = false;
-                }, fadeTime);
-            }
         })
 
         function addHistoryElem(scoreText, scoreColor, addClickMarker) {
@@ -820,6 +891,24 @@
             document.getElementById("loc-history").prepend(historyElem);
             if (document.getElementById("loc-history").children.length > 50) {
                 document.getElementById("loc-history").removeChild(document.getElementById("loc-history").lastElementChild);
+            }
+
+            if (autoStart) {
+                opacityInterval = setInterval(() => {
+                    markerOpacity = Math.max(0, markerOpacity-1/(fadeTime/20));
+                    if (addClickMarker) {
+                        clickMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
+                    }
+                    locMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
+                })
+
+                setTimeout(() => {
+                    selectRandCity();
+                    document.getElementById("top-display").style.color = "rgba(255, 255, 255, 1)";
+                    clearInterval(opacityInterval);
+                    markerOpacity = 1;
+                    inTransition = false;
+                }, fadeTime);
             }
 
             return historyElem;
@@ -886,21 +975,6 @@
                 let historyElem = addHistoryElem("Didn't know", "#cad", false);
 
                 setHistoryElemStyle();
-
-                if (autoStart) {
-                    opacityInterval = setInterval(() => {
-                        markerOpacity = Math.max(0, markerOpacity-1/(fadeTime/20));
-                        locMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
-                    })
-
-                    setTimeout(() => {
-                        selectRandCity();
-                        document.getElementById("top-display").style.color = "rgba(255, 255, 255, 1)";
-                        clearInterval(opacityInterval);
-                        markerOpacity = 1;
-                        inTransition = false;
-                    }, fadeTime);
-                }
             }
         });
 
