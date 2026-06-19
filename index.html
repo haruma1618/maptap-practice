@@ -276,6 +276,13 @@
     <script>
         // Data used: https://public.opendatasoft.com/explore/assets/geonames-all-cities-with-a-population-1000/view
 
+        let d = document;
+        d.id = d.getElementById;
+
+        EventTarget.prototype.listen = function(t, f) {
+            this.addEventListener(t, f);
+        };
+
         let mouseX = 0;
         let mouseY = 0;
         let autoStart = true;
@@ -286,12 +293,12 @@
         let inTransition = false;
         let currCountriesList = ["US"];
         let currCountryMap = "usa";
-        let showDivision = document.getElementById("checkbox-division-name").checked;
-        let showCountry = document.getElementById("checkbox-country-name").checked;
-        let showPopulation = document.getElementById("checkbox-city-pop").checked;
-        let minPopulation = Number(document.getElementById("min-population").value);
-        let maxPopulation = Number(document.getElementById("max-population").value);
-        let minBeforeRepeat = Number(document.getElementById("locs-before-repeat").value);
+        let showDivision = d.id("checkbox-division-name").checked;
+        let showCountry = d.id("checkbox-country-name").checked;
+        let showPopulation = d.id("checkbox-city-pop").checked;
+        let minPopulation = Number(d.id("min-population").value);
+        let maxPopulation = Number(d.id("max-population").value);
+        let minBeforeRepeat = Number(d.id("locs-before-repeat").value);
         let removedCities = [];
         let locHistory = [];
         let pastMarkerCoords = [];
@@ -320,16 +327,16 @@
         let us_codes = {"AL":"Alabama","AK":"Alaska","AS":"American Samoa","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"D.C.","FL":"Florida","GA":"Georgia","GU":"Guam","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","MP":"Northern Mariana Islands","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","PR":"Puerto Rico","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","VI":"Virgin Islands","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"}
         //let id_codes_f = {}
 
-        document.getElementById("left-hide-btn").addEventListener("click", (e)=>{
-            document.getElementById("left-hide-btn").innerHTML = (document.getElementById("left-hide-btn").innerHTML != "&lt;" ? "&lt;" : "&gt;");
-            document.getElementById("left-panel").style.display = (document.getElementById("left-panel").style.display != "none" ? "none" : "flex");
+        d.id("left-hide-btn").listen("click", (e)=>{
+            d.id("left-hide-btn").innerHTML = (d.id("left-hide-btn").innerHTML != "&lt;" ? "&lt;" : "&gt;");
+            d.id("left-panel").style.display = (d.id("left-panel").style.display != "none" ? "none" : "flex");
+        });
+        
+        d.id("select-map-btn").listen("click", (e)=>{
+            d.id("map-select-popup").style.display = "block";
         });
 
-        document.getElementById("select-map-btn").addEventListener("click", (e)=>{
-            document.getElementById("map-select-popup").style.display = "block";
-        });
-
-        document.getElementById("show-all-locs-btn").addEventListener("click", (e)=>{
+        d.id("show-all-locs-btn").listen("click", (e)=>{
             if (allLocMarkers.length === 0) {
                 addAllLocMarkers();
             } else {
@@ -337,8 +344,8 @@
             }
         });
 
-        document.getElementById("map-select-exit").addEventListener("click", (e)=>{
-            document.getElementById("map-select-popup").style.display = "none";
+        d.id("map-select-exit").listen("click", (e)=>{
+            d.id("map-select-popup").style.display = "none";
         });
 
         let citiesLoaded = false;
@@ -388,10 +395,10 @@
                     currCitiesList.push(c);
                 }
             }
-            document.getElementById("num-locs").innerText = currCitiesList.length;
+            d.id("num-locs").innerText = currCitiesList.length;
             if (minBeforeRepeat > currCitiesList.length) {
                 minBeforeRepeat = currCitiesList.length;
-                document.getElementById("locs-before-repeat").value = minBeforeRepeat.toString();
+                d.id("locs-before-repeat").value = minBeforeRepeat.toString();
             }
             
 
@@ -406,7 +413,7 @@
                     }
                 }
                 minPopulation = maxPop;
-                document.getElementById("min-population").value = maxPop;
+                d.id("min-population").value = maxPop;
                 setCurrCities(true);
             }*/
         }
@@ -442,8 +449,8 @@
                 let marker = new maplibregl.Marker({color: regionColorsDict[c.region_code], scale: 2/3*Math.pow(2, 1/2*Math.log10(c.population/maxPop))})
                             .setLngLat([c.longitude, c.latitude]).setPopup(popup).addTo(map);
 
-                marker.getElement().addEventListener("mouseenter", ()=>{if (!popup.isOpen()) marker.togglePopup()});
-                marker.getElement().addEventListener("mouseleave", ()=>{if (popup.isOpen()) marker.togglePopup()});
+                marker.getElement().listen("mouseenter", ()=>{if (!popup.isOpen()) marker.togglePopup()});
+                marker.getElement().listen("mouseleave", ()=>{if (popup.isOpen()) marker.togglePopup()});
                 allLocMarkers.push(marker);
             }
         }
@@ -457,15 +464,15 @@
             allLocMarkers.length = 0;
         }
 
-        for (let btn of document.getElementById("map-select-buttons").children) {
-            btn.addEventListener("click", (e)=>{
+        for (let btn of d.id("map-select-buttons").children) {
+            btn.listen("click", (e)=>{
                 setCurrCountries(e.target.value);
                 setMapSource();
             });
         }
 
-        document.getElementById("use-custom").addEventListener("click", (e)=>{
-            let countriesStr = document.getElementById("custom-map-input").value;
+        d.id("use-custom").listen("click", (e)=>{
+            let countriesStr = d.id("custom-map-input").value;
 
             if (countriesStr) {
                 let countriesArr = countriesStr.split(",");
@@ -480,15 +487,15 @@
             setMapSource();
         });
 
-        document.getElementById("load-curr-code").addEventListener("click", (e)=>{
+        d.id("load-curr-code").listen("click", (e)=>{
             let mapCode = currCountriesList.join(",");
-            document.getElementById("custom-map-input").value = mapCode;
+            d.id("custom-map-input").value = mapCode;
             updateCustomMapCountryText();
         });
 
         function updateCustomMapCountryText() {
             let displayStr = "(";
-            let countriesStr = document.getElementById("custom-map-input").value;
+            let countriesStr = d.id("custom-map-input").value;
 
             let countriesArr = [];
             if (countriesStr) {
@@ -526,11 +533,11 @@
                 } 
             }
 
-            document.getElementById("custom-map-countries").innerHTML = displayStr;
+            d.id("custom-map-countries").innerHTML = displayStr;
         }
         updateCustomMapCountryText();
 
-        document.getElementById("custom-map-input").addEventListener("change", updateCustomMapCountryText);
+        d.id("custom-map-input").listen("change", updateCustomMapCountryText);
 
         function setCurrCountries(mapVal=null) {
             let prevCountriesList = currCountriesList;
@@ -554,7 +561,7 @@
                 setCurrCities();
             } else if (currCitiesList.length < minBeforeRepeat) {
                 minBeforeRepeat = currCitiesList.length;
-                document.getElementById("locs-before-repeat").value = currCitiesList.length;
+                d.id("locs-before-repeat").value = currCitiesList.length;
             }
 
             selectRandCity();
@@ -565,34 +572,34 @@
             }
         }
 
-        document.getElementById("min-population").addEventListener("change", updateMapPreferences);
-        document.getElementById("max-population").addEventListener("change", updateMapPreferences);
-        document.getElementById("locs-before-repeat").addEventListener("change", updateMapPreferences);
+        d.id("min-population").listen("change", updateMapPreferences);
+        d.id("max-population").listen("change", updateMapPreferences);
+        d.id("locs-before-repeat").listen("change", updateMapPreferences);
 
 
         function updateMapPreferences(e) {
             if (!citiesLoaded) return;
 
-            let minVal = document.getElementById("min-population").value;
+            let minVal = d.id("min-population").value;
             if (Number(minVal) === NaN || minVal === "") {
                 alert("Invalid value for: Minimum population");
-                document.getElementById("min-population").value = minPopulation.toString();
+                d.id("min-population").value = minPopulation.toString();
                 return;
             }
             minVal = Number(minVal);
 
-            let maxVal = document.getElementById("max-population").value;
+            let maxVal = d.id("max-population").value;
             if (Number(maxVal) === NaN || maxVal === "") {
                 alert("Invalid value for: Maximum population");
-                document.getElementById("max-population").value = maxPopulation.toString();
+                d.id("max-population").value = maxPopulation.toString();
                 return;
             }
             maxVal = Number(maxVal);
 
-            let minBeforeRepeatVal = document.getElementById("locs-before-repeat").value;
+            let minBeforeRepeatVal = d.id("locs-before-repeat").value;
             if (Number(minBeforeRepeatVal) === NaN || minBeforeRepeatVal === "") {
                 alert("Invalid value for: Min # of cities before repeat");
-                document.getElementById("locs-before-repeat").value = minBeforeRepeat.toString();
+                d.id("locs-before-repeat").value = minBeforeRepeat.toString();
                 return;
             }
             minBeforeRepeatVal = Number(minBeforeRepeatVal);
@@ -613,16 +620,16 @@
                 invalid = true;
             } else if (minBeforeRepeat > currCitiesList.length) {
                 minBeforeRepeat = currCitiesList.length;
-                document.getElementById("locs-before-repeat").value = minBeforeRepeat.toString();
+                d.id("locs-before-repeat").value = minBeforeRepeat.toString();
             }
 
             if (invalid) {
                 minPopulation = prevMin;
                 maxPopulation = prevMax;
                 minBeforeRepeat = prevMinBeforeRepeat;
-                document.getElementById("min-population").value = prevMin.toString();
-                document.getElementById("max-population").value = prevMax.toString();
-                document.getElementById("locs-before-repeat").value = prevMinBeforeRepeat.toString();
+                d.id("min-population").value = prevMin.toString();
+                d.id("max-population").value = prevMax.toString();
+                d.id("locs-before-repeat").value = prevMinBeforeRepeat.toString();
                 setCurrCities();
             }
             
@@ -631,7 +638,7 @@
             }
         }
         
-        document.getElementById("top-display").style.transition = "color " + fadeTime/1000 + "s";
+        d.id("top-display").style.transition = "color " + fadeTime/1000 + "s";
 
         function selectRandCity() {
             let newCity;
@@ -655,7 +662,7 @@
             locHistory.unshift(newCity);
             currCity = newCity;
 
-            document.getElementById("top-display").innerHTML = getCityText(currCity, true, showDivision, showCountry, showPopulation);
+            d.id("top-display").innerHTML = getCityText(currCity, true, showDivision, showCountry, showPopulation);
         }
 
         function getCityText(city, useHtml, showDivision, showCountry, showPopulation) {
@@ -714,14 +721,14 @@
         });
 
         function getTileSource() {
-            if (document.getElementById("checkbox-topo-map").checked) {
+            if (d.id("checkbox-topo-map").checked) {
                 return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}";
             } else {
                 return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
             }
         }
 
-        document.getElementById("checkbox-topo-map").addEventListener("change", (e)=>{
+        d.id("checkbox-topo-map").listen("change", (e)=>{
             map.getSource("satellite-tiles").setTiles([getTileSource()]);
         })
 
@@ -750,7 +757,7 @@
                         "data": gj
                     });
 
-                    if (document.getElementById("checkbox-outline").checked) {
+                    if (d.id("checkbox-outline").checked) {
                         map.addLayer(outlineLayer);
                     }
                 })
@@ -772,7 +779,7 @@
                         }
                     });
 
-                    if (document.getElementById("checkbox-outline").checked) {
+                    if (d.id("checkbox-outline").checked) {
                         map.addLayer(outlineLayer);
                     };
                 })
@@ -784,11 +791,11 @@
             map.dragRotate.disable();
         });
         
-        document.getElementById("checkbox-outline").addEventListener("change", addCountryOutlines);
+        d.id("checkbox-outline").listen("change", addCountryOutlines);
 
         function addCountryOutlines() {
             if (!map.isStyleLoaded() || !map.getSource("uploaded-source")) return;
-            if (document.getElementById("checkbox-outline").checked) {
+            if (d.id("checkbox-outline").checked) {
                 map.addLayer(outlineLayer);
             } else {
                 if (map.getLayer("polygons-stroke")) {
@@ -797,21 +804,21 @@
             }
         }
 
-        document.getElementById("checkbox-division-name").addEventListener("change", (e)=>{
+        d.id("checkbox-division-name").listen("change", (e)=>{
             showDivision = e.currentTarget.checked;
         })
-        document.getElementById("checkbox-country-name").addEventListener("change", (e)=>{
+        d.id("checkbox-country-name").listen("change", (e)=>{
             showCountry = e.currentTarget.checked;
         })
-        document.getElementById("checkbox-city-pop").addEventListener("change", (e)=>{
+        d.id("checkbox-city-pop").listen("change", (e)=>{
             showPopulation = e.currentTarget.checked;
         })
 
         function updateScoringDiffSlider() {
-            document.getElementById("scoring-diff-value").innerText = document.getElementById("scoring-diff-slider").value;
+            d.id("scoring-diff-value").innerText = d.id("scoring-diff-slider").value;
         }
         updateScoringDiffSlider();
-        document.getElementById("scoring-diff-slider").addEventListener("input", updateScoringDiffSlider);
+        d.id("scoring-diff-slider").listen("input", updateScoringDiffSlider);
 
         let clickMarker;
         let locMarker;
@@ -829,26 +836,26 @@
 
             clickMarker = new maplibregl.Marker({color: "#FF0000"}).setLngLat([e.lngLat.lng, e.lngLat.lat]).addTo(map);
             locMarker = new maplibregl.Marker({color: "#00CC00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
-            document.getElementById("top-display").style.color = "rgba(255, 255, 255, 0)";
+            d.id("top-display").style.color = "rgba(255, 255, 255, 0)";
 
             pastMarkerCoords.push([[e.lngLat.lng, e.lngLat.lat], [currCity.longitude, currCity.latitude]]);
 
             let distFromClick = distanceKm(e.lngLat.lat, currCity.latitude, e.lngLat.lng, currCity.longitude);
 
-            let scoringDiffMult = Number(document.getElementById("scoring-diff-slider").value);
+            let scoringDiffMult = Number(d.id("scoring-diff-slider").value);
             let score = 1000*Math.exp(-(distFromClick / 16250) * (3.5*scoringDiffMult));
 
-            let distPopup = document.createElement("div");
+            let distPopup = d.createElement("div");
             distPopup.classList.add("dist-popup");
             distPopup.style.animation = "move-popup-text " + 1.5*fadeTime/1000 + "s";
             distPopup.innerHTML = Math.round(score) + "/1000" + "<br>" + distFromClick.toFixed(2) + " km";
             distPopup.style.width = 200 + "px";
             distPopup.style.left = mouseX - 100 + "px";
             distPopup.style.top = mouseY - 50 + "px";
-            distPopup.addEventListener("animationend", distPopup.remove);
+            distPopup.listen("animationend", distPopup.remove);
             distPopup.style.color = "hsl(" + (240 * (1-score/1000)) + ", 100%, 60%)";
             distPopup.style["-webkit-text-stroke"] = "0.75px hsl(" + (240 * (1-score/1000)) + ", 100%, 20%)";
-            document.body.appendChild(distPopup);
+            d.body.appendChild(distPopup);
 
             let scoreText = Math.round(score) + "/1000" + " (" + distFromClick.toFixed(2) + " km)";
             let scoreColor = "hsl(" + (240 * (1-score/1000)) + ", 100%, 85%)";
@@ -859,20 +866,20 @@
         })
 
         function addHistoryElem(scoreText, scoreColor, addClickMarker) {
-            let historyElem = document.createElement("div");
+            let historyElem = d.createElement("div");
             historyElem.classList.add("history-elem");
-            let locationNameElem = document.createElement("div");
-            locationNameElem.innerHTML = document.getElementById("top-display").innerHTML;
+            let locationNameElem = d.createElement("div");
+            locationNameElem.innerHTML = d.id("top-display").innerHTML;
             historyElem.appendChild(locationNameElem);
-            let secondRow = document.createElement("div");
-            let scoreElem = document.createElement("span");
+            let secondRow = d.createElement("div");
+            let scoreElem = d.createElement("span");
             scoreElem.innerText = scoreText;
             scoreElem.style.color = scoreColor;
             secondRow.appendChild(scoreElem);
             historyElem.appendChild(secondRow);
             historyElem.setAttribute("data-marker-ind", pastMarkerCoords.length-1);
 
-            historyElem.addEventListener("mouseenter", (e)=>{
+            historyElem.listen("mouseenter", (e)=>{
                 let markerPositions = pastMarkerCoords[e.currentTarget.getAttribute("data-marker-ind")];
 
                 if (addClickMarker) {
@@ -881,16 +888,16 @@
                 showingLocMarker = new maplibregl.Marker({color: "#008000"}).setLngLat(markerPositions[1]).addTo(map);
             });
 
-            historyElem.addEventListener("mouseleave", (e)=>{
+            historyElem.listen("mouseleave", (e)=>{
                 if (addClickMarker) {
                     if (showingClickMarker) {showingClickMarker.remove();}
                 }
                 if (showingLocMarker) {showingLocMarker.remove();}
             });
 
-            document.getElementById("loc-history").prepend(historyElem);
-            if (document.getElementById("loc-history").children.length > 50) {
-                document.getElementById("loc-history").removeChild(document.getElementById("loc-history").lastElementChild);
+            d.id("loc-history").prepend(historyElem);
+            if (d.id("loc-history").children.length > 50) {
+                d.id("loc-history").removeChild(d.id("loc-history").lastElementChild);
             }
 
             if (autoStart) {
@@ -904,7 +911,7 @@
 
                 setTimeout(() => {
                     selectRandCity();
-                    document.getElementById("top-display").style.color = "rgba(255, 255, 255, 1)";
+                    d.id("top-display").style.color = "rgba(255, 255, 255, 1)";
                     clearInterval(opacityInterval);
                     markerOpacity = 1;
                     inTransition = false;
@@ -915,7 +922,7 @@
         }
 
         function setHistoryElemStyle() {
-            let historyElems = document.getElementById("loc-history").children;
+            let historyElems = d.id("loc-history").children;
             for (let i = 0; i < historyElems.length; i++) {
                 if (i !== 0) {
                     historyElems[i].style.backgroundColor = "rgba(177, 0, 0, 0.4)";
@@ -931,36 +938,39 @@
             };
         }
 
-        document.addEventListener("mousemove", (e) => {
+        d.listen("mousemove", (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
         })
 
-        function createTopRightPopup(color, text){
-            let popup = document.createElement("div");
+        function createTopRightPopup(color, text, border=null){
+            let popup = d.createElement("div");
             popup.style.position = "fixed";
             popup.style.top = "0";
             popup.style.right = "0";
             popup.style.color = color;
             popup.innerText = text;
+            if (border) {
+                popup.style["text-shadow"] = `-1px -1px 0 ${border}, 1px -1px 0 ${border}, -1px 1px 0 ${border}, 1px 1px 0 ${border}`;
+            }
             popup.style.transition = "opacity 2.5s";
-            popup.addEventListener("transitionend", popup.remove);
-            document.body.appendChild(popup);
+            popup.listen("transitionend", popup.remove);
+            d.body.appendChild(popup);
             setTimeout(()=>{popup.style.opacity = "0"}, 30);
         }
 
-        document.addEventListener("keydown", (e) => {
+        d.listen("keydown", (e) => {
             if (e.key === "r") {
                 let cityToRemove = inTransition ? locHistory[0] : locHistory[1];
                 removedCities.push(cityToRemove);
                 setCurrCities();
-                createTopRightPopup("#ffcfcf", "Removed " + cityToRemove.name + " from cities list");
+                createTopRightPopup("#ffcfcf", "Removed " + cityToRemove.name + " from cities list", "#000");
             } else if (e.key === "b") {
                 let prevCitiesLen = currCitiesList.length;
                 removedCities = [];
                 setCurrCities();
                 let newCitiesLen = currCitiesList.length;
-                createTopRightPopup("#cfcfff", "Restored " + (newCitiesLen-prevCitiesLen) + " removed cities to cities list");
+                createTopRightPopup("#cfcfff", "Restored " + (newCitiesLen-prevCitiesLen) + " removed cities to cities list", "#000");
             } else if (e.key === " ") {
                 if (inTransition) return;
 
@@ -970,7 +980,7 @@
 
                 pastMarkerCoords.push([[null, null], [currCity.longitude, currCity.latitude]]);
                 locMarker = new maplibregl.Marker({color: "#00CC00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
-                document.getElementById("top-display").style.color = "rgba(255, 255, 255, 0)";
+                d.id("top-display").style.color = "rgba(255, 255, 255, 0)";
 
                 let historyElem = addHistoryElem("Didn't know", "#cad", false);
 
