@@ -113,7 +113,8 @@ JO - Jordan
 KZ - Kazakhstan
 KE - Kenya
 KI - Kiribati
-KR - Korea
+KP - North Korea
+KR - South Korea
 XK - Kosovo
 KW - Kuwait
 KG - Kyrgyzstan
