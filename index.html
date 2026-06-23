@@ -189,10 +189,10 @@
     <div id="top-display-container" style="display: flex; width: 500px; height: 100px;">
         <div id="top-display"></div>
         <div id="select-countries-panel" style="display: none; margin-top: 5px;">
-            <button id="select-countries-cancel" style="padding: 3px 8px 3px 8px;">Cancel</button>
-            <button id="select-countries-confirm" style="padding: 3px 8px 3px 8px;">Select</button>
+            <button id="select-countries-cancel" style="padding: 3px 8px 3px 8px; background-color: #404">Cancel</button>
+            <button id="select-countries-confirm" style="padding: 3px 8px 3px 8px; background-color: #404">Select</button>
             <div style="height: 5px"></div>
-            <div style="font-size: 13px; color: #ff4040">Selected: <span id="selected-countries"></span></div>
+            <div style="font-size: 13px; color: #f4b">Selected: <span id="selected-countries"></span></div>
         </div>
     </div>
     <div id="left-hide-btn">&lt;</div>
@@ -311,7 +311,7 @@
             </div>
         </div>
         <div style="height: 20px"></div>
-        <button id="select-countries" style="font-size: 14px;">Custom map - Select countries</button>
+        <button id="select-countries" style="font-size: 14px; background-color: #404">Custom map - Select countries</button>
         <div style="height: 15px"></div>
         <div style="font-size: 14px; text-align: center;">Or - enter list of country codes:</div>
         <div style="height: 5px"></div>
@@ -434,6 +434,7 @@
         });
         
         d.id("select-map-btn").listen("click", (e)=>{
+            hideCountrySelection();
             d.id("map-select-popup").style.display = "flex";
         });
 
@@ -465,7 +466,7 @@
             for (let c of cities) {
                 let o = {
                     name: c.name,
-                    country: c.country_code,
+                    country: ["EH"].includes(c.country_code_2) ? c.country_code_2 : c.country_code,
                     country_name: iso2ToCountryName[c.country_code],
                     population: c.population,
                     latitude: c.coordinates.lat,
@@ -596,6 +597,7 @@
         d.id("select-countries").listen("click", (e)=>{
             addAllCountries();
             selectingCountriesForMap = true;
+            d.id("checkbox-outline").checked = true;
             d.id("map-select-popup").style.display = "none";
             d.id("select-countries-panel").style.display = "block";
         })
@@ -621,18 +623,19 @@
             selectingCountriesForMap = false;
             selectedFeatureCountries.length = 0;
             d.id("selected-countries").innerText = "";
-            d.id("map-select-popup").style.display = "none";
             d.id("select-countries-panel").style.display = "none";
         }
 
         d.id("select-countries-cancel").listen("click", (e)=>{
             hideCountrySelection();
+            d.id("map-select-popup").style.display = "none";
         })
 
         d.id("select-countries-confirm").listen("click", (e)=>{
             valueToCountries["custom"] = [...selectedFeatureCountries];
             setCurrCountries("custom");
             hideCountrySelection();
+            d.id("map-select-popup").style.display = "none";
         })
 
 
@@ -907,6 +910,7 @@
             if (!selectingCountriesForMap) return;
             let id = e.features[0].id;
             let country = e.features[0].properties["ISO3166-1-Alpha-2"];
+            console.log(country)
 
             if (!Object.keys(iso2ToCountryName).includes(country)) return;
 
