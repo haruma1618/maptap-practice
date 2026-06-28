@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <link href="https://unpkg.com/maplibre-gl@5.0.1/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/maplibre-gl@5.0.1/dist/maplibre-gl.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
         html, body {
             margin: 0;
@@ -142,6 +141,11 @@
             appearance: textfield;
         }
 
+        #checkbox-settings {
+            display: flex;
+            flex-direction: column;
+        }
+
         button, select {
             font-family: "Consolas";
             border-radius: 0;
@@ -163,6 +167,10 @@
 
         #map-select-large-regions > button {
             background-color: rgb(12, 0, 60);
+        }
+
+        .button-highlighted {
+            background-color: rgb(90, 0, 28);
         }
 
         input::placeholder {
@@ -226,25 +234,32 @@
         <div style="margin-bottom: 20px"></div>
         <div>Possible locations: <span id="num-locs"></span></div>
         <div style="margin-bottom: 20px"></div>
-        <div>
-            <input type="checkbox" id="checkbox-outline" checked>
-            <span>Show country outline(s)</span>
+        <div id="checkbox-settings">
+            <div>
+                <input type="checkbox" id="checkbox-outline" checked>
+                <span>Show country outline(s)</span>
+            </div>
+            <div style="scale: 0.9;">
+                <input type="checkbox" style="margin-left: 30px;" id="checkbox-outline-subdivisions" checked>
+                <span>Show subdivisions</span>
+            </div>
+            <div><input type="checkbox" id="checkbox-division-name" checked>
+                <span>Show subdivision name</span>
+            </div>
+            <div>
+                <input type="checkbox" id="checkbox-country-name">
+                <span>Show country name</span>
+            </div>
+            <div>
+                <input type="checkbox" id="checkbox-city-pop">
+                <span>Show city population</span>
+            </div>
+            <div>
+                <input type="checkbox" id="checkbox-topo-map">
+                <span>Topological map only</span>
+            </div>
         </div>
-        <div><input type="checkbox" id="checkbox-division-name" checked>
-            <span>Show subdivision name</span>
-        </div>
-        <div>
-            <input type="checkbox" id="checkbox-country-name">
-            <span>Show country name</span>
-        </div>
-        <div>
-            <input type="checkbox" id="checkbox-city-pop">
-            <span>Show city population</span>
-        </div>
-        <div>
-            <input type="checkbox" id="checkbox-topo-map">
-            <span>Topological map only</span>
-        </div>
+
         <div style="margin-bottom: 20px"></div>
         <div style="display: flex; flex-direction: column; width: 220px">
             <label for="scoring-diff-mult">
@@ -449,18 +464,22 @@
         d.id("select-map-btn").listen("click", (e)=>{
             hideCountrySelection();
             d.id("map-select-popup").style.display = "flex";
+            d.id("select-map-btn").classList.add("button-highlighted");
         });
 
         d.id("show-all-locs-btn").listen("click", (e)=>{
             if (allLocMarkers.length === 0) {
                 addAllLocMarkers();
+                d.id("show-all-locs-btn").classList.add("button-highlighted");
             } else {
                 removeAllLocMarkers();
+                d.id("show-all-locs-btn").classList.remove("button-highlighted");
             }
         });
 
         d.id("map-select-exit").listen("click", (e)=>{
             d.id("map-select-popup").style.display = "none";
+            d.id("select-map-btn").classList.remove("button-highlighted");
         });
         
         d.id("show-med-countries").listen("click", (e)=>{
@@ -475,8 +494,12 @@
         })
 
         let citiesLoaded = false;
-        $.getJSON("all_cities_p10000.json", (cities)=>{
-            for (let c of cities) {
+        
+        async function loadAllCities() {
+            let allCitiesResp = await fetch("all_cities_p10000.json");
+            let allCitiesData = await allCitiesResp.json();
+
+            for (let c of allCitiesData) {
                 let o = {
                     name: c.name,
                     country: ["EH"].includes(c.country_code_2) ? c.country_code_2 : c.country_code,
@@ -499,7 +522,8 @@
             setCurrCountries();
             citiesLoaded = true;
             setMapSource();
-        });
+        }
+        loadAllCities();
 
         function cityFitsConstraints(c) {
             return currCountriesList.includes(c.country) && c.population >= minPopulation && c.population <= maxPopulation;
@@ -601,8 +625,10 @@
         for (let div of d.id("map-select-button-container").children) {
             for (let btn of div.children) {
                 btn.listen("click", (e)=>{
-                    setCurrCountries(e.target.value);
-                    setMapSource();
+                    if (e.target.id !== "show-med-countries") {
+                        setCurrCountries(e.target.value);
+                        setMapSource();
+                    }
                 });
             }
         }
@@ -613,6 +639,7 @@
             d.id("checkbox-outline").checked = true;
             d.id("map-select-popup").style.display = "none";
             d.id("select-countries-panel").style.display = "block";
+            d.id("show-all-locs-btn").classList.remove("button-highlighted");
             removeAllLocMarkers();
         })
 
@@ -643,6 +670,7 @@
         d.id("select-countries-cancel").listen("click", (e)=>{
             hideCountrySelection();
             d.id("map-select-popup").style.display = "none";
+            d.id("select-map-btn").classList.remove("button-highlighted");
         })
 
         d.id("select-countries-confirm").listen("click", (e)=>{
@@ -650,6 +678,7 @@
             setCurrCountries("custom");
             hideCountrySelection();
             d.id("map-select-popup").style.display = "none";
+            d.id("select-map-btn").classList.remove("button-highlighted");
         })
 
 
@@ -946,7 +975,58 @@
             d.id("selected-countries").innerText = selectedStr;
         });
 
-        function setMapSource() {
+        async function setMapSource() {
+            if (map.getLayer("polygons-stroke")) {
+                map.removeLayer("polygons-stroke");
+            }
+            if (map.getLayer("polygons-fill")) {
+                map.removeLayer("polygons-fill");
+            }
+            if (map.getSource("country-polygons")) {
+                map.removeSource("country-polygons");
+            }
+
+            let combinedFeatures = [];
+            let nonADM1Countries = [];
+            for (let country of currCountriesList) {
+                if (supportedADM1.includes(country) && d.id("checkbox-outline-subdivisions").checked) {
+                    let resp = await fetch(`geojson_data/${country}.json`);
+                    let data = await resp.json();
+
+                    for (let f of data.features) {
+                        combinedFeatures.push(f);
+                    }
+                } else {
+                    nonADM1Countries.push(country);
+                }
+            }
+
+            let resp = await fetch("all_countries.geojson")
+            let data = await resp.json();
+            
+            for (let f of data.features) {
+                if (nonADM1Countries.includes(f.properties["ISO3166-1-Alpha-2"])) {
+                    combinedFeatures.push(f);
+                }
+            }
+
+            map.addSource("country-polygons", {
+                "type": "geojson",
+                "data": {
+                    "type": "FeatureCollection",
+                    "features": combinedFeatures
+                },
+                "generateId": true
+            });
+
+            console.log(combinedFeatures)
+            if (d.id("checkbox-outline").checked) {
+                map.addLayer(outlineLayer);
+                map.addLayer(fillLayer);
+            }
+        }
+
+        async function addAllCountries() {
             if (map.getLayer("polygons-stroke")) {
                 map.removeLayer("polygons-stroke");
             }
@@ -957,71 +1037,23 @@
                 map.removeSource("country-polygons");
             }
             
-            if (currCountriesList.length === 1 && supportedADM1.includes(currCountriesList[0])) {
-                map.addSource("country-polygons", {
-                    "type": "geojson",
-                    "data": "geojson_data/" + currCountriesList[0] + ".json",
-                    "generateId": true
-                });
+            let allCountries = await fetch("all_countries.geojson");
+            let allCountriesData = await allCountries.json();
 
-                if (d.id("checkbox-outline").checked) {
-                    map.addLayer(outlineLayer);
-                    map.addLayer(fillLayer);
-                }
-            } else {
-                let combinedFeatures = [];
+            map.addSource("country-polygons", {
+                "type": "geojson",
+                "data": {
+                    "type": "FeatureCollection",
+                    "features": allCountriesData.features
+                },
+                "generateId": true
+            });
 
-                $.getJSON("all_countries.geojson", (data)=>{
-                    for (let f of data.features) {
-                        if (currCountriesList.includes(f.properties["ISO3166-1-Alpha-2"])) {
-                            combinedFeatures.push(f);
-                        }
-                    }
-
-                    map.addSource("country-polygons", {
-                        "type": "geojson",
-                        "data": {
-                            "type": "FeatureCollection",
-                            "features": combinedFeatures
-                        },
-                        "generateId": true
-                    });
-
-                    if (d.id("checkbox-outline").checked) {
-                        map.addLayer(outlineLayer);
-                        map.addLayer(fillLayer);
-                    };
-                })
-            }
-        }
-
-        function addAllCountries() {
-            if (map.getLayer("polygons-stroke")) {
-                map.removeLayer("polygons-stroke");
-            }
-            if (map.getLayer("polygons-fill")) {
-                map.removeLayer("polygons-fill");
-            }
-            if (map.getSource("country-polygons")) {
-                map.removeSource("country-polygons");
-            }
-
-            $.getJSON("all_countries.geojson", (data)=>{
-                map.addSource("country-polygons", {
-                    "type": "geojson",
-                    "data": {
-                        "type": "FeatureCollection",
-                        "features": data.features
-                    },
-                    "generateId": true
-                });
-
-                if (d.id("checkbox-outline").checked) {
-                    map.addLayer(outlineLayer);
-                    map.addLayer(fillLayer);
-                };
-            })
-        }
+            if (d.id("checkbox-outline").checked) {
+                map.addLayer(outlineLayer);
+                map.addLayer(fillLayer);
+            };
+    }
 
         map.on("load", (e)=> {
             map.doubleClickZoom.disable();
@@ -1029,6 +1061,7 @@
         });
         
         d.id("checkbox-outline").listen("change", addCountryOutlines);
+        d.id("checkbox-outline-subdivisions").listen("change", setMapSource);
 
         function addCountryOutlines() {
             if (!map.isStyleLoaded() || !map.getSource("country-polygons")) return;
@@ -1195,6 +1228,25 @@
             popup.listen("transitionend", popup.remove);
             d.body.appendChild(popup);
             setTimeout(()=>{popup.style.opacity = "0"}, 30);
+        }
+
+        function removeSatellites(pop_mult, max_distance_km, max_pop=1e8, need_same_subdiv=false) {
+            // pop_mult - How many times bigger parent city needs to be for satellite/suburb to be removed
+            // max_pop - Max population for city to be removed
+            
+            let prevRemovedNum = removedCities.length;
+            for (let c1 of currCitiesList) {
+                for (let c2 of currCitiesList) {
+                    if (!removedCities.includes(c2) && c2.population < max_pop && (!need_same_subdiv || c1.region === c2.region) &&
+                        c2.population * pop_mult < c1.population && distanceKm(c1.latitude, c2.latitude, c1.longitude, c2.longitude) < max_distance_km) {
+                        removedCities.push(c2);
+                    }
+                }
+            }
+            let newRemovedNum = removedCities.length;
+
+            setCurrCities();
+            createTopRightPopup("#ffcfcf", "Removed " + (newRemovedNum-prevRemovedNum) + " satellites/suburbs from cities list", "#000");
         }
 
         d.listen("keydown", (e) => {
