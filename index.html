@@ -283,6 +283,16 @@
     <div id="more-settings-popup" class="center-popup" style="display: none">
         <button id="more-settings-exit" style="position: absolute; top: 10px; right: 10px">X</button>
         <h3 style="text-align: center">More settings</h3>
+        <div>
+            <input type="checkbox" id="checkbox-blue-marble-map" checked>
+            <span>MapTap style map (Blue Marble)</span>
+        </div>
+        <div style="text-align: center">
+            <input type="checkbox" id="checkbox-maptap-subdivisions">
+            <span style="font-size: 13px;">Only include subdivs. for countries with them in MapTap VS</span>
+            <span style="font-size: 13px;" id="maptap-subdivs-text"></span>
+        </div>
+        <div style="height: 20px"></div>
         <div style="display: flex; flex-direction: column; width: 250px">
             <label for="scoring-diff-slider">
                 Scoring harshness mult.: <span id="scoring-diff-value"></span>
@@ -294,16 +304,6 @@
                 Location fade time: <span id="location-fade-value"></span>s
             </label>
             <input type="range" id="location-fade-slider" min="0" max="2000" value="1000" step="1">
-        </div>
-        <div style="height: 15px"></div>
-        <div>
-            <input type="checkbox" id="checkbox-blue-marble-map">
-            <span>MapTap style map (Blue Marble)</span>
-        </div>
-        <div>
-            <input type="checkbox" id="checkbox-maptap-subdivisions">
-            <span style="font-size: 13px">Only include subdivs. for countries with them in MapTap VS</span><br>
-            </span>
         </div>
     </div>
 
@@ -540,6 +540,8 @@
             d.id("more-settings-popup").style.display = "none";
             d.id("more-settings-btn").classList.remove("button-highlighted");
         });
+
+        d.id("maptap-subdivs-text").innerHTML = `(${maptapADM1.toString()})`
 
         let citiesLoaded = false;
         
@@ -965,6 +967,11 @@
             canvasContextAttributes: { antialias: true },
         });
 
+        map.on('error', (e)=>{
+            if (e && e.error && [400].includes(e.error.status)) return;
+            console.log(e);
+        });
+
         function getTileSource() {
             if (d.id("checkbox-topo-map").checked) {
                 return {
@@ -1216,6 +1223,10 @@
             let historyElem = addHistoryElem(scoreText, scoreColor, true);
 
             setHistoryElemStyle();
+
+            if (allLocMarkers.length > 0) {
+                addAllLocMarkers();
+            }
         })
 
         function addHistoryElem(scoreText, scoreColor, addClickMarker) {
