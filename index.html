@@ -90,6 +90,11 @@
         B: Restore removed locs.<br>
         Space: Mark loc. as unknown
     </div>
+    <div style="position: fixed; left: 240px; top: 5px; font-size: 14px; color: #bbb">
+        <input type="checkbox" id="checkbox-sfx" checked>
+        Tap sound effects
+    </div>
+
     <div style="position: fixed; left: 5px; bottom: 25px; font-size: 14px; color: #bbb">
         City data from: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">Geonames</a>
     </div>
@@ -111,11 +116,25 @@
             <span style="font-size: 13px;" id="maptap-subdivs-text"></span>
         </div>
         <div style="height: 20px"></div>
+        <div style="text-align: center;">
+            <input type="checkbox" id="checkbox-auto-remove">
+            <span>Auto remove locations guessed less than
+            <input type="number" id="auto-remove-dist" style="width: 30px" value="25">
+            km away
+            </span>
+        </div>
+        <div style="height: 20px"></div>
         <div style="display: flex; flex-direction: column; width: 250px">
             <label for="scoring-diff-slider">
                 Scoring harshness mult.: <span id="scoring-diff-value"></span>
             </label>
             <input type="range" id="scoring-diff-slider" min="1" max="5" value="1" step="0.1">
+        </div>
+        <div style="display: flex; flex-direction: column; width: 250px">
+            <label for="globe-brightness-slider">
+                Globe brightness: <span id="globe-brightness-value"></span>
+            </label>
+            <input type="range" id="globe-brightness-slider" min="1" max="1.5" value="1" step="0.02">
         </div>
         <div style="display: flex; flex-direction: column; width: 250px">
             <label for="location-fade-slider">

@@ -127,6 +127,11 @@ d.id("remove-satellites-exit").listen("click", (e)=>{
 
 d.id("maptap-subdivs-text").innerHTML = `(${maptapADM1.toString()})`
 
+let tapSfx = d.id("checkbox-sfx").checked;
+d.id("checkbox-sfx").listen("change", ()=>{
+    tapSfx = d.id("checkbox-sfx").checked;
+})
+
 let citiesLoaded = false;
 
 async function loadAllCities() {
@@ -722,6 +727,7 @@ map.on("load", (e)=> {
 
 d.id("checkbox-outline").listen("change", addCountryOutlines);
 d.id("checkbox-outline-subdivisions").listen("change", setMapSource);
+d.id("checkbox-outline-subdivisions").disabled = !d.id("checkbox-outline").checked;
 
 function addCountryOutlines() {
     if (!map.isStyleLoaded() || !map.getSource("country-polygons")) return;
@@ -732,6 +738,7 @@ function addCountryOutlines() {
             map.removeLayer("polygons-stroke");
         }
     }
+    d.id("checkbox-outline-subdivisions").disabled = !d.id("checkbox-outline").checked;
 }
 
 d.id("checkbox-division-name").listen("change", (e)=>{
@@ -762,11 +769,32 @@ updateScoringDiffSlider();
 d.id("scoring-diff-slider").listen("input", updateScoringDiffSlider);
 
 function updateLocFadeSlider() {
-    d.id("location-fade-value").innerText = ""+parseInt(d.id("location-fade-slider").value)/1000;
-    fadeTime = parseInt(d.id("location-fade-slider").value);
+    let v = parseInt(d.id("location-fade-slider").value);
+    d.id("location-fade-value").innerText = ""+v/1000;
+    fadeTime = v;
 }
 updateLocFadeSlider();
 d.id("location-fade-slider").listen("input", updateLocFadeSlider);
+
+function updateBrightnessSlider() {
+    let v = parseFloat(d.id("globe-brightness-slider").value);
+    d.id("globe-brightness-value").innerText = v;
+    d.id("map").style.filter = `brightness(${v*100}%)`;
+}
+updateBrightnessSlider();
+d.id("globe-brightness-slider").listen("input", updateBrightnessSlider);
+
+d.id("auto-remove-dist").disabled = !d.id("checkbox-auto-remove").checked;
+let autoRemove = d.id("checkbox-auto-remove").checked;
+let autoRemoveDist = parseInt(d.id("auto-remove-dist").value);
+
+d.id("checkbox-auto-remove").listen("change", ()=>{
+    autoRemove = d.id("checkbox-auto-remove").checked;
+    d.id("auto-remove-dist").disabled = !autoRemove;
+});
+d.id("auto-remove-dist").listen("input", ()=>{
+    autoRemoveDist = parseInt(d.id("auto-remove-dist").value);
+});
 
 let clickMarker;
 let locMarker;
@@ -794,6 +822,23 @@ map.on("click", (e)=> {
     let scoringDiffMult = Number(d.id("scoring-diff-slider").value);
     let score = 1000*Math.exp(-(distFromClick / 16250) * (3.5*scoringDiffMult));
 
+    if (tapSfx) {
+        let audio;
+        if (score > 990) {
+            audio = new Audio("sounds/ding_full.mp3");
+        } else if (score > 950) {
+            audio = new Audio("sounds/ding_high.mp3");
+        } else if (score > 900) {
+            audio = new Audio("sounds/ding_med.mp3");
+        } else if (score > 850) {
+            audio = new Audio("sounds/ding_low.mp3");
+        } else {
+            audio = new Audio("sounds/ding_lowest.mp3");
+        }
+        audio.volume = 0.5;
+        audio.play();
+    }
+
     let distPopup = d.createElement("div");
     distPopup.classList.add("dist-popup");
     distPopup.style.animation = "move-popup-text " + 1.5*fadeTime/1000 + "s";
@@ -816,6 +861,10 @@ map.on("click", (e)=> {
 
     if (allLocMarkers.length > 0) {
         addAllLocMarkers();
+    }
+
+    if (autoRemove && distFromClick < autoRemoveDist) {
+        removeLatestCity();
     }
 })
 
@@ -958,21 +1007,31 @@ d.id("restore-satellites").listen("click", (e)=>{
     removeSatellites(1, 0, 0);
 })
 
+function removeLatestCity() {
+    let cityToRemove = inTransition ? locHistory[0] : locHistory[1];
+    removedCities.push(cityToRemove);
+    setCurrCities();
+    createTopRightPopup("#ffcfcf", "Removed " + cityToRemove.name + " from cities list", "#000");
+    if (allLocMarkers.length > 0) {
+        addAllLocMarkers();
+    }
+}
+
+function restoreRemovedCities() {
+    let prevCitiesLen = currCitiesList.length;
+    removedCities = [];
+    setCurrCities();
+    let newCitiesLen = currCitiesList.length;
+    createTopRightPopup("#cfcfff", "Restored " + (newCitiesLen-prevCitiesLen) + " removed cities to cities list", "#000");
+}
+
 d.listen("keydown", (e) => {
     if (d.activeElement && d.activeElement.tagName === "INPUT") return;
 
     if (e.key === "r") {
-        let cityToRemove = inTransition ? locHistory[0] : locHistory[1];
-        removedCities.push(cityToRemove);
-        setCurrCities();
-        createTopRightPopup("#ffcfcf", "Removed " + cityToRemove.name + " from cities list", "#000");
-        addAllLocMarkers();
+        removeLatestCity();
     } else if (e.key === "b") {
-        let prevCitiesLen = currCitiesList.length;
-        removedCities = [];
-        setCurrCities();
-        let newCitiesLen = currCitiesList.length;
-        createTopRightPopup("#cfcfff", "Restored " + (newCitiesLen-prevCitiesLen) + " removed cities to cities list", "#000");
+        restoreRemovedCities();
     } else if (e.key === " ") {
         if (inTransition) return;
 
