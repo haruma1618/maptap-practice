@@ -1,0 +1,183 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: "Consolas";
+    color: rgba(255, 255, 255, 1);
+}
+
+#top-display-container {
+    position: fixed;
+    top: 40px;
+    height: 800px;
+    left: calc(50% - 175px);
+    flex-direction: column;
+    display: flex;
+}
+
+#top-display {
+    width: 400px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(177, 0, 56, 0.6);
+    border: 2px solid rgba(50, 0, 16, 0.6);
+    font-size: 18px;
+}
+
+#left-panel {
+    position: fixed;
+    top: calc(50% - 250px);
+    left: 30px;
+    width: 250px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(177, 0, 56, 0.4);
+    border: 2px solid rgba(50, 0, 16, 0.4);
+    font-size: 14px;
+}
+
+#left-hide-btn {
+    position: fixed;
+    top: calc(50% - 285px);
+    left: 30px;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(177, 0, 56, 0.4);
+    border: 2px solid rgba(50, 0, 16, 0.4);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.center-popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(177, 0, 56, 0.6);
+    border: 2px solid rgba(50, 0, 16, 0.6);
+    padding: 10px;
+    padding-bottom: 20px;
+    overflow-y: auto;
+}
+
+#right-panel {
+    position: fixed;
+    top: calc(50% - 250px);
+    right: 30px;
+    width: 250px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(177, 0, 56, 0.4);
+    border: 2px solid rgba(50, 0, 16, 0.4);
+    font-size: 14px;
+    overflow: auto;
+}
+
+#loc-history {
+    position: relative;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.history-elem {
+    width: 100%;
+    margin-top: 5px;
+    padding: 10px 3px 10px 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#map {
+    min-height: 500px;
+    height: 100%;
+    width: 100%;
+    background: #0b0d23;
+}
+
+.dist-popup {
+    font-family: "Consolas";
+    font-size: 20px;
+    text-align: center;
+    opacity: 1;
+    position: fixed;
+}
+
+input[type="number"] {
+    font-family: "Consolas";
+    border-radius: 0;
+    border: 1px solid rgb(0, 0, 0);
+    background-color: rgb(50, 0, 16);
+    color: white;
+    appearance: textfield;
+}
+
+#checkbox-settings {
+    display: flex;
+    flex-direction: column;
+}
+
+button, select {
+    font-family: "Consolas";
+    border-radius: 0;
+    border: 1px solid rgb(0, 0, 0);
+    background-color: rgb(50, 0, 16);
+    color: white;
+    cursor: pointer;
+}
+
+.map-select-buttons > button {
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+#map-select-countries-med > button {
+    font-size: 10.5px;
+    background-color: rgb(60, 40, 0);
+}
+
+#map-select-large-regions > button {
+    background-color: rgb(12, 0, 60);
+}
+
+.button-highlighted {
+    background-color: rgb(90, 0, 28);
+}
+
+input::placeholder {
+    font-style: italic;
+    font-family: "Consolas";
+}
+
+@keyframes move-popup-text {
+    0% {transform: translate(0, 0); opacity: 1;}
+    100% {transform: translate(0, -50px); opacity: 0;}
+}
+
+.maplibregl-popup-content {
+    height: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
