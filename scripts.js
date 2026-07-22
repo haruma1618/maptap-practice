@@ -160,12 +160,12 @@ async function loadAllCities() {
     for (let c of allCitiesData) {
         let o = {
             name: c.name,
-            country: ["EH"].includes(c.country_code_2) ? c.country_code_2 : c.country_code,
+            country: ["EH"].includes(c.c_code2) ? c.c_code2 : c.c_code,
             country_name: iso2ToCountryName[c.country_code],
-            population: c.population,
-            latitude: c.coordinates.lat,
-            longitude: c.coordinates.lon,
-            region_code: c.admin1_code
+            population: c.pop,
+            latitude: c.lat,
+            longitude: c.lon,
+            region_code: c.adm1
         }
 
         allCities.push(o);
