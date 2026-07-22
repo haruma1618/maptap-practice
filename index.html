@@ -92,6 +92,10 @@
         Space: Mark loc. as unknown
     </div>
     <div style="position: fixed; left: 240px; top: 5px; font-size: 14px; color: #bbb">
+        <input type="checkbox" id="checkbox-bg-sound">
+        Chill background sounds<br>
+        <input type="range" style="width: 90px; height: 5px" id="bg-sound-volume" min="0" max="1" value="0.5" step="0.02">
+        Bg volume<br>
         <input type="checkbox" id="checkbox-sfx" checked>
         Tap sound effects
     </div>
@@ -150,7 +154,9 @@
         <button id="remove-satellites-exit" style="position: absolute; top: 10px; right: 10px">X</button>
 
         <b style="font-size: 18px">Remove satellite cities/suburbs</b>
-        <div style="height: 10px"></div>
+        <div style="height: 5px"></div>
+        <div style="font-size: 14px">Currently removed: <span id="num-removed-satellites-text">0</span></div>
+        <div style="height: 15px"></div>
         <div>
             <button id="remove-satellites" style="font-size: 16px; margin-right: 5px;">Remove</button>
             <button id="restore-satellites" style="font-size: 16px">Restore</button>

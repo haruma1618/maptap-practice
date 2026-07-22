@@ -132,6 +132,23 @@ d.id("checkbox-sfx").listen("change", ()=>{
     tapSfx = d.id("checkbox-sfx").checked;
 })
 
+let bgSound = new Howl({src: ["sounds/bg_audio2.mp3"], html5: true, loop: true, volume: 0.5});
+let bgSoundId;
+d.id("checkbox-bg-sound").checked = false;
+d.id("checkbox-bg-sound").listen("click", ()=>{
+    if (d.id("checkbox-bg-sound").checked) {
+        bgSoundId = bgSound.play();
+    } else {
+        bgSound.stop();
+    }
+})
+
+d.id("bg-sound-volume").listen("change", ()=>{
+    if (bgSound.playing()) {
+        bgSound.volume(parseFloat(d.id("bg-sound-volume").value), bgSoundId);
+    }
+})
+
 let citiesLoaded = false;
 
 async function loadAllCities() {
@@ -800,13 +817,12 @@ let clickMarker;
 let locMarker;
 let opacityInterval;
 let markerOpacity = 1;
-let soundNames = ["full", "high", "med", "low", "lowest"];
-let soundScoreReqs = [990, 950, 900, 850, 0];
+let soundNames = ["full", "high", "med", "low", "lower", "lowest"];
+let soundScoreReqs = [990, 950, 900, 850, 800, 0];
 let clickSounds = {};
 for (let n of soundNames) {
-    clickSounds[n] = new Howl({src: [`sounds/ding_${n}.mp3`]})
+    clickSounds[n] = new Howl({src: [`sounds/ding_${n}.mp3`], volume: 0.25})
 }
-Howler.volume(0.5);
 
 map.on("click", (e)=> {
     if (inTransition) return;
@@ -976,15 +992,20 @@ function removeSatellites(pop_mult, max_distance_km, max_pop=1e8, need_same_subd
     
     let prevRemovedNum = removedSatellites.length;
     removedSatellites.length = 0;
-    for (let c1 of currCitiesList) {
-        for (let c2 of currCitiesList) {
-            if (!removedSatellites.includes(c2) && c2.population < max_pop && (!need_same_subdiv || c1.region === c2.region) &&
-                c2.population * pop_mult < c1.population && distanceKm(c1.latitude, c2.latitude, c1.longitude, c2.longitude) < max_distance_km) {
+    citiesInCountry = allCities.filter(x => currCountriesList.includes(x.country));
+    citiesInCountry.sort((a, b) => a.population-b.population);
+
+    for (let c1 of citiesInCountry) {
+        for (let c2 of citiesInCountry) { // c2 = city to remove
+            if (c2.population > c1.population/pop_mult || c2.population >= max_pop) break;
+            if (!removedSatellites.includes(c2) && (!need_same_subdiv || c1.region === c2.region) &&
+                distanceKm(c1.latitude, c2.latitude, c1.longitude, c2.longitude) < max_distance_km) {
                 removedSatellites.push(c2);
             }
         }
     }
     let newRemovedNum = removedSatellites.length;
+    d.id("num-removed-satellites-text").innerText = removedSatellites.length + "";
 
     setCurrCities();
     if (newRemovedNum >= prevRemovedNum) {
@@ -992,7 +1013,10 @@ function removeSatellites(pop_mult, max_distance_km, max_pop=1e8, need_same_subd
     } else {
         createTopRightPopup("#cfcfff", "Restored " + (prevRemovedNum-newRemovedNum) + " satellites/suburbs to cities list", "#000");
     }
-    addAllLocMarkers();
+
+    if (allLocMarkers.length > 0) {
+        addAllLocMarkers();
+    }
 }
 
 d.id("remove-satellites").listen("click", (e)=>{
