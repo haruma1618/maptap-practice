@@ -60,6 +60,13 @@ let valueToCountries = {
     "oceania": ["AS", "AU", "CK", "FJ", "FM", "GU", "KI", "MH", "MP", "NC", "NF", "NR", "NU", "NZ", "PF", "PG", "PN", "PW", "SB", "TK", "TO", "TV", "UM", "VU", "WF", "WS"]
 };
 
+let allCountriesGeojson;
+async function getAllCountriesGeojson() {
+    let allCountries = await fetch("all_countries.geojson");
+    allCountriesGeojson = await allCountries.json();
+}
+getAllCountriesGeojson();
+
 d.id("left-hide-btn").listen("click", (e)=>{
     d.id("left-hide-btn").innerHTML = (d.id("left-hide-btn").innerHTML != "&lt;" ? "&lt;" : "&gt;");
     d.id("left-panel").style.display = (d.id("left-panel").style.display != "none" ? "none" : "flex");
@@ -669,24 +676,31 @@ async function setMapSource() {
 
     let combinedFeatures = [];
     let nonADM1Countries = [];
+    let countryJSONUrls = [];
 
     for (let country of currCountriesList) {
         if (getSupportedADM1().includes(country) && d.id("checkbox-outline-subdivisions").checked) {
-            let resp = await fetch(`geojson_data/${country}.json`);
-            let data = await resp.json();
-
-            for (let f of data.features) {
-                combinedFeatures.push(f);
-            }
+            countryJSONUrls.push(`geojson_data/${country}.json`);
         } else {
             nonADM1Countries.push(country);
         }
     }
 
-    let resp = await fetch("all_countries.geojson")
-    let data = await resp.json();
-    
-    for (let f of data.features) {
+    let promises = countryJSONUrls.map(async function(url) {
+        let resp = await fetch(url);
+        if (!resp.ok) {
+            throw new Error(`${url} - ${resp.status}`);
+        }
+        return resp.json();
+    });
+    let jsonDataObjects = await Promise.all(promises);
+    for (let data of jsonDataObjects) {
+        for (let f of data.features) {
+            combinedFeatures.push(f);
+        }
+    }
+
+    for (let f of allCountriesGeojson.features) {
         if (nonADM1Countries.includes(f.properties["ISO3166-1-Alpha-2"])) {
             combinedFeatures.push(f);
         }
@@ -718,15 +732,12 @@ async function addAllCountries() {
     if (map.getSource("country-polygons")) {
         map.removeSource("country-polygons");
     }
-    
-    let allCountries = await fetch("all_countries.geojson");
-    let allCountriesData = await allCountries.json();
 
     map.addSource("country-polygons", {
         "type": "geojson",
         "data": {
             "type": "FeatureCollection",
-            "features": allCountriesData.features
+            "features": allCountriesGeojson.features
         },
         "generateId": true
     });
@@ -817,8 +828,8 @@ let clickMarker;
 let locMarker;
 let opacityInterval;
 let markerOpacity = 1;
-let soundNames = ["full", "high", "med", "low", "lower", "lowest"];
-let soundScoreReqs = [990, 950, 900, 850, 800, 0];
+let soundNames = ["full", "high", "med", "low", "lower", "lowest", "fail"];
+let soundScoreReqs = [990, 950, 900, 850, 800, 700, 0];
 let clickSounds = {};
 for (let n of soundNames) {
     clickSounds[n] = new Howl({src: [`sounds/ding_${n}.mp3`], volume: 0.25})
