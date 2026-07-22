@@ -800,6 +800,14 @@ let clickMarker;
 let locMarker;
 let opacityInterval;
 let markerOpacity = 1;
+let soundNames = ["full", "high", "med", "low", "lowest"];
+let soundScoreReqs = [990, 950, 900, 850, 0];
+let clickSounds = {};
+for (let n of soundNames) {
+    clickSounds[n] = new Howl({src: [`sounds/ding_${n}.mp3`]})
+}
+Howler.volume(0.5);
+
 map.on("click", (e)=> {
     if (inTransition) return;
     if (selectingCountriesForMap) return;
@@ -823,20 +831,12 @@ map.on("click", (e)=> {
     let score = 1000*Math.exp(-(distFromClick / 16250) * (3.5*scoringDiffMult));
 
     if (tapSfx) {
-        let audio;
-        if (score > 990) {
-            audio = new Audio("sounds/ding_full.mp3");
-        } else if (score > 950) {
-            audio = new Audio("sounds/ding_high.mp3");
-        } else if (score > 900) {
-            audio = new Audio("sounds/ding_med.mp3");
-        } else if (score > 850) {
-            audio = new Audio("sounds/ding_low.mp3");
-        } else {
-            audio = new Audio("sounds/ding_lowest.mp3");
-        }
-        audio.volume = 0.5;
-        audio.play();
+        for (let i = 0; i < soundScoreReqs.length; i++) {
+            if (score >= soundScoreReqs[i]) {
+                clickSounds[soundNames[i]].play();
+                break;
+            }
+        } 
     }
 
     let distPopup = d.createElement("div");
