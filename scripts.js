@@ -578,7 +578,7 @@ const map = new maplibregl.Map({
     canvasContextAttributes: { antialias: true },
 });
 
-map.on('error', (e)=>{
+map.on("error", (e)=>{
     if (e && e.error && [400].includes(e.error.status)) return;
     console.log(e);
 });
@@ -825,6 +825,7 @@ for (let n of soundNames) {
 }
 
 map.on("click", (e)=> {
+    if (!citiesLoaded) return;
     if (inTransition) return;
     if (selectingCountriesForMap) return;
 
