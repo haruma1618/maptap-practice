@@ -49,7 +49,7 @@
             <input type="number" id="locs-before-repeat" name="locs-before-repeat" value="10" style="width: 40px;">
         </div>
         <div style="margin-bottom: 20px"></div>
-        <div>Possible locations: <span id="num-locs"></span></div>
+        <div>Possible locations: <span id="num-locs">...</span></div>
         <div style="margin-bottom: 20px"></div>
         <div id="checkbox-settings">
             <div>
@@ -88,7 +88,7 @@
 
     <div style="position: fixed; left: 5px; top: 5px; font-size: 14px; color: #bbb">
         R: Remove previous loc.<br>
-        B: Restore removed locs.<br>
+        B: Restore all removed locs.<br>
         Space: Mark loc. as unknown
     </div>
     <div style="position: fixed; left: 240px; top: 5px; font-size: 14px; color: #bbb">
@@ -100,12 +100,11 @@
         Tap sound effects
     </div>
 
-    <div style="position: fixed; left: 5px; bottom: 25px; font-size: 14px; color: #bbb">
-        City data from: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">Geonames</a>
-    </div>
     <div style="position: fixed; left: 5px; bottom: 5px; font-size: 14px; color: #bbb">
+        City data from: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">Geonames</a><br>
         Country outlines from: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">Geoboundaries</a>
-        , <a href="https://datahub.io/core/geo-countries" target="_blank" rel="noopener noreferrer">Datahub</a>
+        , <a href="https://datahub.io/core/geo-countries" target="_blank" rel="noopener noreferrer">Datahub</a><br>
+        Background sounds: youtu.be/bn9F19Hi1Lk
     </div>
 
     <div id="more-settings-popup" class="center-popup" style="display: none; font-size: 14px">
@@ -113,7 +112,7 @@
         <h2 style="text-align: center">More settings</h2>
         <div>
             <input type="checkbox" id="checkbox-blue-marble-map" checked>
-            <span>MapTap style map (Blue Marble)</span>
+            <span>MapTap style map (Blue Marble data, lower resolution)</span>
         </div>
         <div style="text-align: center;">
             <input type="checkbox" id="checkbox-maptap-subdivisions">
@@ -124,8 +123,12 @@
         <div style="text-align: center;">
             <input type="checkbox" id="checkbox-auto-remove">
             <span>Auto remove locations guessed less than
-            <input type="number" id="auto-remove-dist" style="width: 30px" value="25">
+            <input type="number" id="auto-remove-dist" style="width: 30px" value="40">
             km away
+            </span><br>
+            <span>
+            <input type="number" id="auto-remove-num-times" style="width: 20px" value="2">
+            time(s) in a row
             </span>
         </div>
         <div style="height: 20px"></div>
