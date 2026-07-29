@@ -14,11 +14,8 @@ let allCities = [];
 let currCitiesList = [];
 let currCity;
 let inTransition = false;
-let currCountriesList = ["US"];
-let currCountryMap = "usa";
-let showDivision = d.id("checkbox-division-name").checked;
-let showCountry = d.id("checkbox-country-name").checked;
-let showPopulation = d.id("checkbox-city-pop").checked;
+let currCountriesList = [];
+let currCountryMap = "";
 let minPopulation = Number(d.id("min-population").value);
 let maxPopulation = Number(d.id("max-population").value);
 let minBeforeRepeat = Number(d.id("locs-before-repeat").value);
@@ -29,7 +26,6 @@ let locHistory = [];
 let pastMarkerCoords = [];
 let showingClickMarker;
 let showingLocMarker;
-let countryMapVal = "china";
 //let showAllLocs = false;
 let allLocMarkers = [];
 let regionColorsDict = {};
@@ -44,38 +40,87 @@ let convertToType = {
     "n": x => Number(x),
     "b": x => typeof x === "string" ? (x === "true") : Boolean(x),
     "s": x => String(x),
-    "o": x => JSON.parse(x),
+    "o": x => {
+        try {
+            return JSON.parse(x);
+        } catch (e) {
+            console.error(`JSON parse failed, x="${x}"`, e.message);
+            return [];
+        }
+    },
 };
 
-let persistentSettings = {
-    "globeBrightness": {"val": 1, "id": "globe-brightness-slider", "type": "n"},
-    "scoringDiff": {"val": 1, "id": "scoring-diff-slider", "type": "n"},
-    "fadeTime": {"val": 1000, "id": "location-fade-slider", "type": "n"},
+let settings = {
+    "globeBrightness": {"val": 1, "id": "globe-brightness-slider", "type": "n", "textId": "globe-brightness-value"},
+    "scoringDiff": {"val": 1, "id": "scoring-diff-slider", "type": "n", "textId": "scoring-diff-value"},
+    "fadeTime": {"val": 1000, "id": "location-fade-slider", "type": "n", "textId": "location-fade-value"},
     "autoRemove": {"val": false, "id": "checkbox-auto-remove", "type": "b"},
     "autoRemoveDist": {"val": 40, "id": "auto-remove-dist", "type": "n"},
-    "autoRemoveTimes": {"val": 2, "id": "auto-remove-num-times", "type": "n"}
+    "autoRemoveTimes": {"val": 2, "id": "auto-remove-num-times", "type": "n"},
+    "showDivision": {"val": true, "id": "checkbox-division-name", "type": "b"},
+    "showCountry": {"val": false, "id": "checkbox-country-name", "type": "b"},
+    "showPopulation": {"val": false, "id": "checkbox-city-pop", "type": "b"},
+    "showOutline": {"val": true, "id": "checkbox-outline", "type": "b"},
+    "outlineDivisions": {"val": true, "id": "checkbox-outline-subdivisions", "type": "b"},
+    "maptapSubdivisions": {"val": false, "id": "checkbox-maptap-subdivisions", "type": "b"},
+    "minPopulation": {"val": 100000, "id": "min-population", "type": "n"},
+    "maxPopulation": {"val": 50000000, "id": "max-population", "type": "n"},
+    "minBeforeRepeat": {"val": 10, "id": "locs-before-repeat", "type": "n"},
+    "customMapArr": {"val": [], "id": null, "type": "o"},
+    "countryMapVal": {"val": "china", "id": null, "type": "s"}
 }
 
-for (let k in persistentSettings) {
+for (let k in settings) {
     let item = localStorage.getItem(k);
-    if (item !== null) {
-        persistentSettings[k].val = item;
+    if (item !== null && item !== "") {
+        settings[k].val = convertToType[settings[k].type](item);
     } else {
-        localStorage.setItem(k, persistentSettings[k].val);
+        let setVal = (typeof settings[k].val) === "string" ? settings[k].val : JSON.stringify(settings[k].val);
+        localStorage.setItem(k, setVal);
     }
-    d.id(persistentSettings[k].id).value = persistentSettings[k].val;
+
+    if (settings[k]["id"]) {
+        let elem = d.id(settings[k].id);
+        if (elem.type === "checkbox") {
+            d.id(settings[k].id).checked = settings[k].val;
+        } else {
+            d.id(settings[k].id).value = settings[k].val;
+        }
+    }
+
+    if (Object.hasOwn(settings[k], "textId")) {
+        d.id(settings[k].textId).innerText = settings[k].val;
+    }
 }
 
 function setSetting(k, v) {
     localStorage.setItem(k, v);
-    persistentSettings[k].val = convertToType[persistentSettings[k].type](v);
+    settings[k].val = convertToType[settings[k].type](v);
+
+    if (Object.hasOwn(settings[k], "textId")) {
+        d.id(settings[k].textId).innerText = settings[k].val;
+    }
 }
 
+
+// To do: Clean up all repeated setSettingFromEvent code in event listeners
+function setSettingFromEvent(e) {
+    let id = e.currentTarget.id;
+    let setting = Object.entries(settings).filter(x => x[1].id === id);
+    if (setting.length === 0) return;
+
+    let obj = setting[0];
+    if (d.id(id).type === "checkbox") {
+        setSetting(obj[0], d.id(id).checked);
+    } else {
+        setSetting(obj[0], d.id(id).value);
+    }
+}
 
 let iso2ToCountryName = {"AF":"Afghanistan","AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CG":"Rep. of the Congo","CD":"Dem. Rep. of the Congo","CK":"Cook Islands","CR":"Costa Rica","CI":"Cote D'Ivoire","HR":"Croatia","CU":"Cuba","CY":"Cyprus","CZ":"Czech Republic","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","ET":"Ethiopia","FK":"Falkland Islands (Malvinas)","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"The Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KP":"North Korea","KR":"South Korea","XK":"Kosovo","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MK":"North Macedonia","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","AN":"Netherlands Antilles","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","RE":"Reunion","RO":"Romania","RU":"Russia","RW":"Rwanda","BL":"Saint Barthelemy","SH":"Saint Helena","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SZ":"Eswatini","SE":"Sweden","SS":"South Sudan","CH":"Switzerland","SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"United Arab Emirates","GB":"United Kingdom","US":"United States","UM":"United States Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"}
 
 let supportedADM1 = ['AD', 'AE', 'AF', 'AG', 'AL', 'AM', 'AO', 'AR', 'AT', 'AU', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BN', 'BO', 'BR', 'BS', 'BT', 'BW', 'BY', 'BZ', 'CA', 'CD', 'CF', 'CG', 'CH', 'CI', 'CL', 'CM', 'CN', 'CO', 'CR', 'CU', 'CV', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FM', 'FR', 'GA', 'GB', 'GD', 'GE', 'GH', 'GL', 'GM', 'GN', 'GQ', 'GR', 'GT', 'GW', 'GY', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IN', 'IQ', 'IR', 'IS', 'IT', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MG', 'MH', 'MK', 'ML', 'MM', 'MN', 'MR', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NE', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PG', 'PH', 'PK', 'PL', 'PS', 'PT', 'PW', 'PY', 'QA', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SI', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SY', 'SZ', 'TD', 'TG', 'TH', 'TJ', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'US', 'UY', 'UZ', 'VC', 'VE', 'VN', 'VU', 'WS', 'XK', 'YE', 'ZA', 'ZM', 'ZW'];
-let maptapADM1 = ["US", "CN", "IN", "BR", "RU", "CA", "AU"]; // Probably coming: ID
+let maptapADM1 = ["US", "CN", "IN", "BR", "RU", "CA", "AU"];
 
 let valueToCountries = {
     "usa": ["US"], "china": ["CN"], "india": ["IN"], "brazil": ["BR"], "indonesia": ["ID"], "russia": ["RU"], "canada": ["CA"],
@@ -91,6 +136,14 @@ let valueToCountries = {
     "s-america": ["AR", "BO", "BR", "CL", "CO", "EC", "FK", "GF", "GY", "PE", "PY", "SR", "UY", "VE"],
     "oceania": ["AS", "AU", "CK", "FJ", "FM", "GU", "KI", "MH", "MP", "NC", "NF", "NR", "NU", "NZ", "PF", "PG", "PN", "PW", "SB", "TK", "TO", "TV", "UM", "VU", "WF", "WS"]
 };
+if (localStorage.getItem("customMapArr")) {
+    try {
+        valueToCountries["custom"] = JSON.parse(localStorage.getItem("customMapArr"));
+    } catch(e) {
+        window.error(e);
+        valueToCountries["custom"] = [];
+    }
+}
 
 let allCountriesGeojson;
 async function getAllCountriesGeojson() {
@@ -199,11 +252,11 @@ async function loadAllCities() {
     for (let c of allCitiesData) {
         let o = {
             name: c[0],
-            country: ["EH"].includes(c[2]) ? c[2] : c[1],
-            population: c[3],
-            latitude: c[4],
-            longitude: c[5],
-            region_code: c[6]
+            country: c[1],
+            population: c[2],
+            latitude: c[3],
+            longitude: c[4],
+            region_code: c[5]
         }
 
         allCities.push(o);
@@ -222,7 +275,7 @@ async function loadAllCities() {
 loadAllCities();
 
 function cityFitsConstraints(c) {
-    return currCountriesList.includes(c.country) && c.population >= minPopulation && c.population <= maxPopulation;
+    return currCountriesList.includes(c.country) && c.population >= settings.minPopulation.val && c.population <= settings.maxPopulation.val;
 }
 
 function setCurrCities(repeat=false) {
@@ -233,9 +286,9 @@ function setCurrCities(repeat=false) {
         }
     }
     d.id("num-locs").innerText = currCitiesList.length;
-    if (minBeforeRepeat > currCitiesList.length) {
-        minBeforeRepeat = currCitiesList.length;
-        d.id("locs-before-repeat").value = minBeforeRepeat.toString();
+    if (settings.minBeforeRepeat.val > currCitiesList.length) {
+        setSetting("minBeforeRepeat", currCitiesList.length);
+        d.id("locs-before-repeat").value = settings.minBeforeRepeat.val.toString();
     }
     
 
@@ -302,7 +355,7 @@ function addAllLocMarkers() {
         let markerScale = 2/3*Math.pow(2, 1/2*Math.log10(c.population/maxPop));
 
         let popup = new maplibregl.Popup({closeButton: false, closeOnClick: false, offset: 25})
-                    .setHTML("<span style='color:#000'>" + getCityText(c, false, true, showCountry, true) + "</span>");
+                    .setHTML("<span style='color:#000'>" + getCityText(c, false, true, settings.showCountry.val, true) + "</span>");
         let marker = new maplibregl.Marker({color: markerColor, scale: markerScale})
                     .setLngLat([c.longitude, c.latitude]).setPopup(popup).addTo(map);
 
@@ -335,7 +388,7 @@ for (let div of d.id("map-select-button-container").children) {
 d.id("select-countries").listen("click", (e)=>{
     addAllCountries();
     selectingCountriesForMap = true;
-    d.id("checkbox-outline").checked = true;
+    setSetting("showOutline", true);
     d.id("map-select-popup").style.display = "none";
     d.id("select-countries-panel").style.display = "block";
     d.id("show-all-locs-btn").classList.remove("button-highlighted");
@@ -435,31 +488,56 @@ updateCustomMapCountryText();
 
 d.id("custom-map-input").listen("change", updateCustomMapCountryText);
 
+function setCurrMapText() {
+    let mapVal = settings.countryMapVal.val;
+    let currMapTxt = d.id("curr-map-val");
+
+    if (currCountriesList.length === 1) {
+        currMapTxt.innerText = iso2ToCountryName[currCountriesList[0]];
+        return;
+    }
+    if (mapVal !== "custom") {
+        currMapTxt.innerText = mapVal.replace("-", ". ").toLowerCase().replace(/\b\w/g, c=>c.toUpperCase());
+        return;
+    }
+
+    if (currCountriesList.length >= 10) {
+        currMapTxt.innerText = "(" + currCountriesList.length + " countries)";
+    } else {
+        currMapTxt.innerText = currCountriesList.join(", ");
+    }
+}
+setCurrMapText();
+
 function setCurrCountries(mapVal=null) {
     let prevCountriesList = currCountriesList;
     let prevCountryMap = currCountryMap;
 
     if (mapVal) {
-        countryMapVal = mapVal;
+        setSetting("countryMapVal", mapVal);
     }
-    currCountryMap = countryMapVal;
+    if (mapVal === "custom") {
+        setSetting("customMapArr", JSON.stringify(valueToCountries["custom"]));
+    }
+    currCountryMap = settings.countryMapVal.val;
 
-    if (valueToCountries[countryMapVal] !== undefined) {
-        currCountriesList = valueToCountries[countryMapVal];
+    if (valueToCountries[settings.countryMapVal.val] !== undefined) {
+        currCountriesList = valueToCountries[settings.countryMapVal.val];
     }
 
     setCurrCities();
     locHistory = [];
-    if (currCitiesList.length == 0) {
+    if (currCitiesList.length === 0) {
         alert("No cities match the given restrictions");
         currCountriesList = prevCountriesList;
         currCountryMap = prevCountryMap;
         setCurrCities();
-    } else if (currCitiesList.length < minBeforeRepeat) {
+    } else if (currCitiesList.length < settings.minBeforeRepeat.val) {
         minBeforeRepeat = currCitiesList.length;
         d.id("locs-before-repeat").value = currCitiesList.length;
     }
 
+    setCurrMapText();
     selectRandCity();
 
     regionColorsDict = {}; // only reset colors when countries are changed
@@ -479,7 +557,7 @@ function updateMapPreferences(e) {
     let minVal = d.id("min-population").value;
     if (Number(minVal) === NaN || minVal === "") {
         alert("Invalid value for: Minimum population");
-        d.id("min-population").value = minPopulation.toString();
+        d.id("min-population").value = settings.minPopulation.val.toString();
         return;
     }
     minVal = Number(minVal);
@@ -487,7 +565,7 @@ function updateMapPreferences(e) {
     let maxVal = d.id("max-population").value;
     if (Number(maxVal) === NaN || maxVal === "") {
         alert("Invalid value for: Maximum population");
-        d.id("max-population").value = maxPopulation.toString();
+        d.id("max-population").value = settings.maxPopulation.val.toString();
         return;
     }
     maxVal = Number(maxVal);
@@ -495,17 +573,17 @@ function updateMapPreferences(e) {
     let minBeforeRepeatVal = d.id("locs-before-repeat").value;
     if (Number(minBeforeRepeatVal) === NaN || minBeforeRepeatVal === "") {
         alert("Invalid value for: Min # of cities before repeat");
-        d.id("locs-before-repeat").value = minBeforeRepeat.toString();
+        d.id("locs-before-repeat").value = settings.minBeforeRepeat.val.toString();
         return;
     }
     minBeforeRepeatVal = Number(minBeforeRepeatVal);
 
-    let prevMin = minPopulation;
-    minPopulation = minVal;
-    let prevMax = maxPopulation;
-    maxPopulation = maxVal;
-    let prevMinBeforeRepeat = minBeforeRepeat;
-    minBeforeRepeat = minBeforeRepeatVal;
+    let prevMin = settings.minPopulation.val;
+    setSetting("minPopulation", minVal);
+    let prevMax = settings.maxPopulation.val;
+    setSetting("maxPopulation", maxVal);
+    let prevMinBeforeRepeat = settings.minBeforeRepeat.val;
+    setSetting("minBeforeRepeat", minBeforeRepeatVal);
 
     setCurrCities();
 
@@ -514,15 +592,15 @@ function updateMapPreferences(e) {
     if (currCitiesList.length == 0) {
         alert("No cities match the given restrictions");
         invalid = true;
-    } else if (minBeforeRepeat > currCitiesList.length) {
-        minBeforeRepeat = currCitiesList.length;
-        d.id("locs-before-repeat").value = minBeforeRepeat.toString();
+    } else if (settings.minBeforeRepeat.val > currCitiesList.length) {
+        setSetting("minBeforeRepeat", currCitiesList.length);
+        d.id("locs-before-repeat").value = settings.minBeforeRepeat.val.toString();
     }
 
     if (invalid) {
-        minPopulation = prevMin;
-        maxPopulation = prevMax;
-        minBeforeRepeat = prevMinBeforeRepeat;
+        setSetting("minPopulation", prevMin);
+        setSetting("maxPopulation", prevMax);
+        setSetting("minBeforeRepeat", prevMinBeforeRepeat);
         d.id("min-population").value = prevMin.toString();
         d.id("max-population").value = prevMax.toString();
         d.id("locs-before-repeat").value = prevMinBeforeRepeat.toString();
@@ -534,7 +612,7 @@ function updateMapPreferences(e) {
     }
 }
 
-d.id("top-display").style.transition = "color " + persistentSettings.fadeTime.val/1000 + "s";
+d.id("top-display").style.transition = "color " + settings.fadeTime.val/1000 + "s";
 
 function selectRandCity() {
     let newCity;
@@ -545,7 +623,7 @@ function selectRandCity() {
         newCity = currCitiesList[Math.floor(Math.random()*currCitiesList.length)];
         
         validCity = true;
-        for (let i = 0; i < minBeforeRepeat-1; i++) {
+        for (let i = 0; i < settings.minBeforeRepeat.val-1; i++) {
             if (locHistory[i] === newCity) {
                 validCity = false;
             }
@@ -558,7 +636,8 @@ function selectRandCity() {
     locHistory.unshift(newCity);
     currCity = newCity;
 
-    d.id("top-display").innerHTML = getCityText(currCity, true, showDivision, showCountry, showPopulation);
+    d.id("top-display").innerHTML = 
+        getCityText(currCity, true, settings.showDivision.val, settings.showCountry.val, settings.showPopulation.val);
 }
 
 function getCityText(city, useHtml, showDivision, showCountry, showPopulation) {
@@ -710,7 +789,7 @@ async function setMapSource() {
     let countryJSONUrls = [];
 
     for (let country of currCountriesList) {
-        if (getSupportedADM1().includes(country) && d.id("checkbox-outline-subdivisions").checked) {
+        if (getSupportedADM1().includes(country) && settings.outlineDivisions.val) {
             countryJSONUrls.push(`geojson_data/${country}.json`);
         } else {
             nonADM1Countries.push(country);
@@ -747,7 +826,7 @@ async function setMapSource() {
     });
 
     console.log(combinedFeatures)
-    if (d.id("checkbox-outline").checked) {
+    if (settings.showOutline.val) {
         map.addLayer(outlineLayer);
         map.addLayer(fillLayer);
     }
@@ -773,7 +852,7 @@ async function addAllCountries() {
         "generateId": true
     });
 
-    if (d.id("checkbox-outline").checked) {
+    if (settings.showOutline.val) {
         map.addLayer(outlineLayer);
         map.addLayer(fillLayer);
     };
@@ -784,83 +863,68 @@ map.on("load", (e)=> {
     map.dragRotate.disable();
 });
 
-d.id("checkbox-outline").listen("change", addCountryOutlines);
-d.id("checkbox-outline-subdivisions").listen("change", setMapSource);
-d.id("checkbox-outline-subdivisions").disabled = !d.id("checkbox-outline").checked;
+d.id("checkbox-outline").listen("change", (e) => {
+    setSettingFromEvent(e);
+    addCountryOutlines();
+    d.id("checkbox-outline-subdivisions").disabled = !e.currentTarget.checked;
+});
+
+d.id("checkbox-outline-subdivisions").listen("change", (e) => {
+    setSettingFromEvent(e);
+    setMapSource();
+});
 
 function addCountryOutlines() {
     if (!map.isStyleLoaded() || !map.getSource("country-polygons")) return;
-    if (d.id("checkbox-outline").checked) {
+    if (settings.showOutline.val) {
         map.addLayer(outlineLayer);
     } else {
         if (map.getLayer("polygons-stroke")) {
             map.removeLayer("polygons-stroke");
         }
     }
-    d.id("checkbox-outline-subdivisions").disabled = !d.id("checkbox-outline").checked;
 }
 
-d.id("checkbox-division-name").listen("change", (e)=>{
-    showDivision = e.currentTarget.checked;
-})
-d.id("checkbox-country-name").listen("change", (e)=>{
-    showCountry = e.currentTarget.checked;
-})
-d.id("checkbox-city-pop").listen("change", (e)=>{
-    showPopulation = e.currentTarget.checked;
-})
+for (let id of ["checkbox-division-name", "checkbox-country-name", "checkbox-city-pop"]) {
+    d.id(id).listen("change", (e)=>{
+        setSettingFromEvent(e);
+    })
+}
 
 d.id("checkbox-blue-marble-map").listen("change", (e)=>{
     useBlueMarbleGlobe = e.currentTarget.checked;
     map.getSource("satellite-tiles").setTiles([getTileSource().src]);
 })
 d.id("checkbox-maptap-subdivisions").listen("change", (e)=>{
-    maptapSubdivisions = e.currentTarget.checked;
-    if (d.id("checkbox-outline").checked && d.id("checkbox-outline-subdivisions").checked) {
+    setSettingFromEvent(e);
+    if (settings.showOutline.val && settings.outlineDivisions.val) {
         setMapSource();
     }
 })
 
-function updateScoringDiffSlider() {
-    let val = d.id(persistentSettings["scoringDiff"].id).value;
-    setSetting("scoringDiff", val);
 
-    d.id("scoring-diff-value").innerText = val;
-}
-updateScoringDiffSlider();
-d.id("scoring-diff-slider").listen("input", updateScoringDiffSlider);
-
-function updateLocFadeSlider() {
-    let val = d.id(persistentSettings["fadeTime"].id).value;
-    setSetting("fadeTime", val);
-
-    d.id("location-fade-value").innerText = ""+parseInt(val)/1000;
-}
-updateLocFadeSlider();
-d.id("location-fade-slider").listen("input", updateLocFadeSlider);
-
-function updateBrightnessSlider() {
-    let val = d.id(persistentSettings["globeBrightness"].id).value;
-    setSetting("globeBrightness", val);  
-
-    d.id("globe-brightness-value").innerText = val;
-    d.id("map").style.filter = `brightness(${parseFloat(val)*100}%)`;
-}
-updateBrightnessSlider();
-d.id("globe-brightness-slider").listen("input", updateBrightnessSlider);
-
-
-d.id("checkbox-auto-remove").listen("change", ()=>{
-    let val = d.id(persistentSettings["autoRemove"].id).checked;
-    setSetting("autoRemove", val);
+d.id("scoring-diff-slider").listen("input", (e)=>{
+    setSettingFromEvent(e);
 });
-d.id("auto-remove-dist").listen("input", ()=>{
-    let val = d.id(persistentSettings["autoRemoveDist"].id).value;
-    setSetting("autoRemoveDist", val);
+
+d.id("location-fade-slider").listen("input", (e)=>{
+    setSettingFromEvent(e);
 });
-d.id("auto-remove-num-times").listen("input", ()=>{
-    let val = d.id(persistentSettings["autoRemoveTimes"].id).value;
-    setSetting("autoRemoveTimes", val);
+
+d.id("map").style.filter = `brightness(${settings.globeBrightness.val*100}%)`;
+d.id("globe-brightness-slider").listen("input", (e)=>{
+    setSettingFromEvent(e);
+    d.id("map").style.filter = `brightness(${settings.globeBrightness.val*100}%)`;
+});
+
+d.id("checkbox-auto-remove").listen("change", (e)=>{
+    setSettingFromEvent(e);
+});
+d.id("auto-remove-dist").listen("input", (e)=>{
+    setSettingFromEvent(e);
+});
+d.id("auto-remove-num-times").listen("input", (e)=>{
+    setSettingFromEvent(e);
 })
 
 let clickMarker;
@@ -910,7 +974,7 @@ map.on("click", (e)=> {
 
     let distPopup = d.createElement("div");
     distPopup.classList.add("dist-popup");
-    distPopup.style.animation = "move-popup-text " + 1.5*persistentSettings.fadeTime.val/1000 + "s";
+    distPopup.style.animation = "move-popup-text " + 1.5*settings.fadeTime.val/1000 + "s";
     distPopup.innerHTML = Math.round(score) + "/1000" + "<br>" + distFromClick.toFixed(2) + " km";
     distPopup.style.width = 200 + "px";
     distPopup.style.left = mouseX - 100 + "px";
@@ -933,15 +997,15 @@ map.on("click", (e)=> {
     }
 
     let key = allCities.indexOf(clickedCity);
-    if (!persistentSettings.autoRemove.val) return;
-    if (distFromClick < persistentSettings.autoRemoveDist.val) {
+    if (!settings.autoRemove.val) return;
+    if (distFromClick < settings.autoRemoveDist.val) {
         if (Object.hasOwn(numTimesGuessedCorrect, key)) {
             numTimesGuessedCorrect[key]++;
         } else {
             numTimesGuessedCorrect[key] = 1;
         }
 
-        let numCorrectToRemove = persistentSettings.autoRemoveTimes.val;
+        let numCorrectToRemove = settings.autoRemoveTimes.val;
         if (numTimesGuessedCorrect[key] >= numCorrectToRemove) {
             removeLatestCity();
         }
@@ -993,7 +1057,7 @@ function addHistoryElem(scoreText, scoreColor, addClickMarker) {
 function setMarkerInterval(addClickMarker) {
     if (autoStart) {
         opacityInterval = setInterval(() => {
-            markerOpacity = Math.max(0, markerOpacity-1/(persistentSettings.fadeTime.val/20));
+            markerOpacity = Math.max(0, markerOpacity-1/(settings.fadeTime.val/20));
             if (addClickMarker) {
                 clickMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
             }
@@ -1012,7 +1076,7 @@ function setMarkerInterval(addClickMarker) {
             locMarker.setOpacity(0, 0);
 
             inTransition = false;
-        }, persistentSettings.fadeTime.val);
+        }, settings.fadeTime.val);
     }
 }
 

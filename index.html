@@ -22,13 +22,21 @@
     </div>
     <div id="left-hide-btn">&lt;</div>
     <div id="left-panel">
-        <div style="margin-bottom: 5px">
+        <div style="display: none">
+            <div style="text-align: center; margin-left: 10px; margin-right: 10px">
+                Current map: <span id="curr-map-val"></span>
+            </div>
+            <div style="height: 8px;"></div>
+        </div>
+        
+        <div>
             <button id="select-map-btn" style="font-size: 16px">Select map</button>
         </div>
+        <div style="height: 5px"></div>
         <div>
             <button id="show-all-locs-btn" style="font-size: 16px">Show all locations</button>
         </div>
-        <div style="margin-bottom: 20px"></div>
+        <div style="height: 20px"></div>
         <!-- <div style="margin-bottom: 10px">
             <div>Location mode:</div>
             <input type="radio" name="location-mode" id="cities-mode" value="cities-mode" checked>
@@ -146,7 +154,7 @@
         </div>
         <div style="display: flex; flex-direction: column; width: 250px">
             <label for="location-fade-slider">
-                Location fade time: <span id="location-fade-value"></span>s
+                Location fade time: <span id="location-fade-value"></span>ms
             </label>
             <input type="range" id="location-fade-slider" min="0" max="2000" value="1000" step="50">
         </div>
