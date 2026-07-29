@@ -10,7 +10,6 @@ EventTarget.prototype.listen = function(t, f) {
 let mouseX = 0;
 let mouseY = 0;
 let autoStart = true;
-let fadeTime = parseInt(d.id("location-fade-slider").value);
 let allCities = [];
 let currCitiesList = [];
 let currCity;
@@ -41,10 +40,42 @@ let useBlueMarbleGlobe = d.id("checkbox-blue-marble-map").checked;
 let maptapSubdivisions = d.id("checkbox-maptap-subdivisions").checked;
 let numTimesGuessedCorrect = {};
 
+let convertToType = {
+    "n": x => Number(x),
+    "b": x => typeof x === "string" ? (x === "true") : Boolean(x),
+    "s": x => String(x),
+    "o": x => JSON.parse(x),
+};
+
+let persistentSettings = {
+    "globeBrightness": {"val": 1, "id": "globe-brightness-slider", "type": "n"},
+    "scoringDiff": {"val": 1, "id": "scoring-diff-slider", "type": "n"},
+    "fadeTime": {"val": 1000, "id": "location-fade-slider", "type": "n"},
+    "autoRemove": {"val": false, "id": "checkbox-auto-remove", "type": "b"},
+    "autoRemoveDist": {"val": 40, "id": "auto-remove-dist", "type": "n"},
+    "autoRemoveTimes": {"val": 2, "id": "auto-remove-num-times", "type": "n"}
+}
+
+for (let k in persistentSettings) {
+    let item = localStorage.getItem(k);
+    if (item !== null) {
+        persistentSettings[k].val = item;
+    } else {
+        localStorage.setItem(k, persistentSettings[k].val);
+    }
+    d.id(persistentSettings[k].id).value = persistentSettings[k].val;
+}
+
+function setSetting(k, v) {
+    localStorage.setItem(k, v);
+    persistentSettings[k].val = convertToType[persistentSettings[k].type](v);
+}
+
+
 let iso2ToCountryName = {"AF":"Afghanistan","AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CG":"Rep. of the Congo","CD":"Dem. Rep. of the Congo","CK":"Cook Islands","CR":"Costa Rica","CI":"Cote D'Ivoire","HR":"Croatia","CU":"Cuba","CY":"Cyprus","CZ":"Czech Republic","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","ET":"Ethiopia","FK":"Falkland Islands (Malvinas)","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"The Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KP":"North Korea","KR":"South Korea","XK":"Kosovo","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MK":"North Macedonia","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","AN":"Netherlands Antilles","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","RE":"Reunion","RO":"Romania","RU":"Russia","RW":"Rwanda","BL":"Saint Barthelemy","SH":"Saint Helena","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SZ":"Eswatini","SE":"Sweden","SS":"South Sudan","CH":"Switzerland","SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"United Arab Emirates","GB":"United Kingdom","US":"United States","UM":"United States Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"}
 
 let supportedADM1 = ['AD', 'AE', 'AF', 'AG', 'AL', 'AM', 'AO', 'AR', 'AT', 'AU', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BN', 'BO', 'BR', 'BS', 'BT', 'BW', 'BY', 'BZ', 'CA', 'CD', 'CF', 'CG', 'CH', 'CI', 'CL', 'CM', 'CN', 'CO', 'CR', 'CU', 'CV', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FM', 'FR', 'GA', 'GB', 'GD', 'GE', 'GH', 'GL', 'GM', 'GN', 'GQ', 'GR', 'GT', 'GW', 'GY', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IN', 'IQ', 'IR', 'IS', 'IT', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MG', 'MH', 'MK', 'ML', 'MM', 'MN', 'MR', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NE', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PG', 'PH', 'PK', 'PL', 'PS', 'PT', 'PW', 'PY', 'QA', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SI', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SY', 'SZ', 'TD', 'TG', 'TH', 'TJ', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'US', 'UY', 'UZ', 'VC', 'VE', 'VN', 'VU', 'WS', 'XK', 'YE', 'ZA', 'ZM', 'ZW'];
-let maptapADM1 = ["US", "CN", "IN", "BR", "RU", "CA", "AU", "AR"]; // Probably coming: ID
+let maptapADM1 = ["US", "CN", "IN", "BR", "RU", "CA", "AU"]; // Probably coming: ID
 
 let valueToCountries = {
     "usa": ["US"], "china": ["CN"], "india": ["IN"], "brazil": ["BR"], "indonesia": ["ID"], "russia": ["RU"], "canada": ["CA"],
@@ -503,7 +534,7 @@ function updateMapPreferences(e) {
     }
 }
 
-d.id("top-display").style.transition = "color " + fadeTime/1000 + "s";
+d.id("top-display").style.transition = "color " + persistentSettings.fadeTime.val/1000 + "s";
 
 function selectRandCity() {
     let newCity;
@@ -791,38 +822,46 @@ d.id("checkbox-maptap-subdivisions").listen("change", (e)=>{
 })
 
 function updateScoringDiffSlider() {
-    d.id("scoring-diff-value").innerText = d.id("scoring-diff-slider").value;
+    let val = d.id(persistentSettings["scoringDiff"].id).value;
+    setSetting("scoringDiff", val);
+
+    d.id("scoring-diff-value").innerText = val;
 }
 updateScoringDiffSlider();
 d.id("scoring-diff-slider").listen("input", updateScoringDiffSlider);
 
 function updateLocFadeSlider() {
-    let v = parseInt(d.id("location-fade-slider").value);
-    d.id("location-fade-value").innerText = ""+v/1000;
-    fadeTime = v;
+    let val = d.id(persistentSettings["fadeTime"].id).value;
+    setSetting("fadeTime", val);
+
+    d.id("location-fade-value").innerText = ""+parseInt(val)/1000;
 }
 updateLocFadeSlider();
 d.id("location-fade-slider").listen("input", updateLocFadeSlider);
 
 function updateBrightnessSlider() {
-    let v = parseFloat(d.id("globe-brightness-slider").value);
-    d.id("globe-brightness-value").innerText = v;
-    d.id("map").style.filter = `brightness(${v*100}%)`;
+    let val = d.id(persistentSettings["globeBrightness"].id).value;
+    setSetting("globeBrightness", val);  
+
+    d.id("globe-brightness-value").innerText = val;
+    d.id("map").style.filter = `brightness(${parseFloat(val)*100}%)`;
 }
 updateBrightnessSlider();
 d.id("globe-brightness-slider").listen("input", updateBrightnessSlider);
 
-//d.id("auto-remove-dist").disabled = !d.id("checkbox-auto-remove").checked;
-let autoRemove = d.id("checkbox-auto-remove").checked;
-let autoRemoveDist = parseInt(d.id("auto-remove-dist").value);
 
 d.id("checkbox-auto-remove").listen("change", ()=>{
-    autoRemove = d.id("checkbox-auto-remove").checked;
-    //d.id("auto-remove-dist").disabled = !autoRemove;
+    let val = d.id(persistentSettings["autoRemove"].id).checked;
+    setSetting("autoRemove", val);
 });
 d.id("auto-remove-dist").listen("input", ()=>{
-    autoRemoveDist = parseInt(d.id("auto-remove-dist").value);
+    let val = d.id(persistentSettings["autoRemoveDist"].id).value;
+    setSetting("autoRemoveDist", val);
 });
+d.id("auto-remove-num-times").listen("input", ()=>{
+    let val = d.id(persistentSettings["autoRemoveTimes"].id).value;
+    setSetting("autoRemoveTimes", val);
+})
 
 let clickMarker;
 let locMarker;
@@ -871,7 +910,7 @@ map.on("click", (e)=> {
 
     let distPopup = d.createElement("div");
     distPopup.classList.add("dist-popup");
-    distPopup.style.animation = "move-popup-text " + 1.5*fadeTime/1000 + "s";
+    distPopup.style.animation = "move-popup-text " + 1.5*persistentSettings.fadeTime.val/1000 + "s";
     distPopup.innerHTML = Math.round(score) + "/1000" + "<br>" + distFromClick.toFixed(2) + " km";
     distPopup.style.width = 200 + "px";
     distPopup.style.left = mouseX - 100 + "px";
@@ -894,15 +933,15 @@ map.on("click", (e)=> {
     }
 
     let key = allCities.indexOf(clickedCity);
-    if (!autoRemove) return;
-    if (distFromClick < autoRemoveDist) {
+    if (!persistentSettings.autoRemove.val) return;
+    if (distFromClick < persistentSettings.autoRemoveDist.val) {
         if (Object.hasOwn(numTimesGuessedCorrect, key)) {
             numTimesGuessedCorrect[key]++;
         } else {
             numTimesGuessedCorrect[key] = 1;
         }
 
-        let numCorrectToRemove = parseInt(d.id("auto-remove-num-times").value);
+        let numCorrectToRemove = persistentSettings.autoRemoveTimes.val;
         if (numTimesGuessedCorrect[key] >= numCorrectToRemove) {
             removeLatestCity();
         }
@@ -954,7 +993,7 @@ function addHistoryElem(scoreText, scoreColor, addClickMarker) {
 function setMarkerInterval(addClickMarker) {
     if (autoStart) {
         opacityInterval = setInterval(() => {
-            markerOpacity = Math.max(0, markerOpacity-1/(fadeTime/20));
+            markerOpacity = Math.max(0, markerOpacity-1/(persistentSettings.fadeTime.val/20));
             if (addClickMarker) {
                 clickMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
             }
@@ -973,7 +1012,7 @@ function setMarkerInterval(addClickMarker) {
             locMarker.setOpacity(0, 0);
 
             inTransition = false;
-        }, fadeTime);
+        }, persistentSettings.fadeTime.val);
     }
 }
 
