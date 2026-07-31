@@ -11,6 +11,7 @@ let mouseX = 0;
 let mouseY = 0;
 let autoStart = true;
 let allCities = [];
+let allCitiesMaptap = [];
 let currCitiesList = [];
 let currCity;
 let inTransition = false;
@@ -59,7 +60,8 @@ let settings = {
     "autoRemoveTimes": {"val": 2, "id": "auto-remove-num-times", "type": "n"},
     "showDivision": {"val": true, "id": "checkbox-division-name", "type": "b"},
     "showCountry": {"val": false, "id": "checkbox-country-name", "type": "b"},
-    "showPopulation": {"val": false, "id": "checkbox-city-pop", "type": "b"},
+    "showPopulation": {"val": true, "id": "checkbox-city-pop", "type": "b"},
+    "showDifficulty": {"val": true, "id": "checkbox-city-diff", "type": "b"},
     "showOutline": {"val": true, "id": "checkbox-outline", "type": "b"},
     "outlineDivisions": {"val": true, "id": "checkbox-outline-subdivisions", "type": "b"},
     "maptapSubdivisions": {"val": false, "id": "checkbox-maptap-subdivisions", "type": "b"},
@@ -67,7 +69,12 @@ let settings = {
     "maxPopulation": {"val": 50000000, "id": "max-population", "type": "n"},
     "minBeforeRepeat": {"val": 10, "id": "locs-before-repeat", "type": "n"},
     "customMapArr": {"val": [], "id": null, "type": "o"},
-    "countryMapVal": {"val": "china", "id": null, "type": "s"}
+    "countryMapVal": {"val": "china", "id": null, "type": "s"},
+    "useMaptapDatabase": {"val": false, "id": "checkbox-maptap-database", "type": "b"},
+    "maxDiff": {"val": 6, "id": "max-difficulty", "type": "n"},
+    "mapCenterLat": {"val": 0, "id": null, "type": "n"},
+    "mapCenterLng": {"val": 0, "id": null, "type": "n"},
+    "maptapCitiesOnly": {"val": true, "id": "checkbox-cities-only", "type": "b"}
 }
 
 for (let k in settings) {
@@ -117,7 +124,7 @@ function setSettingFromEvent(e) {
     }
 }
 
-let iso2ToCountryName = {"AF":"Afghanistan","AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CG":"Rep. of the Congo","CD":"Dem. Rep. of the Congo","CK":"Cook Islands","CR":"Costa Rica","CI":"Cote D'Ivoire","HR":"Croatia","CU":"Cuba","CY":"Cyprus","CZ":"Czech Republic","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","ET":"Ethiopia","FK":"Falkland Islands (Malvinas)","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"The Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KP":"North Korea","KR":"South Korea","XK":"Kosovo","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MK":"North Macedonia","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","AN":"Netherlands Antilles","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","RE":"Reunion","RO":"Romania","RU":"Russia","RW":"Rwanda","BL":"Saint Barthelemy","SH":"Saint Helena","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SZ":"Eswatini","SE":"Sweden","SS":"South Sudan","CH":"Switzerland","SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"United Arab Emirates","GB":"United Kingdom","US":"United States","UM":"United States Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"}
+let iso2ToCountryName = {"AF":"Afghanistan","AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CG":"Rep. of the Congo","CD":"Dem. Rep. of the Congo","CK":"Cook Islands","CR":"Costa Rica","CI":"Côte d'Ivoire","HR":"Croatia","CU":"Cuba","CY":"Cyprus","CZ":"Czech Republic","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","ET":"Ethiopia","FK":"Falkland Islands (Malvinas)","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"The Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KP":"North Korea","KR":"South Korea","XK":"Kosovo","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MK":"North Macedonia","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","AN":"Netherlands Antilles","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","RE":"Reunion","RO":"Romania","RU":"Russia","RW":"Rwanda","BL":"Saint Barthelemy","SH":"Saint Helena","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SZ":"Eswatini","SE":"Sweden","SS":"South Sudan","CH":"Switzerland","SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"United Arab Emirates","GB":"United Kingdom","US":"United States","UM":"United States Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"}
 
 let supportedADM1 = ['AD', 'AE', 'AF', 'AG', 'AL', 'AM', 'AO', 'AR', 'AT', 'AU', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BN', 'BO', 'BR', 'BS', 'BT', 'BW', 'BY', 'BZ', 'CA', 'CD', 'CF', 'CG', 'CH', 'CI', 'CL', 'CM', 'CN', 'CO', 'CR', 'CU', 'CV', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FM', 'FR', 'GA', 'GB', 'GD', 'GE', 'GH', 'GL', 'GM', 'GN', 'GQ', 'GR', 'GT', 'GW', 'GY', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IN', 'IQ', 'IR', 'IS', 'IT', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MG', 'MH', 'MK', 'ML', 'MM', 'MN', 'MR', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NE', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PG', 'PH', 'PK', 'PL', 'PS', 'PT', 'PW', 'PY', 'QA', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SI', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SY', 'SZ', 'TD', 'TG', 'TH', 'TJ', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'US', 'UY', 'UZ', 'VC', 'VE', 'VN', 'VU', 'WS', 'XK', 'YE', 'ZA', 'ZM', 'ZW'];
 let maptapADM1 = ["US", "CN", "IN", "BR", "RU", "CA", "AU"];
@@ -182,6 +189,34 @@ d.id("show-all-locs-btn").listen("click", (e)=>{
         d.id("show-all-locs-btn").classList.remove("button-highlighted");
     }
 });
+
+function changeSettingVis() {
+    if (d.id("checkbox-maptap-database").checked) {
+        for (let el of d.getElementsByClassName("regular-db-settings")) {
+            el.style.display = "none";
+        }
+        for (let el of d.getElementsByClassName("maptap-db-settings")) {
+            el.style.display = "flex";
+        }
+    } else {
+        for (let el of d.getElementsByClassName("regular-db-settings")) {
+            el.style.display = "flex";
+        }
+        for (let el of d.getElementsByClassName("maptap-db-settings")) {
+            el.style.display = "none";
+        }
+    }
+}
+changeSettingVis();
+
+d.id("checkbox-maptap-database").listen("click", (e)=>{
+    setSettingFromEvent(e);
+    changeSettingVis();
+    setCurrCities();
+    if (allLocMarkers.length > 0) {
+        addAllLocMarkers();
+    }
+})
 
 d.id("map-select-exit").listen("click", (e)=>{
     d.id("map-select-popup").style.display = "none";
@@ -256,16 +291,35 @@ async function loadAllCities() {
             population: c[2],
             latitude: c[3],
             longitude: c[4],
-            region_code: c[5]
+            region_code: c[5],
+            maptap_loc: false
         }
 
         allCities.push(o);
 
         if (Object.hasOwn(adm1CodeDict, o.country) && Object.hasOwn(adm1CodeDict[o.country], o.region_code)) {
             o.region = adm1CodeDict[o.country][o.region_code];
-        } /*else {
-            console.log("Subdivision name missing: " + o.name + ", " + o.country + "-" + o.region_code);
-        }*/
+        }
+        delete o.region_code;
+    }
+
+    let allCitiesMaptapResp = await fetch("all_locs_maptap.json");
+    let allCitiesMaptapData = await allCitiesMaptapResp.json();
+
+    for (let c of allCitiesMaptapData) {
+        let o = {
+            name: c[0],
+            country: c[1],
+            latitude: c[2],
+            longitude: c[3],
+            region: c[4],
+            type: c[5],
+            difficulty: c[6],
+            population: c[7],
+            maptap_loc: true
+        }
+
+        allCitiesMaptap.push(o);
     }
 
     setCurrCountries();
@@ -274,13 +328,23 @@ async function loadAllCities() {
 }
 loadAllCities();
 
+function isCity(maptapLoc) {
+    return ["city", "capital", "state_capital"].includes(maptapLoc.type)
+}
+
 function cityFitsConstraints(c) {
-    return currCountriesList.includes(c.country) && c.population >= settings.minPopulation.val && c.population <= settings.maxPopulation.val;
+    if (c.maptap_loc) {
+        return currCountriesList.includes(c.country) && c.difficulty <= settings.maxDiff.val && !(settings.maptapCitiesOnly.val && !isCity(c));
+    } else {
+        return currCountriesList.includes(c.country) && c.population >= settings.minPopulation.val && c.population <= settings.maxPopulation.val;
+    }
 }
 
 function setCurrCities(repeat=false) {
+    let list = settings.useMaptapDatabase.val ? allCitiesMaptap : allCities;
+
     currCitiesList = [];
-    for (let c of allCities) {
+    for (let c of list) {
         if (cityFitsConstraints(c) && !removedCities.includes(c) && !removedSatellites.includes(c)) {
             currCitiesList.push(c);
         }
@@ -308,6 +372,10 @@ function setCurrCities(repeat=false) {
     }*/
 }
 
+let maptapDiffColors = [
+    "#00cc66", "#22cc00", "#88cc00", "#cccc00", "#cc7700", "#cc4400", "#cc0077", "#cc00cc"
+];
+
 function addAllLocMarkers() {
     if (currCitiesList.length === 0) return;
 
@@ -332,30 +400,47 @@ function addAllLocMarkers() {
 
 
     for (let c of markerCities) {
-        if (regionColorsDict[c.region_code] === undefined) {
-            let gen = true;
-            let color;
+        let markerColor;
 
-            while (gen) {
-                color = "#" + Math.floor(Math.random()*(2**23-1)).toString(16).padStart(6,"0");
-                if (Math.max(parseInt(color[1], 16), parseInt(color[3], 16), parseInt(color[5], 16)) >= 8) {
-                    gen = false;
+        if (!settings.useMaptapDatabase.val) {
+            if (regionColorsDict[c.region] === undefined) {
+                let numGens = 0;
+                let gen = true;
+                let color;
+
+                while (gen && numGens < 100) {
+                    color = "#" + Math.floor(Math.random()*(2**24-1)).toString(16).padStart(6,"0");
+                    let brightness = Math.max(parseInt(color[1]+color[2], 16), parseInt(color[3]+color[4], 16), parseInt(color[5]+color[6], 16));
+                    if (brightness >= 8*16 && brightness <= 14*16) {
+                        gen = false;
+                    }
+                    numGens++;
                 }
+                regionColorsDict[c.region] = color;
             }
-            regionColorsDict[c.region_code] = color;
+
+            markerColor = regionColorsDict[c.region];
+        } else {
+            markerColor = maptapDiffColors[c.difficulty-1];
         }
 
-        let markerColor = regionColorsDict[c.region_code];
+
         if (removedCities.includes(c)) {
             markerColor = "#aaa";
         }
         if (removedSatellites.includes(c)) {
             markerColor = "#888";
         }
-        let markerScale = 2/3*Math.pow(2, 1/2*Math.log10(c.population/maxPop));
+        let markerScale;
+        
+        if (c.maptap_loc) {
+            markerScale = (c.population && isCity(c)) ? 0.55*Math.pow(2, 0.36*Math.log10(c.population/maxPop)) : 0.36;
+        } else {
+            markerScale = 0.67*Math.pow(2, 0.5*Math.log10(c.population/maxPop));
+        }
 
         let popup = new maplibregl.Popup({closeButton: false, closeOnClick: false, offset: 25})
-                    .setHTML("<span style='color:#000'>" + getCityText(c, false, true, settings.showCountry.val, true) + "</span>");
+                    .setHTML("<span style='color:#000'>" + getCityText(c, false, true, settings.showCountry.val, true, true) + "</span>");
         let marker = new maplibregl.Marker({color: markerColor, scale: markerScale})
                     .setLngLat([c.longitude, c.latitude]).setPopup(popup).addTo(map);
 
@@ -501,10 +586,11 @@ function setCurrMapText() {
         return;
     }
 
-    if (currCountriesList.length >= 10) {
-        currMapTxt.innerText = "(" + currCountriesList.length + " countries)";
+    let sortedCountries = currCountriesList.toSorted();
+    if (sortedCountries.length > 4) {
+        currMapTxt.innerText = sortedCountries.slice(0, 3).join(", ") + ", (+" + (sortedCountries.length-3) + ")";
     } else {
-        currMapTxt.innerText = currCountriesList.join(", ");
+        currMapTxt.innerText = sortedCountries.join(", ");
     }
 }
 setCurrMapText();
@@ -546,44 +632,34 @@ function setCurrCountries(mapVal=null) {
     }
 }
 
-d.id("min-population").listen("change", updateMapPreferences);
-d.id("max-population").listen("change", updateMapPreferences);
-d.id("locs-before-repeat").listen("change", updateMapPreferences);
+let mapPrefs = [
+    {id: "min-population", settingId: "minPopulation", name: "Minimum population"},
+    {id: "max-population", settingId: "maxPopulation", name: "Maximum population"},
+    {id: "locs-before-repeat", settingId: "minBeforeRepeat", name: "Min # of cities before repeat"},
+    {id: "max-difficulty", settingId: "maxDiff", name: "Max. location difficulty"}
+]
 
+for (let pref of mapPrefs) {
+    d.id(pref.id).listen("change", updateMapPreferences);
+}
 
 function updateMapPreferences(e) {
     if (!citiesLoaded) return;
 
-    let minVal = d.id("min-population").value;
-    if (Number(minVal) === NaN || minVal === "") {
-        alert("Invalid value for: Minimum population");
-        d.id("min-population").value = settings.minPopulation.val.toString();
-        return;
+    for (let pref of mapPrefs) {
+        let val = d.id(pref.id).value;
+        if (Number(val) === NaN || val === "") {
+            alert(`Invalid value for: ${pref.name}`);
+            d.id(pref.id).value = settings[pref.settingId].val.toString();
+            return;
+        }
+        pref.val = Number(val);
     }
-    minVal = Number(minVal);
 
-    let maxVal = d.id("max-population").value;
-    if (Number(maxVal) === NaN || maxVal === "") {
-        alert("Invalid value for: Maximum population");
-        d.id("max-population").value = settings.maxPopulation.val.toString();
-        return;
+    for (let pref of mapPrefs) {
+        pref.prev = settings[pref.settingId].val;
+        setSetting(pref.settingId, pref.val);
     }
-    maxVal = Number(maxVal);
-
-    let minBeforeRepeatVal = d.id("locs-before-repeat").value;
-    if (Number(minBeforeRepeatVal) === NaN || minBeforeRepeatVal === "") {
-        alert("Invalid value for: Min # of cities before repeat");
-        d.id("locs-before-repeat").value = settings.minBeforeRepeat.val.toString();
-        return;
-    }
-    minBeforeRepeatVal = Number(minBeforeRepeatVal);
-
-    let prevMin = settings.minPopulation.val;
-    setSetting("minPopulation", minVal);
-    let prevMax = settings.maxPopulation.val;
-    setSetting("maxPopulation", maxVal);
-    let prevMinBeforeRepeat = settings.minBeforeRepeat.val;
-    setSetting("minBeforeRepeat", minBeforeRepeatVal);
 
     setCurrCities();
 
@@ -598,12 +674,10 @@ function updateMapPreferences(e) {
     }
 
     if (invalid) {
-        setSetting("minPopulation", prevMin);
-        setSetting("maxPopulation", prevMax);
-        setSetting("minBeforeRepeat", prevMinBeforeRepeat);
-        d.id("min-population").value = prevMin.toString();
-        d.id("max-population").value = prevMax.toString();
-        d.id("locs-before-repeat").value = prevMinBeforeRepeat.toString();
+        for (let pref of mapPrefs) {
+            setSetting(pref.settingId, pref.prev);
+            d.id(pref.id).value = pref.prev.toString();
+        }
         setCurrCities();
     }
     
@@ -637,10 +711,10 @@ function selectRandCity() {
     currCity = newCity;
 
     d.id("top-display").innerHTML = 
-        getCityText(currCity, true, settings.showDivision.val, settings.showCountry.val, settings.showPopulation.val);
+        getCityText(currCity, true, settings.showDivision.val, settings.showCountry.val, settings.showPopulation.val, settings.showDifficulty.val);
 }
 
-function getCityText(city, useHtml, showDivision, showCountry, showPopulation) {
+function getCityText(city, useHtml, showDivision, showCountry, showPopulation, showDifficulty) {
     let displayText = city.name;
 
     if (showDivision && city.region && getSupportedADM1().includes(city.country)) {
@@ -661,6 +735,17 @@ function getCityText(city, useHtml, showDivision, showCountry, showPopulation) {
         } else {
             displayText += "(" + Math.floor(city.population/1e3) + "K)";
         }
+        if (useHtml) {
+            displayText += "</span>";
+        }
+    }
+    if (showDifficulty && city.difficulty) {
+        if (useHtml) {
+            displayText += "&nbsp;<span style='font-size:13px;'>";
+        } else {
+            displayText += " ";
+        }
+        displayText += "(L" + city.difficulty + ")";
         if (useHtml) {
             displayText += "</span>";
         }
@@ -686,7 +771,7 @@ let style = {
     projection: { type: "globe" }
 }
 
-const map = new maplibregl.Map({
+let map = new maplibregl.Map({
     container: "map",
     style: style,
     zoom: 2,
@@ -694,6 +779,7 @@ const map = new maplibregl.Map({
     maxPitch: 85,
     canvasContextAttributes: { antialias: true },
 });
+map.setCenter([settings.mapCenterLng.val, settings.mapCenterLat.val]);
 
 map.on("error", (e)=>{
     if (e && e.error && [400].includes(e.error.status)) return;
@@ -768,6 +854,15 @@ map.on("click", "polygons-fill", (e) => {
     }
     d.id("selected-countries").innerText = selectedStr;
 });
+
+setInterval(() => {
+    if (map.getCenter().lat != settings.mapCenterLat.val) {
+        setSetting("mapCenterLat", map.getCenter().lat);
+    }
+    if (map.getCenter().lng != settings.mapCenterLng.val) {
+        setSetting("mapCenterLng", map.getCenter().lng);
+    }
+}, 2000);
 
 function getSupportedADM1() {
     return (maptapSubdivisions ? maptapADM1 : supportedADM1);
@@ -885,11 +980,25 @@ function addCountryOutlines() {
     }
 }
 
-for (let id of ["checkbox-division-name", "checkbox-country-name", "checkbox-city-pop"]) {
+for (let id of ["checkbox-division-name", "checkbox-country-name", "checkbox-city-pop", "checkbox-city-diff", "checkbox-auto-remove"]) {
     d.id(id).listen("change", (e)=>{
         setSettingFromEvent(e);
     })
 }
+
+for (let id of ["scoring-diff-slider", "location-fade-slider", "auto-remove-dist", "auto-remove-num-times"]) {
+    d.id(id).listen("input", (e)=>{
+        setSettingFromEvent(e);
+    })
+}
+
+d.id("checkbox-cities-only").listen("change", (e)=>{
+    setSettingFromEvent(e);
+    setCurrCities();
+    if (allLocMarkers.length > 0) {
+        addAllLocMarkers();
+    }
+})
 
 d.id("checkbox-blue-marble-map").listen("change", (e)=>{
     useBlueMarbleGlobe = e.currentTarget.checked;
@@ -902,30 +1011,12 @@ d.id("checkbox-maptap-subdivisions").listen("change", (e)=>{
     }
 })
 
-
-d.id("scoring-diff-slider").listen("input", (e)=>{
-    setSettingFromEvent(e);
-});
-
-d.id("location-fade-slider").listen("input", (e)=>{
-    setSettingFromEvent(e);
-});
-
 d.id("map").style.filter = `brightness(${settings.globeBrightness.val*100}%)`;
 d.id("globe-brightness-slider").listen("input", (e)=>{
     setSettingFromEvent(e);
     d.id("map").style.filter = `brightness(${settings.globeBrightness.val*100}%)`;
 });
 
-d.id("checkbox-auto-remove").listen("change", (e)=>{
-    setSettingFromEvent(e);
-});
-d.id("auto-remove-dist").listen("input", (e)=>{
-    setSettingFromEvent(e);
-});
-d.id("auto-remove-num-times").listen("input", (e)=>{
-    setSettingFromEvent(e);
-})
 
 let clickMarker;
 let locMarker;
@@ -939,13 +1030,19 @@ for (let n of soundNames) {
 }
 
 map.on("click", (e)=> {
-    if (!citiesLoaded) return;
-    if (inTransition) return;
-    if (selectingCountriesForMap) return;
+    if (!citiesLoaded) {//console.log("Click failed: cities not loaded");
+        return;}
+    if (inTransition) {//console.log("Click failed: in transition");
+        return;}
+    if (selectingCountriesForMap) {//console.log("Click failed: selecting countries");
+        return;}
 
     let pxl = map.project([e.lngLat.lng, e.lngLat.lat]);
-    if (Math.pow(pxl.x - mouseX, 2) + Math.pow(pxl.y - mouseY, 2) > 4) return;
+    let cdist = (pxl.x - mouseX)**2 + (pxl.y - mouseY)**2;
+    if (cdist > 4) {//console.log(`Click failed: off map - pxl: ${pxl.x},${pxl.y} mouse: ${mouseX},${mouseY}`);
+        return;}
     
+    //console.log("Clicked");
     inTransition = true;
     if (clickMarker) {clickMarker.remove()}
     if (locMarker) {locMarker.remove()}
@@ -1119,6 +1216,10 @@ function createTopRightPopup(color, text, border=null){
 }
 
 function removeSatellites(pop_mult, max_distance_km, max_pop=1e8, need_same_subdiv=false) {
+    if (settings.useMaptapDatabase.val) {
+        createTopRightPopup("#ffcfcf", "Doesn't work with MapTap database, for now", "#000");
+        return;
+    }
     // pop_mult - How many times bigger parent city needs to be for satellite/suburb to be removed
     // max_pop - Max population for city to be removed
     

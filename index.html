@@ -22,11 +22,11 @@
     </div>
     <div id="left-hide-btn">&lt;</div>
     <div id="left-panel">
-        <div style="display: none">
-            <div style="text-align: center; margin-left: 10px; margin-right: 10px">
+        <div>
+            <div style="text-align: center; margin-left: 10px; margin-right: 10px; color: #ddd; font-size: 13px">
                 Current map: <span id="curr-map-val"></span>
             </div>
-            <div style="height: 8px;"></div>
+            <div style="height: 10px;"></div>
         </div>
         
         <div>
@@ -36,7 +36,12 @@
         <div>
             <button id="show-all-locs-btn" style="font-size: 16px">Show all locations</button>
         </div>
-        <div style="height: 20px"></div>
+        <div style="height: 10px"></div>
+        <div>
+            <input type="checkbox" id="checkbox-maptap-database">
+            <span>Use MapTap database</span>
+        </div>
+        <div style="height: 15px"></div>
         <!-- <div style="margin-bottom: 10px">
             <div>Location mode:</div>
             <input type="radio" name="location-mode" id="cities-mode" value="cities-mode" checked>
@@ -44,13 +49,25 @@
             <input type="radio" name="location-mode" id="subdivisions-mode" value="subdivisions-mode">
             <label for="subdivisions-mode">Subdivisions</label>
         </div> -->
-        <div>
-            <label for="min-population">Min. population:</label>
-            <input type="number" id="min-population" name="min-population" value="100000" style="width: 70px;">
+        <div class="regular-db-settings" style="flex-direction: column;">
+            <div>
+                <label for="min-population">Min. population:</label>
+                <input type="number" id="min-population" name="min-population" value="100000" style="width: 70px;">
+            </div>
+            <div>
+                <label for="max-population">Max. population:</label>
+                <input type="number" id="max-population" name="max-population" value="50000000" style="width: 70px;">
+            </div>
         </div>
-        <div>
-            <label for="max-population">Max. population:</label>
-            <input type="number" id="max-population" name="max-population" value="50000000" style="width: 70px;">
+        <div class="maptap-db-settings" style="display: flex; flex-direction: column; align-items: center;">
+            <div>
+                <label for="max-difficulty">Max. difficulty:</label>
+                <input type="number" id="max-difficulty" name="max-difficulty" value="6" style="width: 25px;">
+            </div>
+            <div>
+                <input type="checkbox" id="checkbox-cities-only" name="checkbox-cities-only">
+                <label for="checkbox-cities-only">Cities only</label>
+            </div>
         </div>
         <div>
             <label for="locs-before-repeat">Min. before repeat: </label>
@@ -76,8 +93,16 @@
                 <span>Show country name</span>
             </div>
             <div>
-                <input type="checkbox" id="checkbox-city-pop">
-                <span>Show city population</span>
+                <div>
+                    <input type="checkbox" id="checkbox-city-pop">
+                    <span>Show city population</span>
+                </div>
+            </div>
+            <div class="maptap-db-settings">
+                <div>
+                    <input type="checkbox" id="checkbox-city-diff">
+                    <span>Show city difficulty</span>
+                </div>
             </div>
             <div>
                 <input type="checkbox" id="checkbox-topo-map">
@@ -109,7 +134,8 @@
     </div>
 
     <div style="position: fixed; left: 5px; bottom: 5px; font-size: 14px; color: #bbb">
-        City data from: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">Geonames</a><br>
+        City data from: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">Geonames</a>,
+        <a href="https://maptap.gg/locations" target="_blank" rel="noopener noreferrer">MapTap Atlas</a><br>
         Country outlines from: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">Geoboundaries</a>
         , <a href="https://datahub.io/core/geo-countries" target="_blank" rel="noopener noreferrer">Datahub</a><br>
         Background sounds: youtu.be/bn9F19Hi1Lk
