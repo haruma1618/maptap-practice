@@ -377,7 +377,7 @@ function setCurrCities(repeat=false) {
 }
 
 let maptapDiffColors = [
-    "#00cc66", "#22cc00", "#88cc00", "#cccc00", "#cc7700", "#cc4400", "#cc0077", "#cc00cc"
+    "#00cc88", "#33cc00", "#88cc00", "#cccc00", "#cc7700", "#cc4400", "#cc0077", "#cc00cc"
 ];
 
 function addAllLocMarkers() {
@@ -475,7 +475,7 @@ for (let div of d.id("map-select-button-container").children) {
 }
 
 d.id("select-countries").listen("click", (e)=>{
-    addAllCountries();
+    setTimeout(addAllCountries, 100);
     selectingCountriesForMap = true;
     setSetting("showOutline", true);
     d.id("map-select-popup").style.display = "none";
@@ -508,18 +508,22 @@ function hideCountrySelection() {
     d.id("select-countries-panel").style.display = "none";
 }
 
-d.id("select-countries-cancel").listen("click", (e)=>{
-    hideCountrySelection();
+function finishCountrySelect() {
     d.id("map-select-popup").style.display = "none";
     d.id("select-map-btn").classList.remove("button-highlighted");
+    setSetting("showOutline", d.id("checkbox-outline").checked);
+}
+
+d.id("select-countries-cancel").listen("click", (e)=>{
+    hideCountrySelection();
+    finishCountrySelect();
 })
 
 d.id("select-countries-confirm").listen("click", (e)=>{
     valueToCountries["custom"] = [...selectedFeatureCountries];
     setCurrCountries("custom");
     hideCountrySelection();
-    d.id("map-select-popup").style.display = "none";
-    d.id("select-map-btn").classList.remove("button-highlighted");
+    finishCountrySelect();
 })
 
 
@@ -785,10 +789,10 @@ let map = new maplibregl.Map({
 });
 map.setCenter([settings.mapCenterLng.val, settings.mapCenterLat.val]);
 
-map.on("error", (e)=>{
+/*map.on("error", (e)=>{
     if (e && e.error && [400].includes(e.error.status)) return;
     console.log(e);
-});
+});*/
 
 function getTileSource() {
     if (d.id("checkbox-topo-map").checked) {
@@ -837,7 +841,7 @@ map.on("click", "polygons-fill", (e) => {
     if (!selectingCountriesForMap) return;
     let id = e.features[0].id;
     let country = e.features[0].properties["ISO3166-1-Alpha-2"];
-    console.log(country)
+    //console.log(country)
 
     if (!Object.keys(iso2ToCountryName).includes(country)) return;
 
@@ -915,19 +919,25 @@ async function setMapSource() {
         }
     }
 
-    map.addSource("country-polygons", {
-        "type": "geojson",
-        "data": {
-            "type": "FeatureCollection",
-            "features": combinedFeatures
-        },
-        "generateId": true
-    });
+    if (!map.getSource("country-polygons")) {
+        map.addSource("country-polygons", {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": combinedFeatures
+            },
+            "generateId": true
+        });
+    }
 
-    console.log(combinedFeatures)
+    //console.log(combinedFeatures)
     if (settings.showOutline.val) {
-        map.addLayer(outlineLayer);
-        map.addLayer(fillLayer);
+        if (!map.getLayer("polygons-stroke")) {
+            map.addLayer(outlineLayer);
+        }
+        if (!map.getLayer("polygons-fill")) {
+            map.addLayer(fillLayer);
+        }
     }
 }
 
@@ -952,8 +962,12 @@ async function addAllCountries() {
     });
 
     if (settings.showOutline.val) {
-        map.addLayer(outlineLayer);
-        map.addLayer(fillLayer);
+        if (!map.getLayer("polygons-stroke")) {
+            map.addLayer(outlineLayer);
+        }
+        if (!map.getLayer("polygons-fill")) {
+            map.addLayer(fillLayer);
+        }
     };
 }
 
@@ -976,7 +990,9 @@ d.id("checkbox-outline-subdivisions").listen("change", (e) => {
 function addCountryOutlines() {
     if (!map.isStyleLoaded() || !map.getSource("country-polygons")) return;
     if (settings.showOutline.val) {
-        map.addLayer(outlineLayer);
+        if (!map.getLayer("polygons-stroke")) {
+            map.addLayer(outlineLayer);
+        }
     } else {
         if (map.getLayer("polygons-stroke")) {
             map.removeLayer("polygons-stroke");
