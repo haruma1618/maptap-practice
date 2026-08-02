@@ -9,7 +9,6 @@ html, body {
 #top-display-container {
     position: fixed;
     top: 40px;
-    height: 800px;
     left: calc(50% - 175px);
     flex-direction: column;
     display: flex;
