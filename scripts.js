@@ -328,6 +328,10 @@ async function loadAllCities() {
 }
 loadAllCities();
 
+function getCityId(c) {
+    return c.maptap_loc ? (allCitiesMaptap.indexOf(c) + "M") : (allCities.indexOf(c) + "R")
+}
+
 function isCity(maptapLoc) {
     return ["city", "capital", "state_capital"].includes(maptapLoc.type)
 }
@@ -1094,7 +1098,7 @@ map.on("click", (e)=> {
         addAllLocMarkers();
     }
 
-    let key = clickedCity.maptap_loc ? (allCitiesMaptap.indexOf(clickedCity) + "M") : (allCities.indexOf(clickedCity) + "R");
+    let key = getCityId(clickedCity);
     if (!settings.autoRemove.val) return;
     if (distFromClick < settings.autoRemoveDist.val) {
         if (Object.hasOwn(numTimesGuessedCorrect, key)) {
@@ -1281,6 +1285,13 @@ function removeLatestCity() {
 
 function restoreRemovedCities() {
     let prevCitiesLen = currCitiesList.length;
+    for (let c of removedCities) {
+        let id = getCityId(c);
+        if (Object.hasOwn(numTimesGuessedCorrect, id)) {
+            numTimesGuessedCorrect[id] = 0;
+        }
+    }
+
     removedCities = [];
     setCurrCities();
     let newCitiesLen = currCitiesList.length;
