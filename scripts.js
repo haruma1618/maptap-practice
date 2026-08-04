@@ -71,6 +71,7 @@ let settings = {
     "customMapArr": {"val": [], "id": null, "type": "o"},
     "countryMapVal": {"val": "china", "id": null, "type": "s"},
     "useMaptapDatabase": {"val": false, "id": "checkbox-maptap-database", "type": "b"},
+    "minDiff": {"val": 1, "id": "min-difficulty", "type": "n"},
     "maxDiff": {"val": 6, "id": "max-difficulty", "type": "n"},
     "mapCenterLat": {"val": 0, "id": null, "type": "n"},
     "mapCenterLng": {"val": 0, "id": null, "type": "n"},
@@ -279,10 +280,8 @@ d.id("bg-sound-volume").listen("change", ()=>{
 let citiesLoaded = false;
 
 async function loadAllCities() {
-    let allCitiesResp = await fetch("all_cities_p10000.json");
-    let allCitiesData = await allCitiesResp.json();
-    let adm1CodeDictResp = await fetch("adm1CodeDict.json");
-    let adm1CodeDict = await adm1CodeDictResp.json();
+    let resps = await Promise.all(["all_cities_p10000.json", "all_locs_maptap.json", "adm1CodeDict.json"].map(x=>fetch(x)));
+    let [allCitiesData, allCitiesMaptapData, adm1CodeDict] = await Promise.all(resps.map(x=>x.json()));
 
     for (let c of allCitiesData) {
         let o = {
@@ -302,9 +301,6 @@ async function loadAllCities() {
         }
         delete o.region_code;
     }
-
-    let allCitiesMaptapResp = await fetch("all_locs_maptap.json");
-    let allCitiesMaptapData = await allCitiesMaptapResp.json();
 
     for (let c of allCitiesMaptapData) {
         let o = {
@@ -338,7 +334,7 @@ function isCity(maptapLoc) {
 
 function cityFitsConstraints(c) {
     if (c.maptap_loc) {
-        return currCountriesList.includes(c.country) && c.difficulty <= settings.maxDiff.val && !(settings.maptapCitiesOnly.val && !isCity(c));
+        return currCountriesList.includes(c.country) && c.difficulty >= settings.minDiff.val && c.difficulty <= settings.maxDiff.val && !(settings.maptapCitiesOnly.val && !isCity(c));
     } else {
         return currCountriesList.includes(c.country) && c.population >= settings.minPopulation.val && c.population <= settings.maxPopulation.val;
     }
@@ -527,7 +523,6 @@ d.id("select-countries-confirm").listen("click", (e)=>{
 })
 
 
-
 d.id("load-curr-code").listen("click", (e)=>{
     let mapCode = currCountriesList.join(",");
     d.id("custom-map-input").value = mapCode;
@@ -644,6 +639,7 @@ let mapPrefs = [
     {id: "min-population", settingId: "minPopulation", name: "Minimum population"},
     {id: "max-population", settingId: "maxPopulation", name: "Maximum population"},
     {id: "locs-before-repeat", settingId: "minBeforeRepeat", name: "Min # of cities before repeat"},
+    {id: "min-difficulty", settingId: "minDiff", name: "Min. location difficulty"},
     {id: "max-difficulty", settingId: "maxDiff", name: "Max. location difficulty"}
 ]
 

@@ -62,6 +62,10 @@
         </div>
         <div class="maptap-db-settings" style="display: flex; flex-direction: column; align-items: center;">
             <div>
+                <label for="min-difficulty">Min. difficulty:</label>
+                <input type="number" id="min-difficulty" name="min-difficulty" value="1" style="width: 25px;">
+            </div>
+            <div>
                 <label for="max-difficulty">Max. difficulty:</label>
                 <input type="number" id="max-difficulty" name="max-difficulty" value="6" style="width: 25px;">
             </div>
@@ -74,9 +78,9 @@
             <label for="locs-before-repeat">Min. before repeat: </label>
             <input type="number" id="locs-before-repeat" name="locs-before-repeat" value="10" style="width: 40px;">
         </div>
-        <div style="margin-bottom: 20px"></div>
+        <div style="margin-bottom: 15px"></div>
         <div>Possible locations: <span id="num-locs">...</span></div>
-        <div style="margin-bottom: 20px"></div>
+        <div style="margin-bottom: 15px"></div>
         <div id="checkbox-settings">
             <div>
                 <input type="checkbox" id="checkbox-outline" name="checkbox-outline" checked>
