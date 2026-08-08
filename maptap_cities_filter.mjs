@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFile, writeFile } from "node:fs/promises";
 
-const DATABASE_PATH = "./maptap_enabled_locs.json"
+const DATABASE_PATH = "./maptap_enabled_locs_20260807.json"
 const OUTPUT_PATH = "./all_locs_maptap.json";
 
 let origDatabase;
@@ -283,7 +283,9 @@ let maptapSpecialCodes = {
     "South Georgia": "GS",
     "Saint Helena, Ascension and Tristan da Cunha": "SH",
     "Tristan da Cunha": "SH",
-    "Pitcairn Islands": "PN"
+    "Pitcairn Islands": "PN",
+	"Saint-Pierre and Miquelon": "PM",
+	"Saint Barthélemy": "BL"
 }
 
 countryNameToIso2 = {...countryNameToIso2, ...maptapSpecialCodes};

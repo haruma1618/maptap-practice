@@ -970,6 +970,8 @@ async function addAllCountries() {
 map.on("load", (e)=> {
     map.doubleClickZoom.disable();
     map.dragRotate.disable();
+    map.touchZoomRotate.disableRotation();
+    map.touchPitch.disable();
 });
 
 d.id("checkbox-outline").listen("change", (e) => {
