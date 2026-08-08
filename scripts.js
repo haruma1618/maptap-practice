@@ -670,6 +670,7 @@ function updateMapPreferences(e) {
         setSetting(pref.setting, pref.val);
 
         if (pref.setting == "minBeforeRepeat" && pref.prev != settings.minBeforeRepeat.val) {
+            inputtedMinBeforeRepeat = settings.minBeforeRepeat.val;
         }
     }
 
