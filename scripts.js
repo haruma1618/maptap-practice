@@ -17,9 +17,6 @@ let currCity;
 let inTransition = false;
 let currCountriesList = [];
 let currCountryMap = "";
-let minPopulation = Number(d.id("min-population").value);
-let maxPopulation = Number(d.id("max-population").value);
-let minBeforeRepeat = Number(d.id("locs-before-repeat").value);
 let removedCities = [];
 let deepRemovedCities = []; // Deep removed cities can't be restored with R
 let removedSatellites = []; // Removed satellites can't be removed with keys at all (prevents having to click again)
@@ -27,7 +24,6 @@ let locHistory = [];
 let pastMarkerCoords = [];
 let showingClickMarker;
 let showingLocMarker;
-//let showAllLocs = false;
 let allLocMarkers = [];
 let regionColorsDict = {};
 let showMedCountries = false;
@@ -75,7 +71,8 @@ let settings = {
     "mapCenterLat": {"val": 0, "id": null, "type": "n"},
     "mapCenterLng": {"val": 0, "id": null, "type": "n"},
     "maptapCitiesOnly": {"val": true, "id": "checkbox-cities-only", "type": "b"},
-    "dotMarkers": {"val": false, "id": "checkbox-dot-markers", "type": "b"} // Not implemented yet
+    "dotMarkers": {"val": false, "id": "checkbox-dot-markers", "type": "b"},
+    "clickMarkerScale": {"val": 1, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"}
 }
 
 let mapPrefs = [
@@ -107,9 +104,9 @@ for (let k in settings) {
         
         if (!mapPrefs.map(x=>x.setting).includes(k)) {
             elem.listen(elem.type === "checkbox" ? "change" : "input", (e) => {
-                console.log(stg.id);
+                //console.log(stg.id);
                 setSettingFromEvent(e);
-                console.log(`Value: ${stg.val}`);
+                //console.log(`Value: ${stg.val}`);
             });
         }
     }
@@ -186,7 +183,7 @@ d.id("left-hide-btn").listen("click", (e)=>{
     d.id("left-panel").style.display = (d.id("left-panel").style.display != "none" ? "none" : "flex");
 });
 
-function togglePanel(panelId, btnId) {
+function toggleMenuPopup(panelId, btnId) {
     let panel = d.id(panelId);
     if (panel.style.display == "none") {
         panel.style.display = "flex";
@@ -197,9 +194,19 @@ function togglePanel(panelId, btnId) {
     }
 }
 
+function isMenuPopupOpen() {
+    let menuPopupOpen = false;
+    for (let elem of d.getElementsByClassName("center-popup")) {
+        if (elem.style.display != "none") {
+            menuPopupOpen = true;
+        }
+    }
+    return menuPopupOpen;
+}
+
 d.id("select-map-btn").listen("click", (e)=>{
     hideCountrySelection();
-    togglePanel("map-select-popup", "select-map-btn");
+    toggleMenuPopup("map-select-popup", "select-map-btn");
 });
 
 d.id("show-all-locs-btn").listen("click", (e)=>{
@@ -231,6 +238,7 @@ function changeSettingVis() {
 }
 changeSettingVis();
 
+
 d.id("checkbox-maptap-database").listen("change", (e)=>{
     changeSettingVis();
     setCurrCities();
@@ -256,7 +264,7 @@ d.id("show-med-countries").listen("click", (e)=>{
 })
 
 d.id("more-settings-btn").listen("click", (e)=>{
-    togglePanel("more-settings-popup", "more-settings-btn");
+    toggleMenuPopup("more-settings-popup", "more-settings-btn");
 })
 
 d.id("more-settings-exit").listen("click", (e)=>{
@@ -265,7 +273,7 @@ d.id("more-settings-exit").listen("click", (e)=>{
 });
 
 d.id("show-satellites-popup-btn").listen("click", (e)=>{
-    togglePanel("remove-satellites-popup", "show-satellites-popup-btn");
+    toggleMenuPopup("remove-satellites-popup", "show-satellites-popup-btn");
 })
 
 d.id("remove-satellites-exit").listen("click", (e)=>{
@@ -447,10 +455,9 @@ function addAllLocMarkers() {
             markerScale = 0.67*Math.pow(2, 0.5*Math.log10(c.population/maxPop));
         }
 
-        let popup = new maplibregl.Popup({closeButton: false, closeOnClick: false, offset: 25})
+        let popup = new maplibregl.Popup({closeButton: false, closeOnClick: false, offset: settings.dotMarkers.val ? 10 : 25})
                     .setHTML("<span style='color:#000'>" + getCityText(c, false, true, settings.showCountry.val, true, true) + "</span>");
-        let marker = new maplibregl.Marker({color: markerColor, scale: markerScale})
-                    .setLngLat([c.longitude, c.latitude]).setPopup(popup).addTo(map);
+        let marker = createMarker(markerColor, markerScale, c.longitude, c.latitude).setPopup(popup);
 
         marker.getElement().listen("mouseenter", ()=>{if (!popup.isOpen()) marker.togglePopup()});
         marker.getElement().listen("mouseleave", ()=>{if (popup.isOpen()) marker.togglePopup()});
@@ -629,9 +636,6 @@ function setCurrCountries(mapVal=null) {
         currCountriesList = prevCountriesList;
         currCountryMap = prevCountryMap;
         setCurrCities();
-    } else if (currCitiesList.length < settings.minBeforeRepeat.val) {
-        minBeforeRepeat = currCitiesList.length;
-        d.id("locs-before-repeat").value = currCitiesList.length;
     }
 
     setCurrMapText();
@@ -1022,6 +1026,21 @@ d.id("globe-brightness-slider").listen("input", (e)=>{
     d.id("map").style.filter = `brightness(${settings.globeBrightness.val*100}%)`;
 });
 
+function createMarker(col, scl, lng, lat) {
+    let marker;
+    if (!settings.dotMarkers.val) {
+        marker = new maplibregl.Marker({"color": col, "scale": scl});
+    } else {
+        let dot = document.createElement("div");
+        dot.className = "dot-marker";
+        dot.style.backgroundColor = col;
+        dot.style.width = 20*scl + "px";
+        dot.style.height = 20*scl + "px";
+        marker = new maplibregl.Marker({"element": dot});
+    }
+    marker.setLngLat([lng, lat]).addTo(map);
+    return marker;
+}
 
 let clickMarker;
 let locMarker;
@@ -1054,23 +1073,8 @@ map.on("click", (e)=> {
 
     let clickedCity = currCity;
     
-    clickMarker = new maplibregl.Marker({color: "#FF0000"}).setLngLat([e.lngLat.lng, e.lngLat.lat]).addTo(map);
-    locMarker = new maplibregl.Marker({color: "#00CC00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
-    /*if (!settings.dotMarkers.val) {
-        clickMarker = new maplibregl.Marker({color: "#FF0000"}).setLngLat([e.lngLat.lng, e.lngLat.lat]).addTo(map);
-        locMarker = new maplibregl.Marker({color: "#00CC00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
-    } else {
-        let dmRed = document.createElement("div");
-        dmRed.className = "dot-marker";
-        dmRed.style.backgroundColor = "#FF0000";
-        let dmGreen = document.createElement("div");
-        dmGreen.className = "dot-marker";
-        dmGreen.style.backgroundColor = "#00CC00";
-
-        clickMarker = new maplibregl.Marker({element: dmRed}).setLngLat([e.lngLat.lng, e.lngLat.lat]).addTo(map);
-        locMarker = new maplibregl.Marker({element: dmGreen}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
-    }*/
-
+    locMarker = createMarker("#00CC00", settings.clickMarkerScale.val, currCity.longitude, currCity.latitude);
+    clickMarker = createMarker("#FF0000", settings.clickMarkerScale.val, e.lngLat.lng, e.lngLat.lat);
 
     d.id("top-display").style.color = "rgba(255, 255, 255, 0)";
 
@@ -1152,10 +1156,10 @@ function addHistoryElem(scoreText, scoreColor, addClickMarker) {
     historyElem.listen("mouseenter", (e)=>{
         let markerPositions = pastMarkerCoords[e.currentTarget.getAttribute("data-marker-ind")];
 
+        showingLocMarker = createMarker("#008000", settings.clickMarkerScale.val, markerPositions[1][0], markerPositions[1][1]);
         if (addClickMarker) {
-            showingClickMarker = new maplibregl.Marker({color: "#800000"}).setLngLat(markerPositions[0]).addTo(map);
+            showingClickMarker = createMarker("#800000", settings.clickMarkerScale.val, markerPositions[0][0], markerPositions[0][1]);
         }
-        showingLocMarker = new maplibregl.Marker({color: "#008000"}).setLngLat(markerPositions[1]).addTo(map);
     });
 
     historyElem.listen("mouseleave", (e)=>{
@@ -1219,6 +1223,16 @@ function setHistoryElemStyle() {
 d.listen("mousemove", (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
+})
+
+d.listen("click", (e) => {
+    if (event.target.tagName === "BUTTON") {
+        if (isMenuPopupOpen()) {
+            d.id("map").style.filter = `brightness(50%)`;
+        } else {
+            d.id("map").style.filter = `brightness(${settings.globeBrightness.val*100}%)`;
+        }
+    }
 })
 
 function createTopRightPopup(color, text, border=null){
@@ -1330,7 +1344,7 @@ d.listen("keydown", (e) => {
         if (locMarker) {locMarker.remove()}
 
         pastMarkerCoords.push([[null, null], [currCity.longitude, currCity.latitude]]);
-        locMarker = new maplibregl.Marker({color: "#00CC00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
+        locMarker = createMarker("#00CC00", settings.clickMarkerScale.val, currCity.longitude, currCity.latitude);
         d.id("top-display").style.color = "rgba(255, 255, 255, 0)";
 
         let historyElem = addHistoryElem("Didn't know", "#cad", false);

@@ -146,19 +146,25 @@
         Background sounds: youtu.be/bn9F19Hi1Lk
     </div>
 
-    <div id="more-settings-popup" class="center-popup" style="display: none; font-size: 14px">
+    <div id="more-settings-popup" class="center-popup" style="display: none; font-size: 13px">
         <button id="more-settings-exit" style="position: absolute; top: 10px; right: 10px">X</button>
         <b style="text-align: center; font-size: 20px; margin-bottom: 10px">More settings</b><br>
         <div>
             <input type="checkbox" id="checkbox-blue-marble-map" name="checkbox-blue-marble-map" checked>
             <label for="checkbox-blue-marble-map">MapTap style map (Blue Marble data, lower resolution)</label>
         </div>
+        <div style="height: 3px"></div>
         <div style="text-align: center;">
             <input type="checkbox" id="checkbox-maptap-subdivisions" name="checkbox-maptap-subdivisions">
             <label for="checkbox-maptap-subdivisions" style="font-size: 13px;">Only include subdivs. for countries with them in MapTap VS</label>
             <span style="font-size: 13px;" id="maptap-subdivs-text"></span>
         </div>
-        <div style="height: 20px"></div>
+        <div style="height: 3px"></div>
+        <div>
+            <input type="checkbox" id="checkbox-dot-markers" name="checkbox-dot-markers" checked>
+            <label for="checkbox-dot-markers">Use dots instead of pins</label>
+        </div>
+        <div style="height: 12px"></div>
         <div style="text-align: center;">
             <input type="checkbox" id="checkbox-auto-remove" name="checkbox-auto-remove">
             <label for="checkbox-auto-remove">Auto remove locations guessed less than</label>
@@ -170,35 +176,35 @@
             time(s) in a row
             </span>
         </div>
-        <div style="display: none"> <!-- Probably adding this feature later -->
-            <div style="height: 5px"></div>
-            <input type="checkbox" id="checkbox-dot-markers" name="checkbox-dot-markers" checked>
-            <label for="checkbox-dot-markers">Use dots instead of pins</label>
+        <div style="height: 30px"></div>
+        <div style="display: flex">
+            <div class="more-settings-slider">
+                <label for="scoring-diff-slider">
+                    Scoring harshness mult.: <span id="scoring-diff-value"></span>
+                </label>
+                <input type="range" id="scoring-diff-slider" name="scoring-diff-slider" min="1" max="5" value="1" step="0.1">
+            </div>
+            <div class="more-settings-slider">
+                <label for="globe-brightness-slider">
+                    Globe brightness: <span id="globe-brightness-value"></span>
+                </label>
+                <input type="range" id="globe-brightness-slider" name="globe-brightness-slider" min="1" max="1.5" value="1" step="0.02">
+            </div>
         </div>
-        <div style="height: 20px"></div>
-        <div class="more-settings-slider">
-            <label for="scoring-diff-slider">
-                Scoring harshness mult.: <span id="scoring-diff-value"></span>
-            </label>
-            <input type="range" id="scoring-diff-slider" name="scoring-diff-slider" min="1" max="5" value="1" step="0.1">
-        </div>
-        <div class="more-settings-slider">
-            <label for="globe-brightness-slider">
-                Globe brightness: <span id="globe-brightness-value"></span>
-            </label>
-            <input type="range" id="globe-brightness-slider" name="globe-brightness-slider" min="1" max="1.5" value="1" step="0.02">
-        </div>
-        <div class="more-settings-slider">
-            <label for="location-fade-slider">
-                Location fade time: <span id="location-fade-value"></span>ms
-            </label>
-            <input type="range" id="location-fade-slider" name="location-fade-slider" min="0" max="2000" value="1000" step="50">
-        </div>
-        <div class="more-settings-slider" style="display: none"> <!-- Probably adding this feature later -->
-            <label for="marker-scale-slider">
-                Marker scale: <span id="marker-scale-value"></span>
-            </label>
-            <input type="range" id="marker-scale-slider" name="marker-scale-slider" min="0" max="1" value="1" step="0.05">
+         <div style="height: 5px"></div>
+        <div style="display: flex">
+            <div class="more-settings-slider">
+                <label for="location-fade-slider">
+                    Location fade time: <span id="location-fade-value"></span>ms
+                </label>
+                <input type="range" id="location-fade-slider" name="location-fade-slider" min="0" max="2000" value="1000" step="50">
+            </div>
+            <div class="more-settings-slider">
+                <label for="marker-scale-slider">
+                    Click marker scale: <span id="marker-scale-value"></span>
+                </label>
+                <input type="range" id="marker-scale-slider" name="marker-scale-slider" min="0" max="1" value="1" step="0.05">
+            </div>
         </div>
         <div style="height: 15px"></div>
     </div>
