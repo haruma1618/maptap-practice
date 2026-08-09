@@ -86,7 +86,7 @@
                 <input type="checkbox" id="checkbox-outline" name="checkbox-outline" checked>
                 <label for="checkbox-outline">Show country outline(s)</label>
             </div>
-            <div style="scale: 0.9;">
+            <div style="scale: 0.9;" id="checkbox-outline-subdivisions-container">
                 <input type="checkbox" style="margin-left: 30px;" id="checkbox-outline-subdivisions" name="checkbox-outline-subdivisions" checked>
                 <label for="checkbox-outline-subdivisions">Show subdivisions</label>
             </div>
@@ -170,24 +170,35 @@
             time(s) in a row
             </span>
         </div>
+        <div style="display: none"> <!-- Probably adding this feature later -->
+            <div style="height: 5px"></div>
+            <input type="checkbox" id="checkbox-dot-markers" name="checkbox-dot-markers" checked>
+            <label for="checkbox-dot-markers">Use dots instead of pins</label>
+        </div>
         <div style="height: 20px"></div>
-        <div style="display: flex; flex-direction: column; width: 250px">
+        <div class="more-settings-slider">
             <label for="scoring-diff-slider">
                 Scoring harshness mult.: <span id="scoring-diff-value"></span>
             </label>
             <input type="range" id="scoring-diff-slider" name="scoring-diff-slider" min="1" max="5" value="1" step="0.1">
         </div>
-        <div style="display: flex; flex-direction: column; width: 250px">
+        <div class="more-settings-slider">
             <label for="globe-brightness-slider">
                 Globe brightness: <span id="globe-brightness-value"></span>
             </label>
             <input type="range" id="globe-brightness-slider" name="globe-brightness-slider" min="1" max="1.5" value="1" step="0.02">
         </div>
-        <div style="display: flex; flex-direction: column; width: 250px">
+        <div class="more-settings-slider">
             <label for="location-fade-slider">
                 Location fade time: <span id="location-fade-value"></span>ms
             </label>
             <input type="range" id="location-fade-slider" name="location-fade-slider" min="0" max="2000" value="1000" step="50">
+        </div>
+        <div class="more-settings-slider" style="display: none"> <!-- Probably adding this feature later -->
+            <label for="marker-scale-slider">
+                Marker scale: <span id="marker-scale-value"></span>
+            </label>
+            <input type="range" id="marker-scale-slider" name="marker-scale-slider" min="0" max="1" value="1" step="0.05">
         </div>
         <div style="height: 15px"></div>
     </div>
@@ -221,7 +232,9 @@
 
     <div id="map-select-popup" class="center-popup" style="display: none">
         <button id="map-select-exit" style="position: absolute; top: 10px; right: 10px">X</button>
-        <b style="font-size: 20px; text-align: center; margin-bottom: 10px">Select map:</b>
+        <b style="font-size: 20px; text-align: center; margin-bottom: 15px">Select map:</b>
+        <button id="select-countries" style="font-size: 14px; background-color: #404">Custom map - Select countries</button>
+        <div style="height: 15px"></div>
         <div id="map-select-button-container">
             <div class="map-select-buttons" id="map-select-countries-large">
                 <button value="china">China</button>
@@ -266,11 +279,24 @@
                 <button value="asia">Asia</button>
                 <button value="n-america">N. America</button>
                 <button value="s-america">S. America</button>
-                <button value="oceania">Oceania</button>
+                <button value="oceania">Oceania (all)</button>
+                <button value="oceania-islands">Oceania (islands)</button>
+                <button value="caribbean-islands">Caribbean</button>
             </div>
         </div>
-        <div style="height: 20px"></div>
-        <button id="select-countries" style="font-size: 14px; background-color: #404">Custom map - Select countries</button>
+
+        <!-- Probably adding this feature as well -->
+
+        <!-- <div style="height: 20px"></div>
+        <div style="font-size: 14px">
+            Save current map as: <input type="text" id="map-save-name" style="height: 12px; width: 125px">
+            <button id="save-curr-map">Save</button>
+        </div>
+        <div style="font-size: 14px; display: none">
+            Saved maps:
+            <div id="saved-maps"></div>
+        </div> -->
+
         <div style="height: 15px"></div>
         <div style="font-size: 14px; text-align: center;">Or - enter list of country codes:</div>
         <div style="height: 5px"></div>

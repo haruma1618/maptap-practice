@@ -33,8 +33,6 @@ let regionColorsDict = {};
 let showMedCountries = false;
 let selectedFeatureCountries = [];
 let selectingCountriesForMap = false;
-let useBlueMarbleGlobe = d.id("checkbox-blue-marble-map").checked;
-let maptapSubdivisions = d.id("checkbox-maptap-subdivisions").checked;
 let numTimesGuessedCorrect = {};
 
 let convertToType = {
@@ -70,48 +68,68 @@ let settings = {
     "minBeforeRepeat": {"val": 10, "id": "locs-before-repeat", "type": "n"},
     "customMapArr": {"val": [], "id": null, "type": "o"},
     "countryMapVal": {"val": "china", "id": null, "type": "s"},
+    "useBlueMarbleGlobe": {"val": true, "id": "checkbox-blue-marble-map", "type": "b"},
     "useMaptapDatabase": {"val": false, "id": "checkbox-maptap-database", "type": "b"},
     "minDiff": {"val": 1, "id": "min-difficulty", "type": "n"},
     "maxDiff": {"val": 6, "id": "max-difficulty", "type": "n"},
     "mapCenterLat": {"val": 0, "id": null, "type": "n"},
     "mapCenterLng": {"val": 0, "id": null, "type": "n"},
-    "maptapCitiesOnly": {"val": true, "id": "checkbox-cities-only", "type": "b"}
+    "maptapCitiesOnly": {"val": true, "id": "checkbox-cities-only", "type": "b"},
+    "dotMarkers": {"val": false, "id": "checkbox-dot-markers", "type": "b"} // Not implemented yet
 }
 
+let mapPrefs = [
+    {id: "min-population", setting: "minPopulation", name: "Minimum population"},
+    {id: "max-population", setting: "maxPopulation", name: "Maximum population"},
+    {id: "locs-before-repeat", setting: "minBeforeRepeat", name: "Min # of cities before repeat"},
+    {id: "min-difficulty", setting: "minDiff", name: "Min. location difficulty"},
+    {id: "max-difficulty", setting: "maxDiff", name: "Max. location difficulty"}
+]
+
 for (let k in settings) {
+    let stg = settings[k];
+
     let item = localStorage.getItem(k);
     if (item !== null && item !== "") {
-        settings[k].val = convertToType[settings[k].type](item);
+        stg.val = convertToType[stg.type](item);
     } else {
-        let setVal = (typeof settings[k].val) === "string" ? settings[k].val : JSON.stringify(settings[k].val);
+        let setVal = (typeof stg.val) === "string" ? stg.val : JSON.stringify(stg.val);
         localStorage.setItem(k, setVal);
     }
 
-    if (settings[k]["id"]) {
-        let elem = d.id(settings[k].id);
+    if (stg.id) {
+        let elem = d.id(stg.id);
         if (elem.type === "checkbox") {
-            d.id(settings[k].id).checked = settings[k].val;
+            elem.checked = stg.val;
         } else {
-            d.id(settings[k].id).value = settings[k].val;
+            elem.value = stg.val;
+        }
+        
+        if (!mapPrefs.map(x=>x.setting).includes(k)) {
+            elem.listen(elem.type === "checkbox" ? "change" : "input", (e) => {
+                console.log(stg.id);
+                setSettingFromEvent(e);
+                console.log(`Value: ${stg.val}`);
+            });
         }
     }
 
-    if (Object.hasOwn(settings[k], "textId")) {
-        d.id(settings[k].textId).innerText = settings[k].val;
+    if (Object.hasOwn(stg, "textId")) {
+        d.id(stg.textId).innerText = stg.val;
     }
 }
 
 function setSetting(k, v) {
+    let stg = settings[k];
     localStorage.setItem(k, v);
-    settings[k].val = convertToType[settings[k].type](v);
+    stg.val = convertToType[stg.type](v);
 
-    if (Object.hasOwn(settings[k], "textId")) {
-        d.id(settings[k].textId).innerText = settings[k].val;
+    if (Object.hasOwn(stg, "textId")) {
+        d.id(stg.textId).innerText = stg.val;
     }
 }
 
 
-// To do: Clean up all repeated setSettingFromEvent code in event listeners
 function setSettingFromEvent(e) {
     let id = e.currentTarget.id;
     let setting = Object.entries(settings).filter(x => x[1].id === id);
@@ -143,7 +161,9 @@ let valueToCountries = {
     "europe": ["AD", "AL", "AT", "AX", "BA", "BE", "BG", "BY", "CH", "CZ", "DE", "DK", "EE", "ES", "FI", "FO", "FR", "GB", "GG", "GI", "GR", "HR", "HU", "IE", "IM", "IS", "IT", "JE", "LI", "LT", "LU", "LV", "MC", "MD", "ME", "MK", "MT", "NL", "NO", "PL", "PT", "RO", "RS", "SE", "SI", "SJ", "SK", "SM", "UA", "VA", "XK"],
     "n-america": ["AG", "AI", "AW", "BB", "BL", "BM", "BS", "BZ", "CA", "CR", "CU", "DM", "DO", "GD", "GL", "GP", "GT", "HN", "HT", "JM", "KN", "KY", "LC", "MF", "MQ", "MS", "MX", "NI", "PA", "PM", "PR", "SV", "TC", "TT", "US", "VC", "VG", "VI"],
     "s-america": ["AR", "BO", "BR", "CL", "CO", "EC", "FK", "GF", "GY", "PE", "PY", "SR", "UY", "VE"],
-    "oceania": ["AS", "AU", "CK", "FJ", "FM", "GU", "KI", "MH", "MP", "NC", "NF", "NR", "NU", "NZ", "PF", "PG", "PN", "PW", "SB", "TK", "TO", "TV", "UM", "VU", "WF", "WS"]
+    "oceania": ["AS", "AU", "CK", "FJ", "FM", "GU", "KI", "MH", "MP", "NC", "NF", "NR", "NU", "NZ", "PF", "PG", "PN", "PW", "SB", "TK", "TO", "TV", "UM", "VU", "WF", "WS"],
+    "oceania-islands": ["AS", "CK", "FJ", "FM", "GU", "KI", "MH", "MP", "NC", "NF", "NR", "NU", "PF", "PN", "PW", "SB", "TK", "TO", "TV", "UM", "VU", "WF", "WS"],
+    "caribbean-islands": ["VI", "AI", "MF", "KN", "LC", "AG", "DM", "VC", "BB", "GD", "TT", "VG", "MQ", "MS"]
 };
 if (localStorage.getItem("customMapArr")) {
     try {
@@ -211,8 +231,7 @@ function changeSettingVis() {
 }
 changeSettingVis();
 
-d.id("checkbox-maptap-database").listen("click", (e)=>{
-    setSettingFromEvent(e);
+d.id("checkbox-maptap-database").listen("change", (e)=>{
     changeSettingVis();
     setCurrCities();
     if (allLocMarkers.length > 0) {
@@ -264,7 +283,7 @@ d.id("checkbox-sfx").listen("change", ()=>{
 let bgSound = new Howl({src: ["sounds/bg_audio.mp3"], html5: true, loop: true, volume: 0.5});
 let bgSoundId;
 d.id("checkbox-bg-sound").checked = false;
-d.id("checkbox-bg-sound").listen("click", ()=>{
+d.id("checkbox-bg-sound").listen("change", ()=>{
     if (d.id("checkbox-bg-sound").checked) {
         bgSoundId = bgSound.play();
     } else {
@@ -341,7 +360,7 @@ function cityFitsConstraints(c) {
     }
 }
 
-function setCurrCities(repeat=false) {
+function setCurrCities() {
     let list = settings.useMaptapDatabase.val ? allCitiesMaptap : allCities;
 
     currCitiesList = [];
@@ -359,22 +378,6 @@ function setCurrCities(repeat=false) {
         setSetting("minBeforeRepeat", Math.min(inputtedMinBeforeRepeat, currCitiesList.length));
         d.id("locs-before-repeat").value = settings.minBeforeRepeat.val.toString();
     }
-    
-
-    // If there are no cities, likely because min population is too high
-    /*if (currCitiesList.length == 0 && !repeat) {
-        let maxPop = 0;
-        for (let c of allCities) {
-            if (currCountriesList.includes(c.country) && c.population <= maxPopulation && !removedCities.includes(c)) {
-                if (c.population > maxPop) {
-                    maxPop = c.population;
-                }
-            }
-        }
-        minPopulation = maxPop;
-        d.id("min-population").value = maxPop;
-        setCurrCities(true);
-    }*/
 }
 
 let maptapDiffColors = [
@@ -590,7 +593,7 @@ function setCurrMapText() {
         return;
     }
     if (mapVal !== "custom") {
-        currMapTxt.innerText = mapVal.replace("-", ". ").toLowerCase().replace(/\b\w/g, c=>c.toUpperCase());
+        currMapTxt.innerText = mapVal.replace("-", " ").toLowerCase().replace(/\b\w/g, c=>c.toUpperCase());
         return;
     }
 
@@ -639,14 +642,6 @@ function setCurrCountries(mapVal=null) {
         addAllLocMarkers();
     }
 }
-
-let mapPrefs = [
-    {id: "min-population", setting: "minPopulation", name: "Minimum population"},
-    {id: "max-population", setting: "maxPopulation", name: "Maximum population"},
-    {id: "locs-before-repeat", setting: "minBeforeRepeat", name: "Min # of cities before repeat"},
-    {id: "min-difficulty", setting: "minDiff", name: "Min. location difficulty"},
-    {id: "max-difficulty", setting: "maxDiff", name: "Max. location difficulty"}
-]
 
 for (let pref of mapPrefs) {
     d.id(pref.id).listen("change", updateMapPreferences);
@@ -805,7 +800,7 @@ function getTileSource() {
             "src": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}",
             "attr": "Esri (ArcGIS World_Shaded_Relief)"
         };
-    } else if (useBlueMarbleGlobe) {
+    } else if (settings.useBlueMarbleGlobe.val) {
         return {
             "src": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg",
             "attr": "NASA (Blue Marble Next Generation)"
@@ -878,7 +873,7 @@ setInterval(() => {
 }, 2000);
 
 function getSupportedADM1() {
-    return (maptapSubdivisions ? maptapADM1 : supportedADM1);
+    return (settings.maptapSubdivisions.val ? maptapADM1 : supportedADM1);
 }
 
 async function setMapSource() {
@@ -983,14 +978,13 @@ map.on("load", (e)=> {
     map.touchPitch.disable();
 });
 
+d.id("checkbox-outline-subdivisions-container").style.display = d.id("checkbox-outline").checked ? "block" : "none";
 d.id("checkbox-outline").listen("change", (e) => {
-    setSettingFromEvent(e);
     addCountryOutlines();
-    d.id("checkbox-outline-subdivisions").disabled = !e.currentTarget.checked;
+    d.id("checkbox-outline-subdivisions-container").style.display = e.currentTarget.checked ? "block" : "none";
 });
 
 d.id("checkbox-outline-subdivisions").listen("change", (e) => {
-    setSettingFromEvent(e);
     setMapSource();
 });
 
@@ -1007,20 +1001,7 @@ function addCountryOutlines() {
     }
 }
 
-for (let id of ["checkbox-division-name", "checkbox-country-name", "checkbox-city-pop", "checkbox-city-diff", "checkbox-auto-remove"]) {
-    d.id(id).listen("change", (e)=>{
-        setSettingFromEvent(e);
-    })
-}
-
-for (let id of ["scoring-diff-slider", "location-fade-slider", "auto-remove-dist", "auto-remove-num-times"]) {
-    d.id(id).listen("input", (e)=>{
-        setSettingFromEvent(e);
-    })
-}
-
 d.id("checkbox-cities-only").listen("change", (e)=>{
-    setSettingFromEvent(e);
     setCurrCities();
     if (allLocMarkers.length > 0) {
         addAllLocMarkers();
@@ -1028,11 +1009,9 @@ d.id("checkbox-cities-only").listen("change", (e)=>{
 })
 
 d.id("checkbox-blue-marble-map").listen("change", (e)=>{
-    useBlueMarbleGlobe = e.currentTarget.checked;
     map.getSource("satellite-tiles").setTiles([getTileSource().src]);
 })
 d.id("checkbox-maptap-subdivisions").listen("change", (e)=>{
-    setSettingFromEvent(e);
     if (settings.showOutline.val && settings.outlineDivisions.val) {
         setMapSource();
     }
@@ -1040,7 +1019,6 @@ d.id("checkbox-maptap-subdivisions").listen("change", (e)=>{
 
 d.id("map").style.filter = `brightness(${settings.globeBrightness.val*100}%)`;
 d.id("globe-brightness-slider").listen("input", (e)=>{
-    setSettingFromEvent(e);
     d.id("map").style.filter = `brightness(${settings.globeBrightness.val*100}%)`;
 });
 
@@ -1075,9 +1053,25 @@ map.on("click", (e)=> {
     if (locMarker) {locMarker.remove()}
 
     let clickedCity = currCity;
-
+    
     clickMarker = new maplibregl.Marker({color: "#FF0000"}).setLngLat([e.lngLat.lng, e.lngLat.lat]).addTo(map);
     locMarker = new maplibregl.Marker({color: "#00CC00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
+    /*if (!settings.dotMarkers.val) {
+        clickMarker = new maplibregl.Marker({color: "#FF0000"}).setLngLat([e.lngLat.lng, e.lngLat.lat]).addTo(map);
+        locMarker = new maplibregl.Marker({color: "#00CC00"}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
+    } else {
+        let dmRed = document.createElement("div");
+        dmRed.className = "dot-marker";
+        dmRed.style.backgroundColor = "#FF0000";
+        let dmGreen = document.createElement("div");
+        dmGreen.className = "dot-marker";
+        dmGreen.style.backgroundColor = "#00CC00";
+
+        clickMarker = new maplibregl.Marker({element: dmRed}).setLngLat([e.lngLat.lng, e.lngLat.lat]).addTo(map);
+        locMarker = new maplibregl.Marker({element: dmGreen}).setLngLat([currCity.longitude, currCity.latitude]).addTo(map);
+    }*/
+
+
     d.id("top-display").style.color = "rgba(255, 255, 255, 0)";
 
     pastMarkerCoords.push([[e.lngLat.lng, e.lngLat.lat], [currCity.longitude, currCity.latitude]]);
@@ -1346,7 +1340,6 @@ d.listen("keydown", (e) => {
     }
 });
 
-// Haversine formula https://www.geeksforgeeks.org/dsa/program-distance-two-points-earth/
 function distanceKm(lat1, lat2, lon1, lon2) {
     lon1 = lon1 * Math.PI / 180;
     lon2 = lon2 * Math.PI / 180;

@@ -187,3 +187,17 @@ label {
     -moz-user-select: none;
     -ms-user-select: none;
 }
+
+.more-settings-slider {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+}
+
+.dot-marker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #00000080;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.25) 0%, transparent 100%);
+}
