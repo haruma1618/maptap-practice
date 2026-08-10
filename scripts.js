@@ -397,10 +397,10 @@ function addAllLocMarkers() {
 
     removeAllLocMarkers();
     allLocMarkers.length = 0;
-    let maxPop = currCitiesList[0].population;
-    for (let i = 1; i < currCitiesList.length; i++) {
-        if (currCitiesList[i].population > maxPop) {
-            maxPop = currCitiesList[i].population;
+    let maxPop = 1;
+    for (let c of [...currCitiesList, ...removedCities]) {
+        if (cityFitsConstraints(c) && c.population > maxPop) {
+            maxPop = c.population;
         }
     }
 
