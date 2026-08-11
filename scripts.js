@@ -98,6 +98,12 @@ for (let k in settings) {
 
     if (stg.id) {
         let elem = d.id(stg.id);
+        if (!elem) {
+            localStorage.removeItem(k);
+            delete settings[k];
+            continue;
+        }
+
         if (elem.type === "checkbox") {
             elem.checked = stg.val;
         } else {
