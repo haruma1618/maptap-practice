@@ -1,4 +1,6 @@
 // Data used: https://public.opendatasoft.com/explore/assets/geonames-all-cities-with-a-population-1000/view
+import { registerSentinelMercatorProtocol } from './sentinel-mercator-protocol.js';
+registerSentinelMercatorProtocol(maplibregl);
 
 let d = document;
 d.id = d.getElementById;
@@ -64,7 +66,7 @@ let settings = {
     "minBeforeRepeat": {"val": 10, "id": "locs-before-repeat", "type": "n"},
     "customMapArr": {"val": [], "id": null, "type": "o"},
     "countryMapVal": {"val": "china", "id": null, "type": "s"},
-    "useBlueMarbleGlobe": {"val": true, "id": "checkbox-blue-marble-map", "type": "b"},
+    "globeTileType": {"val": "maptap", "id": "map-style-select", "type": "s"},
     "useMaptapDatabase": {"val": false, "id": "checkbox-maptap-database", "type": "b"},
     "minDiff": {"val": 1, "id": "min-difficulty", "type": "n"},
     "maxDiff": {"val": 6, "id": "max-difficulty", "type": "n"},
@@ -103,7 +105,7 @@ for (let k in settings) {
         }
         
         if (!mapPrefs.map(x=>x.setting).includes(k)) {
-            elem.listen(elem.type === "checkbox" ? "change" : "input", (e) => {
+            elem.listen((elem.type === "checkbox" || elem.tagName === "SELECT") ? "change" : "input", (e) => {
                 //console.log(stg.id);
                 setSettingFromEvent(e);
                 //console.log(`Value: ${stg.val}`);
@@ -170,13 +172,6 @@ if (localStorage.getItem("customMapArr")) {
         valueToCountries["custom"] = [];
     }
 }
-
-let allCountriesGeojson;
-async function getAllCountriesGeojson() {
-    let allCountries = await fetch("all_countries.json");
-    allCountriesGeojson = await allCountries.json();
-}
-getAllCountriesGeojson();
 
 d.id("left-hide-btn").listen("click", (e)=>{
     d.id("left-hide-btn").innerHTML = (d.id("left-hide-btn").innerHTML != "&lt;" ? "&lt;" : "&gt;");
@@ -307,9 +302,12 @@ d.id("bg-sound-volume").listen("change", ()=>{
 
 let citiesLoaded = false;
 
+let allCountriesGeojson;
 async function loadAllCities() {
-    let resps = await Promise.all(["all_cities_p10000.json", "all_locs_maptap.json", "adm1CodeDict.json"].map(x=>fetch(x)));
-    let [allCitiesData, allCitiesMaptapData, adm1CodeDict] = await Promise.all(resps.map(x=>x.json()));
+    let resps = await Promise.all(["all_cities_p10000.json", "all_locs_maptap.json", "adm1CodeDict.json", "all_countries.json"].map(x=>fetch(x)));
+    let [allCitiesData, allCitiesMaptapData, adm1CodeDict, allCountriesGeojsonTemp] = await Promise.all(resps.map(x=>x.json()));
+
+    allCountriesGeojson = allCountriesGeojsonTemp;
 
     for (let c of allCitiesData) {
         let o = {
@@ -770,16 +768,16 @@ let style = {
     sources: {
         "satellite-tiles": {
             type: "raster",
-            tiles: [getTileSource().src],
+            tiles: [getTileSource()],
             tileSize: 256,
-            attribution: "Tiles by " + getTileSource().attr
         }
     },
     layers: [{
         id: "satellite-layer",
         type: "raster",
-        source: "satellite-tiles"
+        source: "satellite-tiles",
     }],
+    maxTileCacheZoomLevels: 8,
     projection: { type: "globe" }
 }
 
@@ -793,32 +791,20 @@ let map = new maplibregl.Map({
 });
 map.setCenter([settings.mapCenterLng.val, settings.mapCenterLat.val]);
 
-/*map.on("error", (e)=>{
-    if (e && e.error && [400].includes(e.error.status)) return;
-    console.log(e);
-});*/
-
 function getTileSource() {
-    if (d.id("checkbox-topo-map").checked) {
-        return {
-            "src": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}",
-            "attr": "Esri (ArcGIS World_Shaded_Relief)"
-        };
-    } else if (settings.useBlueMarbleGlobe.val) {
-        return {
-            "src": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg",
-            "attr": "NASA (Blue Marble Next Generation)"
-        };
+    if (settings.globeTileType.val === "topo") {
+        return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}";
+    } else if (settings.globeTileType.val === "maptap") {
+        return "sentinel-merc://{z}/{x}/{y}";
+    } else if (settings.globeTileType.val === "blue-marble") {
+        return "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg";
     } else {
-        return {
-            "src": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-            "attr": "Esri (ArcGIS World_Imagery)"
-        };
+        return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
     }
 }
 
-d.id("checkbox-topo-map").listen("change", (e)=>{
-    map.getSource("satellite-tiles").setTiles([getTileSource().src]);
+d.id("map-style-select").listen("change", (e)=>{
+    map.getSource("satellite-tiles").setTiles([getTileSource()]);
 })
 
 let outlineLayer = {
@@ -1012,9 +998,6 @@ d.id("checkbox-cities-only").listen("change", (e)=>{
     }
 })
 
-d.id("checkbox-blue-marble-map").listen("change", (e)=>{
-    map.getSource("satellite-tiles").setTiles([getTileSource().src]);
-})
 d.id("checkbox-maptap-subdivisions").listen("change", (e)=>{
     if (settings.showOutline.val && settings.outlineDivisions.val) {
         setMapSource();
@@ -1110,7 +1093,7 @@ map.on("click", (e)=> {
     let scoreText = Math.round(score) + "/1000" + " (" + distFromClick.toFixed(2) + " km)";
     let scoreColor = "hsl(" + (240 * (1-score/1000)) + ", 100%, 85%)";
 
-    let historyElem = addHistoryElem(scoreText, scoreColor, true);
+    let historyElem = addHistoryElem(clickedCity, scoreText, scoreColor, true);
 
     setMarkerInterval(true);
     setHistoryElemStyle();
@@ -1139,7 +1122,7 @@ map.on("click", (e)=> {
     }
 })
 
-function addHistoryElem(scoreText, scoreColor, addClickMarker) {
+function addHistoryElem(city, scoreText, scoreColor, addClickMarker) {
     let historyElem = d.createElement("div");
     historyElem.classList.add("history-elem");
     let locationNameElem = d.createElement("div");
@@ -1152,6 +1135,15 @@ function addHistoryElem(scoreText, scoreColor, addClickMarker) {
     secondRow.appendChild(scoreElem);
     historyElem.appendChild(secondRow);
     historyElem.setAttribute("data-marker-ind", pastMarkerCoords.length-1);
+
+    /*let linkButton = d.createElement("button");
+    linkButton.listen("click", ()=>{
+        window.open(`https://www.google.com/maps/place/${getCityText(city, false, true, true, false, false).replaceAll(" ", "+")}`, "_blank", "noopener,noreferrer")
+    })
+    linkButton.classList.add("button-link");
+    linkButton.innerText = "→";
+    linkButton.title = "Open location in Google Maps"
+    historyElem.appendChild(linkButton);*/
 
     historyElem.listen("mouseenter", (e)=>{
         let markerPositions = pastMarkerCoords[e.currentTarget.getAttribute("data-marker-ind")];
@@ -1347,7 +1339,7 @@ d.listen("keydown", (e) => {
         locMarker = createMarker("#00CC00", settings.clickMarkerScale.val, currCity.longitude, currCity.latitude);
         d.id("top-display").style.color = "rgba(255, 255, 255, 0)";
 
-        let historyElem = addHistoryElem("Didn't know", "#cad", false);
+        let historyElem = addHistoryElem(currCity, "Didn't know", "#cad", false);
 
         setMarkerInterval(false);
         setHistoryElemStyle();

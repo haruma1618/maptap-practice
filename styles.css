@@ -106,6 +106,7 @@ html, body {
     align-items: center;
     justify-content: center;
     text-align: center;
+    position: relative;
 }
 
 #map {
@@ -144,6 +145,19 @@ button, select {
     background-color: rgb(50, 0, 16);
     color: white;
     cursor: pointer;
+}
+
+.button-link {
+    background-color: transparent;
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .map-select-buttons > button {
@@ -199,4 +213,8 @@ label {
     border-radius: 50%;
     border: 1px solid #00000080;
     background-image: radial-gradient(rgba(255, 255, 255, 0.4) 0%, transparent 100%);
+}
+
+.maplibregl-ctrl-bottom-right {
+    display: none;
 }

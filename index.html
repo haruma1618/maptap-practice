@@ -109,10 +109,6 @@
                     <label for="checkbox-city-diff">Show city difficulty</label>
                 </div>
             </div>
-            <div>
-                <input type="checkbox" id="checkbox-topo-map" name="checkbox-topo-map">
-                <label for="checkbox-topo-map">Topological map only</label>
-            </div>
         </div>
 
         <div style="margin-bottom: 20px"></div>
@@ -140,18 +136,32 @@
 
     <div style="position: fixed; left: 5px; bottom: 5px; font-size: 14px; color: #bbb">
         City data from: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">Geonames</a>,
-        <a href="https://maptap.gg/locations" target="_blank" rel="noopener noreferrer">MapTap Atlas</a><br>
+        <a href="https://maptap.gg/locations" target="_blank" rel="noopener noreferrer">MapTap</a><br>
         Country outlines from: <a href="https://www.geoboundaries.org/" target="_blank" rel="noopener noreferrer">Geoboundaries</a>
         , <a href="https://datahub.io/core/geo-countries" target="_blank" rel="noopener noreferrer">Datahub</a><br>
         Background sounds: youtu.be/bn9F19Hi1Lk
+    </div>
+    <div style="position: fixed; right: 5px; bottom: 5px; font-size: 14px; text-align: right; color: #bbb">
+        Created using <a href="https://maplibre.org/" target="_blank" rel="noopener noreferrer">MapLibre GL JS</a><br>
+        Map tiles from: MapTap, Esri, NASA Blue Marble<br>
+        Permission was received to use MapTap tiles
     </div>
 
     <div id="more-settings-popup" class="center-popup" style="display: none; font-size: 13px">
         <button id="more-settings-exit" style="position: absolute; top: 10px; right: 10px">X</button>
         <b style="text-align: center; font-size: 20px; margin-bottom: 10px">More settings</b><br>
-        <div>
+        <!--<div>
             <input type="checkbox" id="checkbox-blue-marble-map" name="checkbox-blue-marble-map" checked>
             <label for="checkbox-blue-marble-map">MapTap style map (Blue Marble data, lower resolution)</label>
+        </div>-->
+        <div>
+            <label for="map-style-select">Map style: </label>
+            <select name="map-style-select" id="map-style-select">
+                <option value="maptap" selected>Actual MapTap tiles</option>
+                <option value="esri">Esri Tiles (Highest resolution)</option>
+                <option value="blue-marble">NASA Blue Marble tiles</option>
+                <option value="topo">Topological map only (cities not visible)</option>
+            </select>
         </div>
         <div style="height: 3px"></div>
         <div style="text-align: center;">
@@ -188,7 +198,7 @@
                 <label for="globe-brightness-slider">
                     Globe brightness: <span id="globe-brightness-value"></span>
                 </label>
-                <input type="range" id="globe-brightness-slider" name="globe-brightness-slider" min="1" max="1.5" value="1" step="0.02">
+                <input type="range" id="globe-brightness-slider" name="globe-brightness-slider" min="0.8" max="1.5" value="1" step="0.02">
             </div>
         </div>
          <div style="height: 5px"></div>
@@ -316,7 +326,7 @@
         <a href="iso2_codes.txt" target="_blank" rel="noopener noreferrer" style="font-size:12px; color:#ddd">Country Codes List</a>
     </div>
 
-    <script src="scripts.js"></script>
+    <script src="scripts.js" type="module"></script>
 </body>
 
 </html>
