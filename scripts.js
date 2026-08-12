@@ -1145,7 +1145,7 @@ function addHistoryElem(city, scoreText, scoreColor, addClickMarker) {
 
     let linkButton = d.createElement("button");
     linkButton.listen("click", ()=>{
-        window.open(`https://www.google.com/maps/place/${getCityText(city, false, true, true, false, false).replaceAll(" ", "+")}`, "_blank", "noopener,noreferrer")
+        window.open(`https://www.google.com/maps/search/${getCityText(city, false, true, true, false, false).replaceAll(" ", "+")}`, "_blank", "noopener,noreferrer")
     })
     linkButton.classList.add("button-link");
     linkButton.innerText = "→";
@@ -1308,8 +1308,16 @@ function removeLatestCity() {
     removedCities.push(cityToRemove);
     setCurrCities();
     createTopRightPopup("#ffcfcf", "Removed " + cityToRemove.name + " from cities list", "#000");
-    if (allLocMarkers.length > 0) {
-        addAllLocMarkers();
+    if (allLocMarkers.length > 0) addAllLocMarkers();
+}
+
+function restoreLatestCity() {
+    let cityToRestore = inTransition ? locHistory[0] : locHistory[1];
+    if (removedCities.includes(cityToRestore)) {
+        removedCities = removedCities.filter(x => x != cityToRestore);
+        setCurrCities();
+        createTopRightPopup("#cfcfff", "Restored " + cityToRestore.name + " back to cities list", "#000");
+        if (allLocMarkers.length > 0) addAllLocMarkers();
     }
 }
 
@@ -1333,6 +1341,8 @@ d.listen("keydown", (e) => {
 
     if (e.key === "r") {
         removeLatestCity();
+    } else if (e.key === "t") {
+        restoreLatestCity();
     } else if (e.key === "b") {
         restoreRemovedCities();
     } else if (e.key === " ") {
