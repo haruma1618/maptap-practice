@@ -74,7 +74,7 @@ let settings = {
     "mapCenterLng": {"val": 0, "id": null, "type": "n"},
     "maptapCitiesOnly": {"val": true, "id": "checkbox-cities-only", "type": "b"},
     "dotMarkers": {"val": false, "id": "checkbox-dot-markers", "type": "b"},
-    "clickMarkerScale": {"val": 1, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"}
+    "clickMarkerScale": {"val": 1, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"},
 }
 
 let mapPrefs = [
@@ -99,6 +99,7 @@ for (let k in settings) {
     if (stg.id) {
         let elem = d.id(stg.id);
         if (!elem) {
+            console.log(`Invalid setting - ${k}: ${JSON.stringify(stg)}`);
             localStorage.removeItem(k);
             delete settings[k];
             continue;
@@ -1142,14 +1143,14 @@ function addHistoryElem(city, scoreText, scoreColor, addClickMarker) {
     historyElem.appendChild(secondRow);
     historyElem.setAttribute("data-marker-ind", pastMarkerCoords.length-1);
 
-    /*let linkButton = d.createElement("button");
+    let linkButton = d.createElement("button");
     linkButton.listen("click", ()=>{
         window.open(`https://www.google.com/maps/place/${getCityText(city, false, true, true, false, false).replaceAll(" ", "+")}`, "_blank", "noopener,noreferrer")
     })
     linkButton.classList.add("button-link");
     linkButton.innerText = "→";
     linkButton.title = "Open location in Google Maps"
-    historyElem.appendChild(linkButton);*/
+    historyElem.appendChild(linkButton);
 
     historyElem.listen("mouseenter", (e)=>{
         let markerPositions = pastMarkerCoords[e.currentTarget.getAttribute("data-marker-ind")];
