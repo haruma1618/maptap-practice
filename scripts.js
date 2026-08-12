@@ -67,7 +67,7 @@ let settings = {
     "customMapArr": {"val": [], "id": null, "type": "o"},
     "countryMapVal": {"val": "china", "id": null, "type": "s"},
     "globeTileType": {"val": "maptap", "id": "map-style-select", "type": "s"},
-    "useMaptapDatabase": {"val": false, "id": "checkbox-maptap-database", "type": "b"},
+    "useMaptapDatabase": {"val": true, "id": "checkbox-maptap-database", "type": "b"},
     "minDiff": {"val": 1, "id": "min-difficulty", "type": "n"},
     "maxDiff": {"val": 6, "id": "max-difficulty", "type": "n"},
     "mapCenterLat": {"val": 0, "id": null, "type": "n"},
