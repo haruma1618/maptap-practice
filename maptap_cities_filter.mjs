@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFile, writeFile } from "node:fs/promises";
 
-const DATABASE_PATH = "./maptap_enabled_locs_20260807.json"
+const DATABASE_PATH = "./maptap_raw_database_20260813.json"
 const OUTPUT_PATH = "./all_locs_maptap.json";
 
 let origDatabase;
@@ -297,8 +297,9 @@ async function main() {
 
     console.log(`${DATABASE_PATH} - Original cities: ${origDatabase.length}`);
 
-    const newCities = origDatabase.map((o) => {
-        let name = o.name.split(", ")[0];
+    const newCities = origDatabase.filter(x => x.disabled != true).map((o) => {
+		let nameArr = o.name.split(", ");
+        let name = nameArr[0];
         let countryCode;
         let countryOfCity = o.country.includes("/") ? o.country.split("/")[0] : o.country;
 
@@ -309,13 +310,18 @@ async function main() {
             return null;
         }
 
-        let admin = Object.hasOwn(o, "admin") ? o.admin : null;
+        let admin = null;
+		if (Object.hasOwn(o, "admin")) {
+			admin = o.admin;
+		} else if (nameArr.length >= 3) {
+			admin = nameArr[1];
+		}
+
 		let population = Object.hasOwn(o, "population") ? o.population : null;
         return [name, countryCode, o.lat, o.lng, admin, o.type, o.difficultyLevel, population];
-    }).filter(x => x!=null)
+    }).filter(x => x!=null);
 
-    console.log(`Unknown countries: \n${Array.from(unknownCountries).join("\n")}`);
-    
+    console.log(`Unknown countries: \n${Array.from(unknownCountries).join("\n")}`);    
     console.log(`${OUTPUT_PATH} - Filtered cities: ${newCities.length}`);
     await writeFile(OUTPUT_PATH, JSON.stringify(newCities), "utf-8");
 }

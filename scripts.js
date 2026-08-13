@@ -1,5 +1,5 @@
 // Data used: https://public.opendatasoft.com/explore/assets/geonames-all-cities-with-a-population-1000/view
-import { registerSentinelMercatorProtocol } from './sentinel-mercator-protocol.js';
+import { registerSentinelMercatorProtocol } from "./sentinel-mercator-protocol.js";
 registerSentinelMercatorProtocol(maplibregl);
 
 let d = document;
