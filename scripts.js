@@ -540,6 +540,7 @@ d.id("select-countries-confirm").listen("click", (e)=>{
     setCurrCountries("custom");
     hideCountrySelection();
     finishCountrySelect();
+    removedCities.length = 0;
 })
 
 
@@ -1129,6 +1130,48 @@ map.on("click", (e)=> {
     }
 })
 
+async function getFirstWikiLink(query, city=true) {
+    //console.log(query)
+    const [mainName, ...rest] = query.split(',').map(s => s.trim());
+
+    if (city) {
+        const qualifier = rest.join(', ');
+        const searchUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(mainName)}&language=en&type=item&limit=10&format=json&origin=*`;
+        const searchRes = await fetch(searchUrl);
+        const searchData = await searchRes.json();
+        const candidates = searchData.search || [];
+        if (candidates.length === 0) return null;
+
+        const placeKeywords = /\b(city|town|village|municipality|country|state|province|county|region|district|commune|borough|settlement|capital|metropolis|hamlet|prefecture|department|island|neighborhood|neighbourhood)\b/i;
+        const placeCandidates = candidates.filter(c => c.description && placeKeywords.test(c.description));
+        const pool = placeCandidates.length > 0 ? placeCandidates : candidates;
+
+        let best = pool[0];
+        if (qualifier) {
+            const match = pool.find(c => c.description?.toLowerCase().includes(qualifier.toLowerCase()));
+            if (match) best = match;
+        }
+
+        const entityUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${best.id}&props=sitelinks/urls&sitefilter=enwiki&format=json&origin=*`;
+        const entityRes = await fetch(entityUrl);
+        const entityData = await entityRes.json();
+        const sitelink = entityData.entities[best.id].sitelinks?.enwiki;
+        return sitelink ? sitelink.url : null;
+    } else {
+        const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(mainName)}&srlimit=1&format=json&origin=*`;
+        const searchRes = await fetch(searchUrl);
+        const searchData = await searchRes.json();
+        const topResult = searchData.query?.search?.[0];
+        if (!topResult) return null;
+
+        const urlUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=info&inprop=url&titles=${encodeURIComponent(topResult.title)}&format=json&origin=*`;
+        const urlRes = await fetch(urlUrl);
+        const urlData = await urlRes.json();
+        const page = Object.values(urlData.query.pages)[0];
+        return page.fullurl || null;
+    }
+}
+
 function addHistoryElem(city, scoreText, scoreColor, addClickMarker) {
     let historyElem = d.createElement("div");
     historyElem.classList.add("history-elem");
@@ -1143,14 +1186,25 @@ function addHistoryElem(city, scoreText, scoreColor, addClickMarker) {
     historyElem.appendChild(secondRow);
     historyElem.setAttribute("data-marker-ind", pastMarkerCoords.length-1);
 
-    let linkButton = d.createElement("button");
-    linkButton.listen("click", ()=>{
+    let mapsButton = d.createElement("button");
+    mapsButton.listen("click", ()=>{
         window.open(`https://www.google.com/maps/search/${getCityText(city, false, true, true, false, false).replaceAll(" ", "+")}`, "_blank", "noopener,noreferrer")
     })
-    linkButton.classList.add("button-link");
-    linkButton.innerText = "→";
-    linkButton.title = "Open location in Google Maps"
-    historyElem.appendChild(linkButton);
+    mapsButton.classList.add("button-link");
+    mapsButton.innerText = "→";
+    mapsButton.title = "Open location in Google Maps"
+    historyElem.appendChild(mapsButton);
+
+    let wikiButton = d.createElement("button");
+    wikiButton.listen("click", async ()=>{
+        let link = await getFirstWikiLink(getCityText(city, false, city.region!=null, city.region==null, false, false), isCity(city));
+        window.open(link, "_blank", "noopener,noreferrer")
+    })
+    wikiButton.classList.add("button-link");
+    wikiButton.innerText = "W";
+    wikiButton.title = "Open location in Wikipedia"
+    wikiButton.style.bottom = "21px";
+    historyElem.appendChild(wikiButton);
 
     historyElem.listen("mouseenter", (e)=>{
         let markerPositions = pastMarkerCoords[e.currentTarget.getAttribute("data-marker-ind")];
