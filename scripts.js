@@ -11,7 +11,6 @@ EventTarget.prototype.listen = function(t, f) {
 
 let mouseX = 0;
 let mouseY = 0;
-let autoStart = true;
 let allCities = [];
 let allCitiesMaptap = [];
 let currCitiesList = [];
@@ -30,7 +29,11 @@ let allLocMarkers = [];
 let regionColorsDict = {};
 let showMedCountries = false;
 let selectedFeatureCountries = [];
+let selectedFeatureSubdivs = [];
 let selectingCountriesForMap = false;
+let selectingSubdivsForMap = false;
+let allCurrSubdivs = [];
+let currSubdivsGeojson = null;
 let numTimesGuessedCorrect = {};
 
 let convertToType = {
@@ -38,6 +41,7 @@ let convertToType = {
     "b": x => typeof x === "string" ? (x === "true") : Boolean(x),
     "s": x => String(x),
     "o": x => {
+        if (typeof x === "object") return x;
         try {
             return JSON.parse(x);
         } catch (e) {
@@ -75,6 +79,7 @@ let settings = {
     "maptapCitiesOnly": {"val": true, "id": "checkbox-cities-only", "type": "b"},
     "dotMarkers": {"val": false, "id": "checkbox-dot-markers", "type": "b"},
     "clickMarkerScale": {"val": 1, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"},
+    "enabledSubdivs": {"val": [], "id": null, "type": "o"}
 }
 
 let mapPrefs = [
@@ -152,8 +157,68 @@ function setSettingFromEvent(e) {
 let inputtedMinBeforeRepeat = settings.minBeforeRepeat.val;
 let iso2ToCountryName = {"AF":"Afghanistan","AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CG":"Rep. of the Congo","CD":"Dem. Rep. of the Congo","CK":"Cook Islands","CR":"Costa Rica","CI":"Côte d'Ivoire","HR":"Croatia","CU":"Cuba","CY":"Cyprus","CZ":"Czech Republic","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","ET":"Ethiopia","FK":"Falkland Islands (Malvinas)","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"The Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KP":"North Korea","KR":"South Korea","XK":"Kosovo","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MK":"North Macedonia","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","AN":"Netherlands Antilles","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","RE":"Reunion","RO":"Romania","RU":"Russia","RW":"Rwanda","BL":"Saint Barthelemy","SH":"Saint Helena","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SZ":"Eswatini","SE":"Sweden","SS":"South Sudan","CH":"Switzerland","SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"United Arab Emirates","GB":"United Kingdom","US":"United States","UM":"United States Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"}
 
-let supportedADM1 = ['AD', 'AE', 'AF', 'AG', 'AL', 'AM', 'AO', 'AR', 'AT', 'AU', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BN', 'BO', 'BR', 'BS', 'BT', 'BW', 'BY', 'BZ', 'CA', 'CD', 'CF', 'CG', 'CH', 'CI', 'CL', 'CM', 'CN', 'CO', 'CR', 'CU', 'CV', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FM', 'FR', 'GA', 'GB', 'GD', 'GE', 'GH', 'GL', 'GM', 'GN', 'GQ', 'GR', 'GT', 'GW', 'GY', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IN', 'IQ', 'IR', 'IS', 'IT', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MG', 'MH', 'MK', 'ML', 'MM', 'MN', 'MR', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NE', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PG', 'PH', 'PK', 'PL', 'PS', 'PT', 'PW', 'PY', 'QA', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SI', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SY', 'SZ', 'TD', 'TG', 'TH', 'TJ', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'US', 'UY', 'UZ', 'VC', 'VE', 'VN', 'VU', 'WS', 'XK', 'YE', 'ZA', 'ZM', 'ZW'];
-let maptapADM1 = ["US", "CN", "IN", "BR", "RU", "CA", "AU"];
+let supportedADM1 = ["AD", "AE", "AF", "AG", "AL", "AM", "AO", "AR", "AT", "AU", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BN", "BO", "BR", "BS", "BT", "BW", "BY", "BZ", "CA", "CD", "CF", "CG", "CH", "CI", "CL", "CM", "CN", "CO", "CR", "CU", "CV", "CY", "CZ", "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "ER", "ES", "ET", "FI", "FJ", "FM", "FR", "GA", "GB", "GD", "GE", "GH", "GL", "GM", "GN", "GQ", "GR", "GT", "GW", "GY", "HN", "HR", "HT", "HU", "ID", "IE", "IL", "IN", "IQ", "IR", "IS", "IT", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KP", "KR", "KW", "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MG", "MH", "MK", "ML", "MM", "MN", "MR", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NR", "NU", "NZ", "OM", "PA", "PE", "PG", "PH", "PK", "PL", "PS", "PT", "PW", "PY", "QA", "RO", "RS", "RU", "RW", "SA", "SB", "SC", "SD", "SE", "SG", "SI", "SK", "SL", "SM", "SN", "SO", "SR", "SS", "ST", "SV", "SY", "SZ", "TD", "TG", "TH", "TJ", "TL", "TM", "TN", "TO", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "US", "UY", "UZ", "VC", "VE", "VN", "VU", "WS", "XK", "YE", "ZA", "ZM", "ZW"];
+let maptapADM1 = ["US", "CN", "IN", "BR", "RU", "CA", "AU", "ID", "AR"];
+let subdivPracticeCountries = ["US", "CN", "IN", "BR", "RU", "CA", "AU"];
+
+let subdivNameCorrections = {
+    "BR": {
+        "Rio Granda do Norte": "Rio Grande do Norte",
+        "Rio de Jeneiro": "Rio de Janeiro",
+        "Distrito Federal": "Federal District"
+    },
+    "RU": {
+        "Kaliningrad": "Kaliningrad Oblast",
+        "Chukotka Autonomous Okrug": "Chukotka",
+        "Sakha Republic": "Sakha",
+        "Khanty-Mansiysk Autonomous Okrug – Ugra": "Khanty-Mansia",
+        "Zabaykalsky Krai": "Transbaikal Krai",
+        "Republic of Mordovia": "Mordovia",
+        "Komi Republic": "Komi",
+        "Republic of Karelia": "Karelia",
+        "North Ossetia–Alania": "North Ossetia",
+        "Nenets Autonomous Okrug": "Nenets",
+        "Yamalo-Nenets Autonomous Okrug": "Yamalo-Nenets"
+    },
+    "IN": {
+        "Andaman and Nicobar Islands": "Andaman and Nicobar",
+        "Dādra and Nagar Haveli and Damān and Diu": "Daman and Diu"
+    },
+    "CN": {
+        "云南省": "Yunnan",
+        "广西壮族自治区": "Guangxi",
+        "海南省": "Hainan",
+        "广东省": "Guangdong",
+        "黑龙江省": "Heilongjiang",
+        "内蒙古自治区": "Inner Mongolia",
+        "新疆维吾尔自治区": "Xinjiang",
+        "吉林省": "Jilin",
+        "辽宁省": "Liaoning",
+        "甘肃省": "Gansu",
+        "河北省": "Hebei",
+        "北京市": "Beijing",
+        "山西省": "Shanxi",
+        "天津市": "Tianjin",
+        "陕西省": "Shaanxi",
+        "宁夏回族自治区": "Ningxia",
+        "青海省": "Qinghai",
+        "山东省": "Shandong",
+        "西藏自治区": "Tibet",
+        "河南省": "Henan",
+        "江苏省": "Jiangsu",
+        "安徽省": "Anhui",
+        "四川省": "Sichuan",
+        "湖北省": "Hubei",
+        "重庆市": "Chongqing",
+        "上海市": "Shanghai",
+        "浙江省": "Zhejiang",
+        "湖南省": "Hunan",
+        "江西省": "Jiangxi",
+        "贵州省": "Guizhou",
+        "福建省": "Fujian",
+        "香港": "Hong Kong"
+    }
+}
 
 let valueToCountries = {
     "usa": ["US"], "china": ["CN"], "india": ["IN"], "brazil": ["BR"], "indonesia": ["ID"], "russia": ["RU"], "canada": ["CA"],
@@ -207,7 +272,8 @@ function isMenuPopupOpen() {
 }
 
 d.id("select-map-btn").listen("click", (e)=>{
-    hideCountrySelection();
+    if (isMenuPopupOpen() || selectingSubdivsForMap) return;
+    hideCountrySelection(false);
     toggleMenuPopup("map-select-popup", "select-map-btn");
 });
 
@@ -266,6 +332,7 @@ d.id("show-med-countries").listen("click", (e)=>{
 })
 
 d.id("more-settings-btn").listen("click", (e)=>{
+    if (isMenuPopupOpen()) return;
     toggleMenuPopup("more-settings-popup", "more-settings-btn");
 })
 
@@ -357,6 +424,10 @@ async function loadAllCities() {
 }
 loadAllCities();
 
+function getCitiesList() {
+    return settings.useMaptapDatabase.val ? allCitiesMaptap : allCities;
+}
+
 function getCityId(c) {
     return c.maptap_loc ? (allCitiesMaptap.indexOf(c) + "M") : (allCities.indexOf(c) + "R")
 }
@@ -365,23 +436,68 @@ function isCity(maptapLoc) {
     return ["city", "capital", "state_capital"].includes(maptapLoc.type)
 }
 
+function normName(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 function cityFitsConstraints(c) {
+    if (!currCountriesList.includes(c.country)) return false;
+
+    let firstCheck;
     if (c.maptap_loc) {
-        return currCountriesList.includes(c.country) && c.difficulty >= settings.minDiff.val && c.difficulty <= settings.maxDiff.val && !(settings.maptapCitiesOnly.val && !isCity(c));
+        firstCheck = c.difficulty >= settings.minDiff.val && c.difficulty <= settings.maxDiff.val && !(settings.maptapCitiesOnly.val && !isCity(c));
     } else {
-        return currCountriesList.includes(c.country) && c.population >= settings.minPopulation.val && c.population <= settings.maxPopulation.val;
+        firstCheck = c.population >= settings.minPopulation.val && c.population <= settings.maxPopulation.val;
     }
+    if (!firstCheck) return false;
+
+    let subdivs = settings.enabledSubdivs.val.map(x=>normName(x));
+    if (subdivs.length === 0) return true;  // No enabledSubdivs = all are enabled
+
+    let subdivCheck = c.region && subdivs.includes(normName(c.region));
+    if (!c.region && subdivs.includes(normName(c.name))) {
+        subdivCheck = true; // Check if subdiv name == city name
+    }
+    return subdivCheck;
+}
+
+function getCurrCities() {
+    let fullList = getCitiesList();
+    let citiesList = [];
+    for (let c of fullList) {
+        if (cityFitsConstraints(c) && !removedCities.includes(c) && !removedSatellites.includes(c)) {
+            citiesList.push(c);
+        }
+    }
+
+    return citiesList;
 }
 
 function setCurrCities() {
-    let list = settings.useMaptapDatabase.val ? allCitiesMaptap : allCities;
+    currCitiesList = getCurrCities();
 
-    currCitiesList = [];
-    for (let c of list) {
-        if (cityFitsConstraints(c) && !removedCities.includes(c) && !removedSatellites.includes(c)) {
-            currCitiesList.push(c);
+    if (currCitiesList.length == 0) {
+        // Fallback 1 - Widen ranges
+        if (settings.useMaptapDatabase) {
+            setSetting("minDiff", 1);
+            setSetting("maxDiff", 8);
+            d.id("min-difficulty").value = 1;
+            d.id("max-difficulty").value = 8;
+        } else {
+            setSetting("minPopulation", 0);
+            setSetting("maxPopulation", 50000000);
+            d.id("min-population").value = 0;
+            d.id("max-population").value =500000008;
+        }
+
+        currCitiesList = getCurrCities();
+        if (currCitiesList.length == 0) {
+            // Fallback 2 - enable all subdivisions
+            setSetting("enabledSubdivs", "[]");
+            currCitiesList = getCurrCities();
         }
     }
+
     d.id("num-locs").innerText = currCitiesList.length;
     if (settings.minBeforeRepeat.val > currCitiesList.length) {
         setSetting("minBeforeRepeat", currCitiesList.length);
@@ -491,12 +607,21 @@ for (let div of d.id("map-select-button-container").children) {
 }
 
 d.id("select-countries").listen("click", (e)=>{
-    setTimeout(addAllCountries, 100);
+    addAllCountries();
     selectingCountriesForMap = true;
-    setSetting("showOutline", true);
     d.id("map-select-popup").style.display = "none";
     d.id("select-countries-panel").style.display = "block";
     d.id("show-all-locs-btn").classList.remove("button-highlighted");
+    removeAllLocMarkers();
+})
+
+d.id("select-subdivs").listen("click", (e)=>{
+    if (isMenuPopupOpen() || selectingCountriesForMap) return;
+    addCurrSubdivisions();
+    selectingSubdivsForMap = true;
+    d.id("select-subdivs-panel").style.display = "block";
+    d.id("show-all-locs-btn").classList.remove("button-highlighted");
+    d.id("select-subdivs").classList.add("button-highlighted");
     removeAllLocMarkers();
 })
 
@@ -516,31 +641,58 @@ d.id("use-custom").listen("click", (e)=>{
     setMapSource();
 });
 
-function hideCountrySelection() {
-    setMapSource();
+function hideCountrySelection(hidePopup) {
+    setTimeout(setMapSource, 50);
     selectingCountriesForMap = false;
     selectedFeatureCountries.length = 0;
     d.id("selected-countries").innerText = "";
     d.id("select-countries-panel").style.display = "none";
+    if (hidePopup) {
+        d.id("map-select-popup").style.display = "none";
+        d.id("select-map-btn").classList.remove("button-highlighted");
+    }
 }
 
-function finishCountrySelect() {
-    d.id("map-select-popup").style.display = "none";
-    d.id("select-map-btn").classList.remove("button-highlighted");
-    setSetting("showOutline", d.id("checkbox-outline").checked);
+function hideSubdivSelection() {
+    setTimeout(setMapSource, 50);
+    selectingSubdivsForMap = false;
+    selectedFeatureSubdivs.length = 0;
+    d.id("selected-subdivs").innerText = "";
+    d.id("select-subdivs-panel").style.display = "none";
+    d.id("select-subdivs").classList.remove("button-highlighted");
 }
 
 d.id("select-countries-cancel").listen("click", (e)=>{
-    hideCountrySelection();
-    finishCountrySelect();
+    hideCountrySelection(true);
+})
+
+d.id("select-subdivs-cancel").listen("click", (e)=>{
+    hideSubdivSelection();
+})
+
+d.id("select-subdivs-add-all").listen("click", (e)=>{
+    selectAllSubdivs();
+})
+
+d.id("select-subdivs-remove-all").listen("click", (e)=>{
+    deselectAllSubdivs();
 })
 
 d.id("select-countries-confirm").listen("click", (e)=>{
     valueToCountries["custom"] = [...selectedFeatureCountries];
-    setCurrCountries("custom");
-    hideCountrySelection();
-    finishCountrySelect();
+    hideCountrySelection(true);
     removedCities.length = 0;
+    setCurrCountries("custom");
+})
+
+d.id("select-subdivs-confirm").listen("click", (e)=>{
+    setSetting("enabledSubdivs", JSON.stringify([...selectedFeatureSubdivs]));
+    console.log(settings["enabledSubdivs"].val);
+    hideSubdivSelection();
+    removedCities.length = 0;
+
+    setCurrCities();
+    selectRandCity();
 })
 
 
@@ -620,7 +772,7 @@ function setCurrMapText() {
 setCurrMapText();
 
 function setCurrCountries(mapVal=null) {
-    let prevCountriesList = currCountriesList;
+    let prevCountriesList = currCountriesList.length == 0 ? ["CN"] : currCountriesList;
     let prevCountryMap = currCountryMap;
 
     if (mapVal) {
@@ -631,9 +783,11 @@ function setCurrCountries(mapVal=null) {
     }
     currCountryMap = settings.countryMapVal.val;
 
-    if (valueToCountries[settings.countryMapVal.val] !== undefined) {
-        currCountriesList = valueToCountries[settings.countryMapVal.val];
+    if (valueToCountries[currCountryMap] !== undefined) {
+        currCountriesList = valueToCountries[currCountryMap];
     }
+
+    setSetting("enabledSubdivs", "[]");
 
     setCurrCities();
     locHistory = [];
@@ -644,6 +798,11 @@ function setCurrCountries(mapVal=null) {
         setCurrCities();
     }
 
+    let canSelectSubdivs = currCountriesList.length === 1 && subdivPracticeCountries.includes(currCountriesList[0]);
+    d.id("select-subdivs").style.display = canSelectSubdivs ? "block" : "none";
+    allCurrSubdivs.length = 0;
+    currSubdivsGeojson = null;
+
     setCurrMapText();
     selectRandCity();
 
@@ -652,6 +811,17 @@ function setCurrCountries(mapVal=null) {
         addAllLocMarkers();
     }
 }
+
+d.id("min-difficulty").listen("change", (e)=>{
+    e.target.value = Math.min(Math.max(e.target.value, 1), 8);
+})
+d.id("max-difficulty").listen("change", (e)=>{
+    if (e.target.value === "") {
+        e.target.value = 8;
+        return;
+    }
+    e.target.value = Math.min(Math.max(e.target.value, 1), 8);
+})
 
 for (let pref of mapPrefs) {
     d.id(pref.id).listen("change", updateMapPreferences);
@@ -835,30 +1005,107 @@ let fillLayer = {
     }
 };
 
-map.on("click", "polygons-fill", (e) => {
-    if (!selectingCountriesForMap) return;
-    let id = e.features[0].id;
-    let country = e.features[0].properties["ISO3166-1-Alpha-2"];
-    //console.log(country)
-
-    if (!Object.keys(iso2ToCountryName).includes(country)) return;
-
-    if (selectedFeatureCountries.includes(country)) {
-        selectedFeatureCountries = selectedFeatureCountries.filter(x => x !== country)
+function toggleFeatureSelect(selectedList, name, id) {
+    if (selectedList.includes(name)) {
+        for (let i = selectedList.length-1; i >= 0; i--) {
+            if (selectedList[i] === name) selectedList.splice(i, 1); 
+        }
         map.setFeatureState({"source": "country-polygons", "id": id}, {selected: false});
     } else {
-        selectedFeatureCountries.push(country);
+        selectedList.push(name);
         map.setFeatureState({"source": "country-polygons", "id": id}, {selected: true});
     }
-    
-    let selectedStr = "";
-    for (let i = 0; i < selectedFeatureCountries.length; i++) {
-        selectedStr += iso2ToCountryName[selectedFeatureCountries[i]];
-        if (i < selectedFeatureCountries.length-1) {
-            selectedStr += ", "
+}
+
+function allCitiesInSubdiv(country, name) {
+    return getCitiesList().filter(x => 
+        x.country === country && (x.region && normName(name) === normName(x.region) || !x.region && normName(name) === normName(x.name))
+    );
+}
+
+function getSubdivName(country, feature) {
+    let name = country != "CN" ? feature.properties.shapeName : feature.properties.NAME;
+
+    if (Object.hasOwn(subdivNameCorrections, country)) {
+        if (Object.hasOwn(subdivNameCorrections[country], name)) {
+            name = subdivNameCorrections[country][name];
         }
     }
-    d.id("selected-countries").innerText = selectedStr;
+
+    return name;
+}
+
+function selectAllSubdivs() {
+    let allFeatures = [... new Set(map.querySourceFeatures("country-polygons"))];
+    let invalidSubdivs = [];
+    let country = currCountriesList[0];
+
+    for (let feature of allFeatures) {
+        let name = getSubdivName(country, feature);
+
+        if (!name) continue;
+
+        if (allCitiesInSubdiv(country, name).length > 0) {
+            if (!selectedFeatureSubdivs.includes(name)) {
+                selectedFeatureSubdivs.push(name);
+            }
+            map.setFeatureState({"source": "country-polygons", "id": feature.id}, {selected: true});
+        } else {
+            invalidSubdivs.push(name);
+        }
+    }
+
+    invalidSubdivs = [... new Set(invalidSubdivs)];
+    console.log(`Invalid subdivs: ${invalidSubdivs.join(", ")}`);
+
+    let selectedStr = selectedFeatureSubdivs.slice(0, 20).join(", ");
+    if (selectedFeatureSubdivs.length > 20) {
+        selectedStr += "..."
+    }
+    d.id("selected-subdivs").innerText = selectedStr;
+}
+
+function deselectAllSubdivs() {
+    let allFeatures = [... new Set(map.querySourceFeatures("country-polygons"))];
+    for (let feature of allFeatures) {
+        map.setFeatureState({"source": "country-polygons", "id": feature.id}, {selected: false});
+    }
+    selectedFeatureSubdivs.length = 0;
+    d.id("selected-subdivs").innerText = "";
+}
+
+map.on("click", "polygons-fill", (e) => {
+    if (selectingCountriesForMap) {
+        let feature = e.features[0];
+        let id = feature.id;
+        let country = feature.properties["ISO3166-1-Alpha-2"];
+        //console.log(country)
+
+        if (!Object.keys(iso2ToCountryName).includes(country)) return;
+
+        toggleFeatureSelect(selectedFeatureCountries, country, id);
+        let selectedStr = selectedFeatureCountries.map(x => iso2ToCountryName[x]).join(", ");
+        d.id("selected-countries").innerText = selectedStr;
+    } else if (selectingSubdivsForMap) {
+        let feature = e.features[0];
+        let id = feature.id;
+        let country = currCountriesList[0];
+        let subdiv = getSubdivName(country, feature);
+
+        //console.log(subdiv)
+
+        // Subdivs without any cities are unselectable (to avoid softlocks)
+        let validCities = allCitiesInSubdiv(country, subdiv);
+        console.log(`Subdiv: ${subdiv}, # cities: ${validCities.length}`);
+        if (validCities.length === 0) return;
+
+        toggleFeatureSelect(selectedFeatureSubdivs, subdiv, id);
+        let selectedStr = selectedFeatureSubdivs.slice(0, 20).join(", ");
+        if (selectedFeatureSubdivs.length > 20) {
+            selectedStr += "..."
+        }
+        d.id("selected-subdivs").innerText = selectedStr;
+    }
 });
 
 setInterval(() => {
@@ -874,7 +1121,7 @@ function getSupportedADM1() {
     return (settings.maptapSubdivisions.val ? maptapADM1 : supportedADM1);
 }
 
-async function setMapSource() {
+function removeMapLayers() {
     if (map.getLayer("polygons-stroke")) {
         map.removeLayer("polygons-stroke");
     }
@@ -884,6 +1131,33 @@ async function setMapSource() {
     if (map.getSource("country-polygons")) {
         map.removeSource("country-polygons");
     }
+}
+
+function addMapLayers() {
+    if (!map.getLayer("polygons-stroke")) {
+        map.addLayer(outlineLayer);
+    }
+    if (!map.getLayer("polygons-fill")) {
+        map.addLayer(fillLayer);
+    }
+}
+
+function addPolygonsSource(features) {
+    if (!map.getSource("country-polygons")) {
+        map.addSource("country-polygons", {
+            "type": "geojson",
+            "data": {
+                "type": "FeatureCollection",
+                "features": features
+            },
+            "generateId": true
+        });
+    }
+}
+
+async function setMapSource() {
+    if (currCountriesList.length === 0) return;
+    removeMapLayers();
 
     let combinedFeatures = [];
     let nonADM1Countries = [];
@@ -897,17 +1171,22 @@ async function setMapSource() {
         }
     }
 
+    let enabledSubdivs = settings.enabledSubdivs.val;
+
     let promises = countryJSONUrls.map(async function(url) {
         let resp = await fetch(url);
-        if (!resp.ok) {
-            throw new Error(`${url} - ${resp.status}`);
-        }
+        if (!resp.ok) throw new Error(`${url} - ${resp.status}`);
         return resp.json();
     });
     let jsonDataObjects = await Promise.all(promises);
     for (let data of jsonDataObjects) {
         for (let f of data.features) {
-            combinedFeatures.push(f);
+            let include = false;
+            if (currCountriesList.length > 1 || !subdivPracticeCountries.includes(currCountriesList[0])) {include = true;}
+            if (enabledSubdivs.length === 0) {include = true;}
+            if (enabledSubdivs.includes(getSubdivName(currCountriesList[0], f))) {include = true;}
+
+            if (include) {combinedFeatures.push(f);}
         }
     }
 
@@ -917,56 +1196,37 @@ async function setMapSource() {
         }
     }
 
-    if (!map.getSource("country-polygons")) {
-        map.addSource("country-polygons", {
-            "type": "geojson",
-            "data": {
-                "type": "FeatureCollection",
-                "features": combinedFeatures
-            },
-            "generateId": true
-        });
-    }
+    addPolygonsSource(combinedFeatures);
 
     //console.log(combinedFeatures)
     if (settings.showOutline.val) {
-        if (!map.getLayer("polygons-stroke")) {
-            map.addLayer(outlineLayer);
-        }
-        if (!map.getLayer("polygons-fill")) {
-            map.addLayer(fillLayer);
-        }
+        addMapLayers();
     }
 }
 
-async function addAllCountries() {
-    if (map.getLayer("polygons-stroke")) {
-        map.removeLayer("polygons-stroke");
-    }
-    if (map.getLayer("polygons-fill")) {
-        map.removeLayer("polygons-fill");
-    }
-    if (map.getSource("country-polygons")) {
-        map.removeSource("country-polygons");
-    }
+function addAllCountries() {
+    removeMapLayers();
+    addPolygonsSource(allCountriesGeojson.features);
+    addMapLayers();
+}
 
-    map.addSource("country-polygons", {
-        "type": "geojson",
-        "data": {
-            "type": "FeatureCollection",
-            "features": allCountriesGeojson.features
-        },
-        "generateId": true
-    });
+async function addCurrSubdivisions() {
+    if (currCountriesList.length === 1 && subdivPracticeCountries.includes(currCountriesList[0])) {
+        removeMapLayers();
 
-    if (settings.showOutline.val) {
-        if (!map.getLayer("polygons-stroke")) {
-            map.addLayer(outlineLayer);
+        if (currSubdivsGeojson == null) {
+            let resp = await fetch(`geojson_data/${currCountriesList[0]}.json`);
+            currSubdivsGeojson = await resp.json();
         }
-        if (!map.getLayer("polygons-fill")) {
-            map.addLayer(fillLayer);
+        let features = currSubdivsGeojson.features;
+
+        addPolygonsSource(features);
+        for (let feature of features) {
+            allCurrSubdivs.push(feature.properties["shapeName"]);
         }
-    };
+        //console.log(allCurrSubdivs);
+        addMapLayers();
+    }
 }
 
 map.on("load", (e)=> {
@@ -1045,12 +1305,14 @@ for (let n of soundNames) {
 }
 
 map.on("click", (e)=> {
-    if (!citiesLoaded) {//console.log("Click failed: cities not loaded");
-        return;}
-    if (inTransition) {//console.log("Click failed: in transition");
-        return;}
-    if (selectingCountriesForMap) {//console.log("Click failed: selecting countries");
-        return;}
+    if (!citiesLoaded) //console.log("Click failed: cities not loaded");
+        return;
+    if (inTransition) //console.log("Click failed: in transition");
+        return;
+    if (selectingCountriesForMap) //console.log("Click failed: selecting countries");
+        return;
+    if (selectingSubdivsForMap) //console.log("Click failed: selecting subdivisions");
+        return;
 
     let pxl = map.project([e.lngLat.lng, e.lngLat.lat]);
     let cdist = (pxl.x - mouseX)**2 + (pxl.y - mouseY)**2;
@@ -1188,7 +1450,8 @@ function addHistoryElem(city, scoreText, scoreColor, addClickMarker) {
 
     let mapsButton = d.createElement("button");
     mapsButton.listen("click", ()=>{
-        window.open(`https://www.google.com/maps/search/${getCityText(city, false, true, true, false, false).replaceAll(" ", "+")}`, "_blank", "noopener,noreferrer")
+        window.open(`https://www.google.com/maps/search/${getCityText(city, false, true, true, false, false).replaceAll(" ", "+")}`,
+        "_blank", "noopener,noreferrer")
     })
     mapsButton.classList.add("button-link");
     mapsButton.innerText = "→";
@@ -1231,29 +1494,27 @@ function addHistoryElem(city, scoreText, scoreColor, addClickMarker) {
 }
 
 function setMarkerInterval(addClickMarker) {
-    if (autoStart) {
-        opacityInterval = setInterval(() => {
-            markerOpacity = Math.max(0, markerOpacity-1/(settings.fadeTime.val/20));
-            if (addClickMarker) {
-                clickMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
-            }
-            locMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
-        })
+    opacityInterval = setInterval(() => {
+        markerOpacity = Math.max(0, markerOpacity-1/(settings.fadeTime.val/20));
+        if (addClickMarker) {
+            clickMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
+        }
+        locMarker.setOpacity(Math.pow(markerOpacity, 2), Math.pow(markerOpacity, 2)/5);
+    })
 
-        setTimeout(() => {
-            selectRandCity();
-            d.id("top-display").style.color = "rgba(255, 255, 255, 1)";
-            clearInterval(opacityInterval);
-            markerOpacity = 1;
+    setTimeout(() => {
+        selectRandCity();
+        d.id("top-display").style.color = "rgba(255, 255, 255, 1)";
+        clearInterval(opacityInterval);
+        markerOpacity = 1;
 
-            if (addClickMarker) {
-                clickMarker.setOpacity(0, 0);
-            }
-            locMarker.setOpacity(0, 0);
+        if (addClickMarker) {
+            clickMarker.setOpacity(0, 0);
+        }
+        locMarker.setOpacity(0, 0);
 
-            inTransition = false;
-        }, settings.fadeTime.val);
-    }
+        inTransition = false;
+    }, settings.fadeTime.val);
 }
 
 function setHistoryElemStyle() {
@@ -1416,6 +1677,13 @@ d.listen("keydown", (e) => {
         setHistoryElemStyle();
     }
 });
+
+/*d.listen("keydown", async (e)=>{
+    if (e.key === "a") {
+        console.log("A")
+        console.log([... new Set(map.querySourceFeatures("country-polygons"))]);
+    }
+})*/
 
 function distanceKm(lat1, lat2, lon1, lon2) {
     lon1 = lon1 * Math.PI / 180;

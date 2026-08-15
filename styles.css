@@ -37,7 +37,7 @@ html, body {
     justify-content: center;
     background-color: rgba(177, 0, 56, 0.4);
     border: 2px solid rgba(50, 0, 16, 0.4);
-    font-size: 14px;
+    font-size: 13.5px;
 }
 
 #left-hide-btn {
@@ -217,4 +217,9 @@ label {
 
 .maplibregl-ctrl-bottom-right {
     display: none;
+}
+
+.select-top-btn {
+    padding: 3px 8px 3px 8px;
+    background-color: #404;
 }

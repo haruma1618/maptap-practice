@@ -15,10 +15,18 @@
     <div id="top-display-container" style="display: flex; width: 500px;">
         <div id="top-display">Loading locations...</div>
         <div id="select-countries-panel" style="display: none; margin-top: 5px;">
-            <button id="select-countries-cancel" style="padding: 3px 8px 3px 8px; background-color: #404">Cancel</button>
-            <button id="select-countries-confirm" style="padding: 3px 8px 3px 8px; background-color: #404">Select</button>
+            <button id="select-countries-cancel" class="select-top-btn">Cancel</button>
+            <button id="select-countries-confirm" class="select-top-btn">Select</button>
             <div style="height: 5px"></div>
             <div style="font-size: 13px; color: #f4b">Selected: <span id="selected-countries"></span></div>
+        </div>
+        <div id="select-subdivs-panel" style="display: none; margin-top: 5px;">
+            <button id="select-subdivs-cancel" class="select-top-btn">Cancel</button>
+            <button id="select-subdivs-add-all" class="select-top-btn">Add all</button>
+            <button id="select-subdivs-remove-all" class="select-top-btn">Remove all</button>
+            <button id="select-subdivs-confirm" class="select-top-btn">Select</button>
+            <div style="height: 5px"></div>
+            <div style="font-size: 13px; color: #f4b">Selected: <span id="selected-subdivs"></span></div>
         </div>
     </div>
     <div id="left-hide-btn">&lt;</div>
@@ -31,11 +39,15 @@
         </div>
         
         <div>
-            <button id="select-map-btn" style="font-size: 16px">Select map</button>
+            <button id="select-map-btn" style="font-size: 15px">Select countries</button>
         </div>
-        <div style="height: 5px"></div>
+        <div style="height: 4px"></div>
         <div>
-            <button id="show-all-locs-btn" style="font-size: 16px">Show all locations</button>
+            <button id="select-subdivs" style="font-size: 15px; filter: hue-rotate(-40deg); margin-left: 8px">Select regions</button>
+        </div>
+        <div style="height: 4px"></div>
+        <div>
+            <button id="show-all-locs-btn" style="font-size: 15px">Show all locations</button>
         </div>
         <div style="height: 10px"></div>
         <div>
