@@ -357,23 +357,6 @@ d.id("checkbox-sfx").listen("change", ()=>{
     tapSfx = d.id("checkbox-sfx").checked;
 })
 
-let bgSound = new Howl({src: ["sounds/bg_audio.mp3"], html5: true, loop: true, volume: 0.5});
-let bgSoundId;
-d.id("checkbox-bg-sound").checked = false;
-d.id("checkbox-bg-sound").listen("change", ()=>{
-    if (d.id("checkbox-bg-sound").checked) {
-        bgSoundId = bgSound.play();
-    } else {
-        bgSound.stop();
-    }
-})
-
-d.id("bg-sound-volume").listen("change", ()=>{
-    if (bgSound.playing()) {
-        bgSound.volume(parseFloat(d.id("bg-sound-volume").value), bgSoundId);
-    }
-})
-
 let citiesLoaded = false;
 
 let allCountriesGeojson;
