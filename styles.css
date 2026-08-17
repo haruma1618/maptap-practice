@@ -178,6 +178,10 @@ button, select {
     background-color: rgb(90, 0, 28);
 }
 
+.button-highlighted-partial {
+    background-color: rgb(75, 0, 24);
+}
+
 input::placeholder {
     font-style: italic;
     font-family: "Consolas";
@@ -222,4 +226,8 @@ label {
 .select-top-btn {
     padding: 3px 8px 3px 8px;
     background-color: #404;
+}
+
+a {
+    color: #8b1a56;
 }

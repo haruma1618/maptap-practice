@@ -35,6 +35,7 @@ let selectingSubdivsForMap = false;
 let allCurrSubdivs = [];
 let currSubdivsGeojson = null;
 let numTimesGuessedCorrect = {};
+let locMarkerMode = 0;
 
 let convertToType = {
     "n": x => Number(x),
@@ -277,13 +278,18 @@ d.id("select-map-btn").listen("click", (e)=>{
     toggleMenuPopup("map-select-popup", "select-map-btn");
 });
 
-d.id("show-all-locs-btn").listen("click", (e)=>{
-    if (allLocMarkers.length === 0) {
+d.id("show-all-locs-btn").listen("click", function(e) {
+    locMarkerMode = (locMarkerMode + 1) % 3;
+    if (locMarkerMode == 1) {
         addAllLocMarkers();
-        d.id("show-all-locs-btn").classList.add("button-highlighted");
+        this.classList.add("button-highlighted");
+    } else if (locMarkerMode == 2) {
+        addAllLocMarkers();
+        this.classList.add("button-highlighted-partial");
+        this.classList.remove("button-highlighted");
     } else {
         removeAllLocMarkers();
-        d.id("show-all-locs-btn").classList.remove("button-highlighted");
+        this.classList.remove("button-highlighted-partial");
     }
 });
 
@@ -320,13 +326,13 @@ d.id("map-select-exit").listen("click", (e)=>{
     d.id("select-map-btn").classList.remove("button-highlighted");
 });
 
-d.id("show-med-countries").listen("click", (e)=>{
+d.id("show-med-countries").listen("click", function(e) {
     if (!showMedCountries) {
         d.id("map-select-countries-med").style.display = "block";
-        d.id("show-med-countries").innerText = "Hide";
+        this.innerText = "Hide";
     } else {
         d.id("map-select-countries-med").style.display = "none";
-        d.id("show-med-countries").innerText = "More...";
+        this.innerText = "More...";
     }
     showMedCountries = !showMedCountries;
 })
@@ -495,9 +501,11 @@ function setCurrCities() {
 let maptapDiffColors = [
     "#00cc88", "#33cc00", "#88cc00", "#cccc00", "#cc7700", "#cc4400", "#cc0077", "#cc00cc"
 ];
-
+// To do: add unclickable ,small yellow markers (The mode after clicking "Show all locations" 2 times, then goes to hiding markers)
 function addAllLocMarkers() {
-    if (currCitiesList.length === 0) return;
+    if (locMarkerMode === 0) return;
+    let labelMode = locMarkerMode === 1;
+    console.log(labelMode)
 
     removeAllLocMarkers();
     allLocMarkers.length = 0;
@@ -518,11 +526,12 @@ function addAllLocMarkers() {
         }
     }
 
-
     for (let c of markerCities) {
         let markerColor;
 
-        if (!settings.useMaptapDatabase.val) {
+        if (!labelMode) {
+            markerColor = "#ff8b";
+        } else if (!settings.useMaptapDatabase.val) {
             if (regionColorsDict[c.region] === undefined) {
                 let numGens = 0;
                 let gen = true;
@@ -553,18 +562,25 @@ function addAllLocMarkers() {
         }
         let markerScale;
         
-        if (c.maptap_loc) {
-            markerScale = (c.population && isCity(c)) ? 0.55*Math.pow(2, 0.36*Math.log10(c.population/maxPop)) : 0.36;
+        if (!labelMode) {
+            markerScale = 0.25;
+        } else if (c.maptap_loc) {
+            markerScale = (c.population && isCity(c)) ? 0.55*Math.pow(2, 0.36*Math.log10(c.population/maxPop)) : 0.4;
         } else {
             markerScale = 0.67*Math.pow(2, 0.5*Math.log10(c.population/maxPop));
         }
 
-        let popup = new maplibregl.Popup({closeButton: false, closeOnClick: false, offset: settings.dotMarkers.val ? 10 : 25})
-                    .setHTML("<span style='color:#000'>" + getCityText(c, false, true, settings.showCountry.val, true, true) + "</span>");
-        let marker = createMarker(markerColor, markerScale, c.longitude, c.latitude).setPopup(popup);
+        let marker = createMarker(markerColor, markerScale, c.longitude, c.latitude);
 
-        marker.getElement().listen("mouseenter", ()=>{if (!popup.isOpen()) marker.togglePopup()});
-        marker.getElement().listen("mouseleave", ()=>{if (popup.isOpen()) marker.togglePopup()});
+        if (labelMode) {
+            let popup = new maplibregl.Popup({closeButton: false, closeOnClick: false, offset: (settings.dotMarkers.val ? 10 : 25)});
+            let cityText = getCityText(c, false, true, settings.showCountry.val, true, true);
+            popup.setHTML(`<span style='color:#000'>${cityText}</span>`);
+
+            marker.setPopup(popup);
+            marker.getElement().listen("mouseenter", ()=>{if (!popup.isOpen()) marker.togglePopup()});
+            marker.getElement().listen("mouseleave", ()=>{if (popup.isOpen()) marker.togglePopup()});
+        }
         allLocMarkers.push(marker);
     }
 }
@@ -666,6 +682,7 @@ d.id("select-countries-confirm").listen("click", (e)=>{
     hideCountrySelection(true);
     removedCities.length = 0;
     setCurrCountries("custom");
+    addAllLocMarkers();
 })
 
 d.id("select-subdivs-confirm").listen("click", (e)=>{
@@ -673,9 +690,9 @@ d.id("select-subdivs-confirm").listen("click", (e)=>{
     console.log(settings["enabledSubdivs"].val);
     hideSubdivSelection();
     removedCities.length = 0;
-
     setCurrCities();
     selectRandCity();
+    addAllLocMarkers();
 })
 
 
@@ -1632,6 +1649,7 @@ function restoreRemovedCities() {
     setCurrCities();
     let newCitiesLen = currCitiesList.length;
     createTopRightPopup("#cfcfff", "Restored " + (newCitiesLen-prevCitiesLen) + " removed cities to cities list", "#000");
+    if (newCitiesLen-prevCitiesLen > 0 && allLocMarkers.length > 0) addAllLocMarkers();
 }
 
 d.listen("keydown", (e) => {
@@ -1658,6 +1676,10 @@ d.listen("keydown", (e) => {
 
         setMarkerInterval(false);
         setHistoryElemStyle();
+    } else if (e.key === "c") {
+        d.id("checkbox-outline").click();
+    } else if (e.key === "s") {
+        d.id("show-all-locs-btn").click();
     }
 });
 
