@@ -1661,8 +1661,6 @@ function restoreRemovedCities(last=false) {
 }
 
 d.listen("keydown", (e) => {
-    if (d.activeElement && d.activeElement.tagName === "INPUT") return;
-
     if (e.key === "r") {
         removeLatestCity();
     } else if (e.key === "t") {
@@ -1670,7 +1668,7 @@ d.listen("keydown", (e) => {
     } else if (e.key === "b") {
         restoreRemovedCities();
     } else if (e.key === " ") {
-        if (["INPUT", "BUTTON"].includes(d.activeElement.tagName)) {
+        if (d.activeElement && ["INPUT", "BUTTON"].includes(d.activeElement.tagName)) {
             e.preventDefault();
         }
 
