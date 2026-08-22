@@ -1670,6 +1670,10 @@ d.listen("keydown", (e) => {
     } else if (e.key === "b") {
         restoreRemovedCities();
     } else if (e.key === " ") {
+        if (["INPUT", "BUTTON"].includes(d.activeElement.tagName)) {
+            e.preventDefault();
+        }
+
         if (inTransition) return;
 
         inTransition = true;
