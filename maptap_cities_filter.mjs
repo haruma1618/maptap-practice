@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFile, writeFile } from "node:fs/promises";
 
-const DATABASE_PATH = "./maptap_raw_database_20260821.json"
+const DATABASE_PATH = "./maptap_raw_database_20260827.json"
 const OUTPUT_PATH = "./all_locs_maptap.json";
 
 let origDatabase;
