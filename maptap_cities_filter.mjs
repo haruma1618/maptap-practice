@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFile, writeFile } from "node:fs/promises";
 
-const DATABASE_PATH = "./maptap_raw_database_20260827.json"
+const DATABASE_PATH = "./maptap_raw_database_20260904.json"
 const OUTPUT_PATH = "./all_locs_maptap.json";
 
 let origDatabase;
@@ -262,6 +262,7 @@ let countryNameToIso2 = Object.fromEntries(
 );
 
 let maptapSpecialCodes = {
+	"USA": "US",
     "Scotland": "GB",
     "England": "GB",
     "Northern Ireland": "GB",
