@@ -83,6 +83,7 @@ let settings = {
     "dotMarkers": {"val": false, "id": "checkbox-dot-markers", "type": "b"},
     "clickMarkerScale": {"val": 1, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"},
     "enabledSubdivs": {"val": [], "id": null, "type": "o"},
+    "uiHue": {"val": 0, "id": "ui-hue", "type": "n"}
 }
 
 function val(k) {
@@ -257,10 +258,62 @@ if (localStorage.getItem("customMapArr")) {
     try {
         valueToCountries["custom"] = JSON.parse(localStorage.getItem("customMapArr"));
     } catch(e) {
-        window.error(e);
+        console.error(e);
         valueToCountries["custom"] = [];
     }
 }
+
+let changingHueElems = d.querySelectorAll(`button, input[type="number"], a, select, .center-popup, #top-display, #left-panel, #right-panel, #left-hide-btn`);
+
+function getElementHsla(elem, prop) {
+    let computedBg = window.getComputedStyle(elem)[prop];
+    let values = computedBg.match(/[\d.]+/g).map(Number);
+    let [r, g, b] = values;
+    let a = values.length >= 4 ? values[3] : 1;
+    
+    let rNorm = r / 255, gNorm = g / 255, bNorm = b / 255;
+    let max = Math.max(rNorm, gNorm, bNorm), min = Math.min(rNorm, gNorm, bNorm);
+    let h, s, l = (max + min) / 2;
+
+    if (max !== min) {
+        let d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case rNorm: h = (gNorm - bNorm) / d + (gNorm < bNorm ? 6 : 0); break;
+            case gNorm: h = (bNorm - rNorm) / d + 2; break;
+            case bNorm: h = (rNorm - gNorm) / d + 4; break;
+        }
+        h /= 6;
+    } else {
+        h = s = 0;
+    }
+
+    console.log(values)
+    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100), a];
+}
+
+function setNewHue(elem, datasetAttr, styleAttr, init=false) {
+    if (init && !elem.dataset[datasetAttr]) { // Set hsla dataset attribute for element
+        elem.dataset[datasetAttr] = JSON.stringify(getElementHsla(elem, styleAttr));
+    }
+
+    let hsla = JSON.parse(elem.dataset[datasetAttr]);
+    let newHue = (parseInt(hsla[0]) + val("uiHue")) % 360;
+    elem.style[styleAttr] = `hsla(${newHue}, ${hsla[1]}%, ${hsla[2]}%, ${hsla[3]})`;
+}
+
+function setElemHues(init=false) {
+    for (let elem of changingHueElems) {
+        setNewHue(elem, "bg", "backgroundColor", init);
+        setNewHue(elem, "bd", "borderColor", init);
+        if (elem.tagName === "A") setNewHue(elem, "cl", "color", init);
+    }
+}
+setElemHues(true);
+
+d.id("ui-hue").listen("input", (e)=>{
+    setElemHues();
+})
 
 d.id("left-hide-btn").listen("click", (e)=>{
     d.id("left-hide-btn").innerHTML = (d.id("left-hide-btn").innerHTML != "&lt;" ? "&lt;" : "&gt;");
@@ -492,7 +545,7 @@ function setCurrCities() {
             setSetting("minPopulation", 0);
             setSetting("maxPopulation", 50000000);
             d.id("min-population").value = 0;
-            d.id("max-population").value =500000008;
+            d.id("max-population").value = 500000008;
         }
 
         currCitiesList = getCurrCities();
@@ -504,6 +557,7 @@ function setCurrCities() {
     }
 
     d.id("num-locs").innerText = currCitiesList.length;
+    d.id("num-total").innerText = currCitiesList.length + removedCities.length;
     if (val("minBeforeRepeat") > currCitiesList.length) {
         setSetting("minBeforeRepeat", currCitiesList.length);
         d.id("locs-before-repeat").value = val("minBeforeRepeat").toString();
@@ -689,6 +743,7 @@ d.id("select-countries-confirm").listen("click", (e)=>{
     valueToCountries["custom"] = [...selectedFeatureCountries];
     hideCountrySelection(true);
     removedCities.length = 0;
+    numTimesGuessedCorrect = {};
     setCurrCountries("custom");
     addAllLocMarkers();
 })
@@ -698,6 +753,7 @@ d.id("select-subdivs-confirm").listen("click", (e)=>{
     console.log(val("enabledSubdivs"));
     hideSubdivSelection();
     removedCities.length = 0;
+    numTimesGuessedCorrect = {};
     setCurrCities();
     selectRandCity();
     addAllLocMarkers();
@@ -1313,19 +1369,15 @@ for (let n of soundNames) {
 }
 
 map.on("click", (e)=> {
-    if (!citiesLoaded) //console.log("Click failed: cities not loaded");
+    if (!citiesLoaded || inTransition || selectingCountriesForMap || selectingSubdivsForMap || isMenuPopupOpen()) {
         return;
-    if (inTransition) //console.log("Click failed: in transition");
-        return;
-    if (selectingCountriesForMap) //console.log("Click failed: selecting countries");
-        return;
-    if (selectingSubdivsForMap) //console.log("Click failed: selecting subdivisions");
-        return;
+    }
 
     let pxl = map.project([e.lngLat.lng, e.lngLat.lat]);
     let cdist = (pxl.x - mouseX)**2 + (pxl.y - mouseY)**2;
     if (cdist > 4) {//console.log(`Click failed: off map - pxl: ${pxl.x},${pxl.y} mouse: ${mouseX},${mouseY}`);
-        return;}
+        return;
+    }
     
     //console.log("Clicked");
     inTransition = true;
@@ -1371,8 +1423,7 @@ map.on("click", (e)=> {
     let scoreText = Math.round(score) + "/1000" + " (" + distFromClick.toFixed(2) + " km)";
     let scoreColor = "hsl(" + (240 * (1-score/1000)) + ", 100%, 85%)";
 
-    let historyElem = addHistoryElem(clickedCity, scoreText, scoreColor, true);
-
+    addHistoryElem(clickedCity, scoreText, scoreColor, true);
     setMarkerInterval(true);
     setHistoryElemStyle();
 
@@ -1402,42 +1453,42 @@ map.on("click", (e)=> {
 
 async function getFirstWikiLink(query, city=true) {
     //console.log(query)
-    const [mainName, ...rest] = query.split(',').map(s => s.trim());
+    let [mainName, ...rest] = query.split(',').map(s => s.trim());
 
     if (city) {
-        const qualifier = rest.join(', ');
-        const searchUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(mainName)}&language=en&type=item&limit=10&format=json&origin=*`;
-        const searchRes = await fetch(searchUrl);
-        const searchData = await searchRes.json();
-        const candidates = searchData.search || [];
+        let qualifier = rest.join(', ');
+        let searchUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(mainName)}&language=en&type=item&limit=10&format=json&origin=*`;
+        let searchRes = await fetch(searchUrl);
+        let searchData = await searchRes.json();
+        let candidates = searchData.search || [];
         if (candidates.length === 0) return null;
 
-        const placeKeywords = /\b(city|town|village|municipality|country|state|province|county|region|district|commune|borough|settlement|capital|metropolis|hamlet|prefecture|department|island|neighborhood|neighbourhood)\b/i;
-        const placeCandidates = candidates.filter(c => c.description && placeKeywords.test(c.description));
-        const pool = placeCandidates.length > 0 ? placeCandidates : candidates;
+        let placeKeywords = /\b(city|town|village|municipality|country|state|province|county|region|district|commune|borough|settlement|capital|metropolis|hamlet|prefecture|department|island|neighborhood|neighbourhood)\b/i;
+        let placeCandidates = candidates.filter(c => c.description && placeKeywords.test(c.description));
+        let pool = placeCandidates.length > 0 ? placeCandidates : candidates;
 
         let best = pool[0];
         if (qualifier) {
-            const match = pool.find(c => c.description?.toLowerCase().includes(qualifier.toLowerCase()));
+            let match = pool.find(c => c.description?.toLowerCase().includes(qualifier.toLowerCase()));
             if (match) best = match;
         }
 
-        const entityUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${best.id}&props=sitelinks/urls&sitefilter=enwiki&format=json&origin=*`;
-        const entityRes = await fetch(entityUrl);
-        const entityData = await entityRes.json();
-        const sitelink = entityData.entities[best.id].sitelinks?.enwiki;
+        let entityUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${best.id}&props=sitelinks/urls&sitefilter=enwiki&format=json&origin=*`;
+        let entityRes = await fetch(entityUrl);
+        let entityData = await entityRes.json();
+        let sitelink = entityData.entities[best.id].sitelinks?.enwiki;
         return sitelink ? sitelink.url : null;
     } else {
-        const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(mainName)}&srlimit=1&format=json&origin=*`;
-        const searchRes = await fetch(searchUrl);
-        const searchData = await searchRes.json();
-        const topResult = searchData.query?.search?.[0];
+        let searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(mainName)}&srlimit=1&format=json&origin=*`;
+        let searchRes = await fetch(searchUrl);
+        let searchData = await searchRes.json();
+        let topResult = searchData.query?.search?.[0];
         if (!topResult) return null;
 
-        const urlUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=info&inprop=url&titles=${encodeURIComponent(topResult.title)}&format=json&origin=*`;
-        const urlRes = await fetch(urlUrl);
-        const urlData = await urlRes.json();
-        const page = Object.values(urlData.query.pages)[0];
+        let urlUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=info&inprop=url&titles=${encodeURIComponent(topResult.title)}&format=json&origin=*`;
+        let urlRes = await fetch(urlUrl);
+        let urlData = await urlRes.json();
+        let page = Object.values(urlData.query.pages)[0];
         return page.fullurl || null;
     }
 }
@@ -1529,9 +1580,9 @@ function setHistoryElemStyle() {
     let historyElems = d.id("loc-history").children;
     for (let i = 0; i < historyElems.length; i++) {
         if (i !== 0) {
-            historyElems[i].style.backgroundColor = "rgba(177, 0, 0, 0.4)";
+            historyElems[i].style.backgroundColor = `hsla(${val("uiHue")}, 100%, 35%, 0.4)`;
         } else {
-            historyElems[i].style.backgroundColor = "rgba(255, 90, 90, 0.4)";
+            historyElems[i].style.backgroundColor = `hsla(${val("uiHue")}, 100%, 68%, 0.4)`;
         }
 
         if ([...removedCities, ...removedSatellites].includes(locHistory[i])) {
@@ -1548,7 +1599,7 @@ d.listen("mousemove", (e) => {
 })
 
 d.listen("click", (e) => {
-    if (event.target.tagName === "BUTTON") {
+    if (e.target.tagName === "BUTTON") {
         if (isMenuPopupOpen()) {
             d.id("map").style.filter = `brightness(50%)`;
         } else {
@@ -1654,11 +1705,12 @@ function restoreRemovedCities(last=false) {
         }
     }
 
-    removedCities = [];
+    removedCities.length = 0;
     setCurrCities();
     let newCitiesLen = currCitiesList.length;
     let message = (last ? "Last city removed; restored " : "Restored ") + (newCitiesLen-prevCitiesLen) + " removed cities to cities list";
     createTopRightPopup("#cfcfff", message, "#000");
+    numTimesGuessedCorrect = {};
     if (newCitiesLen-prevCitiesLen > 0 && allLocMarkers.length > 0) addAllLocMarkers();
 }
 
@@ -1684,8 +1736,7 @@ d.listen("keydown", (e) => {
         locMarker = createMarker("#00CC00", val("clickMarkerScale"), currCity.longitude, currCity.latitude);
         d.id("top-display").style.color = "rgba(255, 255, 255, 0)";
 
-        let historyElem = addHistoryElem(currCity, "Didn't know", "#cad", false);
-
+        addHistoryElem(currCity, "Didn't know", "#cad", false);
         setMarkerInterval(false);
         setHistoryElemStyle();
     } else if (e.key === "c") {

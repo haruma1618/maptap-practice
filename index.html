@@ -43,7 +43,7 @@
         </div>
         <div style="height: 4px"></div>
         <div>
-            <button id="select-subdivs" style="font-size: 15px; filter: hue-rotate(-40deg); margin-left: 8px">Select regions</button>
+            <button id="select-subdivs" style="font-size: 15px; margin-left: 8px">Select regions</button>
         </div>
         <div style="height: 4px"></div>
         <div>
@@ -91,7 +91,12 @@
             <input type="number" id="locs-before-repeat" name="locs-before-repeat" value="10" style="width: 40px;">
         </div>
         <div style="margin-bottom: 15px"></div>
-        <div>Possible locations: <span id="num-locs">...</span></div>
+        <div>Possible locations: 
+            <span id="num-locs">...</span>
+            <span style="color: #ccc;">/
+                <span id="num-total">...</span>
+            </span>
+        </div>
         <div style="margin-bottom: 15px"></div>
         <div id="checkbox-settings">
             <div>
@@ -163,7 +168,7 @@
 
     <div id="more-settings-popup" class="center-popup" style="display: none; font-size: 13px">
         <button id="more-settings-exit" style="position: absolute; top: 10px; right: 10px">X</button>
-        <b style="text-align: center; font-size: 20px; margin-bottom: 10px">More settings</b><br>
+        <b style="text-align: center; font-size: 20px; margin-bottom: 12px">More settings</b><br>
         <!--<div>
             <input type="checkbox" id="checkbox-blue-marble-map" name="checkbox-blue-marble-map" checked>
             <label for="checkbox-blue-marble-map">MapTap style map (Blue Marble data, lower resolution)</label>
@@ -215,7 +220,7 @@
                 <input type="range" id="globe-brightness-slider" name="globe-brightness-slider" min="0.8" max="1.5" value="1" step="0.02">
             </div>
         </div>
-         <div style="height: 5px"></div>
+        <div style="height: 5px"></div>
         <div style="display: flex">
             <div class="more-settings-slider">
                 <label for="location-fade-slider">
@@ -231,6 +236,11 @@
             </div>
         </div>
         <div style="height: 15px"></div>
+        <div class="more-settings-slider" style="flex-direction: row; align-items: center;">
+            <label for="ui-hue">UI hue:</label>
+            <div style="width: 8px"></div>
+            <input type="range" id="ui-hue" name="ui-hue" style="width: 160px" min="0" max="360" value="0" step="1">
+        </div>
     </div>
 
     <div id="remove-satellites-popup" class="center-popup" style="display: none;">
