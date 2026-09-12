@@ -81,19 +81,20 @@ let settings = {
     "mapCenterLng": {"val": 0, "id": null, "type": "n"},
     "maptapCitiesOnly": {"val": true, "id": "checkbox-cities-only", "type": "b"},
     "dotMarkers": {"val": false, "id": "checkbox-dot-markers", "type": "b"},
-    "clickMarkerScale": {"val": 1, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"},
+    "clickMarkerScale": {"val": 0.8, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"},
     "enabledSubdivs": {"val": [], "id": null, "type": "o"},
-    "uiHue": {"val": 0, "id": "ui-hue", "type": "n"}
+    "uiHue": {"val": 0, "id": "ui-hue", "type": "n"},
 }
 
 function val(k) {
     if (Object.hasOwn(settings, k)) {
-        if (Object.hasOwn(settings[k], "val")) {
-            return settings[k].val;
-        } else {
-            console.error(`Error - Setting "${k}" missing value`);
-            return null;
+        for (let prop of ["val", "id", "type"]) {
+            if (!Object.hasOwn(settings[k], prop)) {
+                console.error(`Error - Setting "${k}" missing property: ${prop}`);
+                return null;
+            }
         }
+        return settings[k].val;
     } else {
         console.error(`Error - Setting missing: "${k}"`);
         return null;
@@ -111,6 +112,12 @@ let mapPrefs = [
 for (let k in settings) {
     let stg = settings[k];
 
+    for (let prop of ["val", "id", "type"]) {
+        if (!Object.hasOwn(settings[k], prop)) {
+            console.error(`Error - Setting "${k}" missing property: ${prop}`);
+        }
+    }
+
     let item = localStorage.getItem(k);
     if (item !== null && item !== "") {
         stg.val = convertToType[stg.type](item);
@@ -119,10 +126,10 @@ for (let k in settings) {
         localStorage.setItem(k, setVal);
     }
 
-    if (stg.id) {
+    if (stg.id !== null) {
         let elem = d.id(stg.id);
         if (!elem) {
-            console.log(`Invalid setting - ${k}: ${JSON.stringify(stg)}`);
+            console.error(`Invalid setting - ${k}: ${JSON.stringify(stg)}`);
             localStorage.removeItem(k);
             delete settings[k];
             continue;
@@ -288,7 +295,7 @@ function getElementHsla(elem, prop) {
         h = s = 0;
     }
 
-    console.log(values)
+    //console.log(values)
     return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100), a];
 }
 
@@ -441,26 +448,25 @@ async function loadAllCities() {
 
     allCountriesGeojson = allCountriesGeojsonTemp;
 
-    for (let c of allCitiesData) {
+    allCities = allCitiesData.map((c) => {
         let o = {
             name: c[0],
             country: c[1],
             population: c[2],
             latitude: c[3],
             longitude: c[4],
-            region_code: c[5],
             maptap_loc: false
         }
 
-        allCities.push(o);
-
-        if (Object.hasOwn(adm1CodeDict, o.country) && Object.hasOwn(adm1CodeDict[o.country], o.region_code)) {
-            o.region = adm1CodeDict[o.country][o.region_code];
+        let region_code = c[5];
+        if (Object.hasOwn(adm1CodeDict, o.country) && Object.hasOwn(adm1CodeDict[o.country], region_code)) {
+            o.region = adm1CodeDict[o.country][region_code];
         }
-        delete o.region_code;
-    }
 
-    for (let c of allCitiesMaptapData) {
+        return o;
+    });
+
+    allCitiesMaptap = allCitiesMaptapData.map((c) => {
         let o = {
             name: c[0],
             country: c[1],
@@ -473,8 +479,8 @@ async function loadAllCities() {
             maptap_loc: true
         }
 
-        allCitiesMaptap.push(o);
-    }
+        return o;
+    });
 
     setCurrCountries();
     citiesLoaded = true;
@@ -520,15 +526,8 @@ function cityFitsConstraints(c) {
 }
 
 function getCurrCities() {
-    let fullList = getCitiesList();
-    let citiesList = [];
-    for (let c of fullList) {
-        if (cityFitsConstraints(c) && !removedCities.includes(c) && !removedSatellites.includes(c)) {
-            citiesList.push(c);
-        }
-    }
-
-    return citiesList;
+    let citiesList = getCitiesList();
+    return citiesList.filter((c) => cityFitsConstraints(c) && !removedCities.includes(c) && !removedSatellites.includes(c));
 }
 
 function setCurrCities() {
@@ -739,7 +738,7 @@ d.id("select-subdivs-add-all").listen("click", selectAllSubdivs)
 
 d.id("select-subdivs-remove-all").listen("click", deselectAllSubdivs)
 
-d.id("select-countries-confirm").listen("click", (e)=>{
+d.id("select-countries-confirm").listen("click", ()=>{
     valueToCountries["custom"] = [...selectedFeatureCountries];
     hideCountrySelection(true);
     removedCities.length = 0;
@@ -748,7 +747,7 @@ d.id("select-countries-confirm").listen("click", (e)=>{
     addAllLocMarkers();
 })
 
-d.id("select-subdivs-confirm").listen("click", (e)=>{
+d.id("select-subdivs-confirm").listen("click", ()=>{
     setSetting("enabledSubdivs", JSON.stringify([...selectedFeatureSubdivs]));
     console.log(val("enabledSubdivs"));
     hideSubdivSelection();
@@ -760,7 +759,7 @@ d.id("select-subdivs-confirm").listen("click", (e)=>{
 })
 
 
-d.id("load-curr-code").listen("click", (e)=>{
+d.id("load-curr-code").listen("click", ()=>{
     let mapCode = currCountriesList.join(",");
     d.id("custom-map-input").value = mapCode;
     updateCustomMapCountryText();
@@ -891,7 +890,7 @@ for (let pref of mapPrefs) {
     d.id(pref.id).listen("change", updateMapPreferences);
 }
 
-function updateMapPreferences(e) {
+function updateMapPreferences() {
     if (!citiesLoaded) return;
 
     for (let pref of mapPrefs) {
@@ -1537,7 +1536,7 @@ function addHistoryElem(city, scoreText, scoreColor, addClickMarker) {
         }
     });
 
-    historyElem.listen("mouseleave", (e)=>{
+    historyElem.listen("mouseleave", ()=>{
         if (addClickMarker) {
             if (showingClickMarker) {showingClickMarker.remove();}
         }
@@ -1661,7 +1660,7 @@ function removeSatellites(pop_mult, max_distance_km, max_pop=1e8, need_same_subd
     }
 }
 
-d.id("remove-satellites").listen("click", (e)=>{
+d.id("remove-satellites").listen("click", ()=>{
     let popMult = parseInt(d.id("satellite-pop-mult").value);
     let maxDist = parseInt(d.id("satellite-max-dist").value);
     let maxPop = parseInt(d.id("satellite-max-pop").value);
@@ -1669,7 +1668,7 @@ d.id("remove-satellites").listen("click", (e)=>{
     removeSatellites(popMult, maxDist, maxPop, requireSameSubdiv);
 })
 
-d.id("restore-satellites").listen("click", (e)=>{
+d.id("restore-satellites").listen("click", ()=>{
     removeSatellites(1, 0, 0);
 })
 
