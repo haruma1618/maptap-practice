@@ -1519,6 +1519,9 @@ function addHistoryElem(city, scoreText, scoreColor, addClickMarker) {
     let wikiButton = d.createElement("button");
     wikiButton.listen("click", async ()=>{
         let link = await getFirstWikiLink(getCityText(city, false, city.region!=null, city.region==null, false, false), isCity(city));
+        if (link == null) {
+            link = await getFirstWikiLink(getCityText(city, false, false, true, false, false), false);
+        }
         window.open(link, "_blank", "noopener,noreferrer")
     })
     wikiButton.classList.add("button-link");
