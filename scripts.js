@@ -38,6 +38,7 @@ let allCurrSubdivs = [];
 let currSubdivsGeojson = null;
 let numTimesGuessedCorrect = {};
 let locMarkerMode = 0;
+let showVisualSettings = true;
 
 let convertToType = {
     "n": x => Number(x),
@@ -57,7 +58,7 @@ let convertToType = {
 let settings = {
     "globeBrightness": {"val": 1, "id": "globe-brightness-slider", "type": "n", "textId": "globe-brightness-value"},
     "scoringDiff": {"val": 1, "id": "scoring-diff-slider", "type": "n", "textId": "scoring-diff-value"},
-    "fadeTime": {"val": 1000, "id": "location-fade-slider", "type": "n", "textId": "location-fade-value"},
+    "fadeTime": {"val": 800, "id": "location-fade-slider", "type": "n", "textId": "location-fade-value"},
     "autoRemove": {"val": false, "id": "checkbox-auto-remove", "type": "b"},
     "autoRemoveDist": {"val": 40, "id": "auto-remove-dist", "type": "n"},
     "autoRemoveTimes": {"val": 2, "id": "auto-remove-num-times", "type": "n"},
@@ -65,7 +66,7 @@ let settings = {
     "showCountry": {"val": false, "id": "checkbox-country-name", "type": "b"},
     "showPopulation": {"val": true, "id": "checkbox-city-pop", "type": "b"},
     "showDifficulty": {"val": true, "id": "checkbox-city-diff", "type": "b"},
-    "showOutline": {"val": true, "id": "checkbox-outline", "type": "b"},
+    "showOutline": {"val": false, "id": "checkbox-outline", "type": "b"},
     "outlineDivisions": {"val": true, "id": "checkbox-outline-subdivisions", "type": "b"},
     "maptapSubdivisions": {"val": false, "id": "checkbox-maptap-subdivisions", "type": "b"},
     "minPopulation": {"val": 100000, "id": "min-population", "type": "n"},
@@ -79,9 +80,9 @@ let settings = {
     "maxDiff": {"val": 6, "id": "max-difficulty", "type": "n"},
     "mapCenterLat": {"val": 0, "id": null, "type": "n"},
     "mapCenterLng": {"val": 0, "id": null, "type": "n"},
-    "maptapCitiesOnly": {"val": true, "id": "checkbox-cities-only", "type": "b"},
+    "maptapCitiesOnly": {"val": false, "id": "checkbox-cities-only", "type": "b"},
     "dotMarkers": {"val": false, "id": "checkbox-dot-markers", "type": "b"},
-    "clickMarkerScale": {"val": 0.8, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"},
+    "clickMarkerScale": {"val": 0.75, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"},
     "enabledSubdivs": {"val": [], "id": null, "type": "o"},
     "uiHue": {"val": 0, "id": "ui-hue", "type": "n"},
 }
@@ -183,7 +184,6 @@ let inputtedMinBeforeRepeat = val("minBeforeRepeat");
 let iso2ToCountryName = {"AF":"Afghanistan","AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CG":"Rep. of the Congo","CD":"Dem. Rep. of the Congo","CK":"Cook Islands","CR":"Costa Rica","CI":"Côte d'Ivoire","HR":"Croatia","CU":"Cuba","CY":"Cyprus","CZ":"Czech Republic","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","ET":"Ethiopia","FK":"Falkland Islands (Malvinas)","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"The Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KP":"North Korea","KR":"South Korea","XK":"Kosovo","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MK":"North Macedonia","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","AN":"Netherlands Antilles","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","RE":"Reunion","RO":"Romania","RU":"Russia","RW":"Rwanda","BL":"Saint Barthelemy","SH":"Saint Helena","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SZ":"Eswatini","SE":"Sweden","SS":"South Sudan","CH":"Switzerland","SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"United Arab Emirates","GB":"United Kingdom","US":"USA","UM":"United States Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"}
 
 let supportedADM1 = ["AD", "AE", "AF", "AG", "AL", "AM", "AO", "AR", "AT", "AU", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BN", "BO", "BR", "BS", "BT", "BW", "BY", "BZ", "CA", "CD", "CF", "CG", "CH", "CI", "CL", "CM", "CN", "CO", "CR", "CU", "CV", "CY", "CZ", "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "ER", "ES", "ET", "FI", "FJ", "FM", "FR", "GA", "GB", "GD", "GE", "GH", "GL", "GM", "GN", "GQ", "GR", "GT", "GW", "GY", "HN", "HR", "HT", "HU", "ID", "IE", "IL", "IN", "IQ", "IR", "IS", "IT", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KP", "KR", "KW", "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MG", "MH", "MK", "ML", "MM", "MN", "MR", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NR", "NU", "NZ", "OM", "PA", "PE", "PG", "PH", "PK", "PL", "PS", "PT", "PW", "PY", "QA", "RO", "RS", "RU", "RW", "SA", "SB", "SC", "SD", "SE", "SG", "SI", "SK", "SL", "SM", "SN", "SO", "SR", "SS", "ST", "SV", "SY", "SZ", "TD", "TG", "TH", "TJ", "TL", "TM", "TN", "TO", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "US", "UY", "UZ", "VC", "VE", "VN", "VU", "WS", "XK", "YE", "ZA", "ZM", "ZW"];
-let maptapADM1 = ["US", "CN", "IN", "BR", "RU", "CA", "AU", "ID", "AR"];
 let subdivPracticeCountries = ["US", "CN", "IN", "BR", "RU", "CA", "AU"];
 
 let subdivNameCorrections = {
@@ -431,8 +431,6 @@ d.id("remove-satellites-exit").listen("click", (e)=>{
     d.id("remove-satellites-popup").style.display = "none";
     d.id("show-satellites-popup-btn").classList.remove("button-highlighted");
 });
-
-d.id("maptap-subdivs-text").innerHTML = `(${maptapADM1.toString()})`
 
 let tapSfx = d.id("checkbox-sfx").checked;
 d.id("checkbox-sfx").listen("change", ()=>{
@@ -968,7 +966,7 @@ function selectRandCity() {
 function getCityText(city, useHtml, showDivision, showCountry, showPopulation, showDifficulty) {
     let displayText = city.name;
 
-    if (showDivision && city.region && getSupportedADM1().includes(city.country)) {
+    if (showDivision && city.region && supportedADM1.includes(city.country)) {
         displayText += ", " + city.region;
     };
     if (showCountry && iso2ToCountryName[city.country]) {
@@ -1180,10 +1178,6 @@ setInterval(() => {
     }
 }, 2000);
 
-function getSupportedADM1() {
-    return (val("maptapSubdivisions") ? maptapADM1 : supportedADM1);
-}
-
 function removeMapLayers() {
     if (map.getLayer("polygons-stroke")) {
         map.removeLayer("polygons-stroke");
@@ -1227,7 +1221,7 @@ async function setMapSource() {
     let countryJSONUrls = [];
 
     for (let country of currCountriesList) {
-        if (getSupportedADM1().includes(country) && val("outlineDivisions")) {
+        if (supportedADM1.includes(country) && val("outlineDivisions")) {
             countryJSONUrls.push(`geojson_data/${country}.json`);
         } else {
             nonADM1Countries.push(country);
@@ -1299,10 +1293,10 @@ map.on("load", (e)=> {
     map.touchPitch.disable();
 });
 
-d.id("checkbox-outline-subdivisions-container").style.display = d.id("checkbox-outline").checked ? "block" : "none";
+d.id("checkbox-outline-subdivisions-container").style.display = d.id("checkbox-outline").checked ? "flex" : "none";
 d.id("checkbox-outline").listen("change", (e) => {
     addCountryOutlines();
-    d.id("checkbox-outline-subdivisions-container").style.display = e.currentTarget.checked ? "block" : "none";
+    d.id("checkbox-outline-subdivisions-container").style.display = e.currentTarget.checked ? "flex" : "none";
 });
 
 d.id("checkbox-outline-subdivisions").listen("change", (e) => {
@@ -1329,12 +1323,6 @@ d.id("checkbox-cities-only").listen("change", (e)=>{
     }
 })
 
-d.id("checkbox-maptap-subdivisions").listen("change", (e)=>{
-    if (val("showOutline") && val("outlineDivisions")) {
-        setMapSource();
-    }
-})
-
 d.id("map").style.filter = `brightness(${val("globeBrightness")*100}%)`;
 d.id("globe-brightness-slider").listen("input", (e)=>{
     d.id("map").style.filter = `brightness(${val("globeBrightness")*100}%)`;
@@ -1348,8 +1336,8 @@ function createMarker(col, scl, lng, lat) {
         let dot = document.createElement("div");
         dot.className = "dot-marker";
         dot.style.backgroundColor = col;
-        dot.style.width = 20*scl + "px";
-        dot.style.height = 20*scl + "px";
+        dot.style.width = 18*scl + "px";
+        dot.style.height = 18*scl + "px";
         marker = new maplibregl.Marker({"element": dot});
     }
     marker.setLngLat([lng, lat]).addTo(map);
@@ -1772,3 +1760,21 @@ function distanceKm(lat1, lat2, lon1, lon2) {
 
     return c * r;
 }
+
+d.id("locs-before-repeat-info").listen("click", ()=>{
+    alert(`Minimum number of locations before a location can come up again. For example, if you get the location "Osaka, Japan" and this value is 10, you can't get "Osaka, Japan" again until 10 more locations have come up.`)
+})
+
+d.id("visual-settings-toggle").listen("click", (e)=>{
+    if (showVisualSettings) {
+        e.target.innerText = "▲";
+        e.target.title = "Show visual settings";
+        d.id("checkbox-settings").style.display = "none";
+    } else {
+        e.target.innerText = "▼";
+        e.target.title = "Hide visual settings";
+        d.id("checkbox-settings").style.display = "flex";
+    }
+
+    showVisualSettings = !showVisualSettings;
+})

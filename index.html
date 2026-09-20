@@ -49,12 +49,12 @@
         <div>
             <button id="show-all-locs-btn" title="Keyboard shortcut: S" style="font-size: 15px">Show all locations</button>
         </div>
-        <div style="height: 10px"></div>
+        <div style="height: 12px"></div>
         <div>
             <input type="checkbox" id="checkbox-maptap-database" name="checkbox-maptap-database">
             <label for="checkbox-maptap-database">Use MapTap database</label>
         </div>
-        <div style="height: 15px"></div>
+        <div style="height: 12px"></div>
         <!-- <div style="margin-bottom: 10px">
             <div>Location mode:</div>
             <input type="radio" name="location-mode" id="cities-mode" value="cities-mode" checked>
@@ -75,11 +75,11 @@
         <div class="maptap-db-settings" style="display: flex; flex-direction: column; align-items: center;">
             <div>
                 <label for="min-difficulty">Min. difficulty:</label>
-                <input type="number" id="min-difficulty" name="min-difficulty" value="1" style="width: 25px;">
+                <input type="number" id="min-difficulty" name="min-difficulty" value="1" style="width: 18px;">
             </div>
             <div>
                 <label for="max-difficulty">Max. difficulty:</label>
-                <input type="number" id="max-difficulty" name="max-difficulty" value="6" style="width: 25px;">
+                <input type="number" id="max-difficulty" name="max-difficulty" value="6" style="width: 18px;">
             </div>
             <div>
                 <input type="checkbox" id="checkbox-cities-only" name="checkbox-cities-only">
@@ -88,7 +88,7 @@
         </div>
         <div>
             <label for="locs-before-repeat">Min. before repeat: </label>
-            <input type="number" id="locs-before-repeat" name="locs-before-repeat" value="10" style="width: 40px;">
+            <input type="number" id="locs-before-repeat" name="locs-before-repeat" value="10" style="width: 28px;"><button id="locs-before-repeat-info">?</button>
         </div>
         <div style="margin-bottom: 15px"></div>
         <div>Possible locations: 
@@ -98,37 +98,37 @@
             </span>
         </div>
         <div style="margin-bottom: 15px"></div>
-        <div id="checkbox-settings">
-            <div>
-                <input type="checkbox" id="checkbox-outline" name="checkbox-outline" title="Keyboard shortcut: C" checked>
-                <label for="checkbox-outline" title="Keyboard shortcut: C">Show country outline(s)</label>
-            </div>
-            <div style="scale: 0.9;" id="checkbox-outline-subdivisions-container">
-                <input type="checkbox" style="margin-left: 30px;" id="checkbox-outline-subdivisions" name="checkbox-outline-subdivisions" checked>
-                <label for="checkbox-outline-subdivisions">Show subdivisions</label>
-            </div>
-            <div><input type="checkbox" id="checkbox-division-name" name="checkbox-division-name" checked>
-                <label for="checkbox-division-name">Show subdivision name</label>
-            </div>
-            <div>
-                <input type="checkbox" id="checkbox-country-name" name="checkbox-country-name">
-                <label for="checkbox-country-name">Show country name</label>
-            </div>
-            <div>
-                <div>
-                    <input type="checkbox" id="checkbox-city-pop" name="checkbox-city-pop">
-                    <label for="checkbox-city-pop">Show city population</label>
+        <div id="visual-settings-container">
+            <div style="width: 20px"></div>
+            <div id="checkbox-settings">
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox-setting" id="checkbox-outline" name="checkbox-outline" title="Keyboard shortcut: C" checked> 
+                    <label for="checkbox-outline" title="Keyboard shortcut: C"> Show country outline(s)</label>
+                </div>
+                <div class="checkbox-container" style="scale: 0.9" id="checkbox-outline-subdivisions-container">
+                    <input type="checkbox" class="checkbox-setting" style="margin-left: 30px;" id="checkbox-outline-subdivisions" name="checkbox-outline-subdivisions" checked><label for="checkbox-outline-subdivisions">Show subdivisions</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox-setting" id="checkbox-division-name" name="checkbox-division-name" checked> 
+                    <label for="checkbox-division-name"> Show subdivision name</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox-setting" id="checkbox-country-name" name="checkbox-country-name"> 
+                    <label for="checkbox-country-name"> Show country name</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox-setting" id="checkbox-city-pop" name="checkbox-city-pop"> 
+                    <label for="checkbox-city-pop"> Show city population</label>
+                </div>
+                <div class="checkbox-container maptap-db-settings">
+                    <input type="checkbox" class="checkbox-setting" id="checkbox-city-diff" name="checkbox-city-diff"> 
+                    <label for="checkbox-city-diff"> Show city difficulty</label>
                 </div>
             </div>
-            <div class="maptap-db-settings">
-                <div>
-                    <input type="checkbox" id="checkbox-city-diff" name="checkbox-city-diff">
-                    <label for="checkbox-city-diff">Show city difficulty</label>
-                </div>
-            </div>
+            <button id="visual-settings-toggle" title="Hide visual settings">▼</button>
         </div>
 
-        <div style="margin-bottom: 20px"></div>
+        <div style="margin-bottom: 18px"></div>
         <button id="more-settings-btn" style="font-size: 16px">More settings...</button>
         <div style="height: 5px"></div>
         <button id="show-satellites-popup-btn" class="regular-db-settings" style="font-size: 13px">Remove satellite cities...</button>
@@ -182,18 +182,17 @@
                 <option value="topo">Topological map only (cities not visible)</option>
             </select>
         </div>
-        <div style="height: 3px"></div>
-        <div style="text-align: center;">
+        <div style="text-align: center; display: none">
             <input type="checkbox" id="checkbox-maptap-subdivisions" name="checkbox-maptap-subdivisions">
             <label for="checkbox-maptap-subdivisions" style="font-size: 13px;">Only include subdivs. for countries with them in MapTap VS</label>
             <span style="font-size: 13px;" id="maptap-subdivs-text"></span>
         </div>
-        <div style="height: 3px"></div>
+        <div style="height: 10px"></div>
         <div>
             <input type="checkbox" id="checkbox-dot-markers" name="checkbox-dot-markers" checked>
-            <label for="checkbox-dot-markers">Use dots instead of pins</label>
+            <label for="checkbox-dot-markers">Use dots instead of pins (easier to pinpoint)</label>
         </div>
-        <div style="height: 12px"></div>
+        <div style="height: 10px"></div>
         <div style="text-align: center;">
             <input type="checkbox" id="checkbox-auto-remove" name="checkbox-auto-remove">
             <label for="checkbox-auto-remove">Auto remove locations guessed less than</label>

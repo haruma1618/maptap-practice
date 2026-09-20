@@ -56,6 +56,20 @@ html, body {
     cursor: pointer;
 }
 
+#visual-settings-container {
+    display: flex;
+    align-items: center;
+}
+
+#visual-settings-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+}
+
 .center-popup {
     position: absolute;
     top: 50%;
@@ -136,6 +150,17 @@ input[type="number"] {
 #checkbox-settings {
     display: flex;
     flex-direction: column;
+    align-items: start;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox-setting {
+    margin-right: 10px;
 }
 
 #ui-hue {
@@ -173,6 +198,13 @@ button, select {
     justify-content: center;
 }
 
+#locs-before-repeat-info {
+    width: 16px;
+    height: 16px;
+    font-size: 11px;
+    margin-left: 5px;
+}
+
 .map-select-buttons > button {
     font-size: 12px;
     margin-bottom: 4px;
@@ -188,11 +220,11 @@ button, select {
 }
 
 .button-highlighted {
-    background-color: rgb(90, 0, 28);
+    filter: brightness(130%);
 }
 
 .button-highlighted-partial {
-    background-color: rgb(75, 0, 24);
+    filter: brightness(115%);
 }
 
 input::placeholder {
