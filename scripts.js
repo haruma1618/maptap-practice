@@ -56,9 +56,9 @@ let convertToType = {
 };
 
 let settings = {
-    "globeBrightness": {"val": 1.1, "id": "globe-brightness-slider", "type": "n", "textId": "globe-brightness-value"},
+    "globeBrightness": {"val": 1.2, "id": "globe-brightness-slider", "type": "n", "textId": "globe-brightness-value"},
     "scoringDiff": {"val": 1, "id": "scoring-diff-slider", "type": "n", "textId": "scoring-diff-value"},
-    "fadeTime": {"val": 800, "id": "location-fade-slider", "type": "n", "textId": "location-fade-value"},
+    "fadeTime": {"val": 1000, "id": "location-fade-slider", "type": "n", "textId": "location-fade-value"},
     "autoRemove": {"val": false, "id": "checkbox-auto-remove", "type": "b"},
     "autoRemoveDist": {"val": 40, "id": "auto-remove-dist", "type": "n"},
     "autoRemoveTimes": {"val": 2, "id": "auto-remove-num-times", "type": "n"},
