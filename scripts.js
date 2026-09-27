@@ -56,7 +56,7 @@ let convertToType = {
 };
 
 let settings = {
-    "globeBrightness": {"val": 1, "id": "globe-brightness-slider", "type": "n", "textId": "globe-brightness-value"},
+    "globeBrightness": {"val": 1.1, "id": "globe-brightness-slider", "type": "n", "textId": "globe-brightness-value"},
     "scoringDiff": {"val": 1, "id": "scoring-diff-slider", "type": "n", "textId": "scoring-diff-value"},
     "fadeTime": {"val": 800, "id": "location-fade-slider", "type": "n", "textId": "location-fade-value"},
     "autoRemove": {"val": false, "id": "checkbox-auto-remove", "type": "b"},
@@ -84,7 +84,8 @@ let settings = {
     "dotMarkers": {"val": false, "id": "checkbox-dot-markers", "type": "b"},
     "clickMarkerScale": {"val": 0.75, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"},
     "enabledSubdivs": {"val": [], "id": null, "type": "o"},
-    "uiHue": {"val": 0, "id": "ui-hue", "type": "n"},
+    "uiHue": {"val": 0, "id": "ui-hue", "type": "n", "textId": "ui-hue-value"},
+    "borderOpacity": {"val": 0.5, "id": "border-opacity-slider", "type": "n", "textId": "border-opacity-value"}
 }
 
 function val(k) {
@@ -1060,7 +1061,8 @@ let outlineLayer = {
     "source": "country-polygons",
     "paint": {
         "line-color": "#A00000",
-        "line-width": 1.5
+        "line-width": 1.5,
+        "line-opacity": val("borderOpacity")
     }
 };
 
@@ -1324,6 +1326,12 @@ function addCountryOutlines() {
     }
 }
 
+d.id("border-opacity-slider").listen("input", (e)=>{
+    if (map.getLayer("polygons-stroke")) {
+        map.setPaintProperty("polygons-stroke", "line-opacity", val("borderOpacity"));
+    }
+})
+
 d.id("checkbox-cities-only").listen("change", (e)=>{
     setCurrCities();
     if (allLocMarkers.length > 0) {
@@ -1360,7 +1368,7 @@ let soundNames = ["full", "high", "med", "low", "lower", "lowest", "fail"];
 let soundScoreReqs = [990, 950, 900, 850, 800, 700, 0];
 let clickSounds = {};
 for (let n of soundNames) {
-    clickSounds[n] = new Howl({src: [`sounds/ding_${n}.mp3`], volume: 0.25})
+    clickSounds[n] = new Howl({src: [`sounds/ding_${n}.mp3`], volume: 0.2})
 }
 
 map.on("click", (e)=> {
@@ -1771,6 +1779,10 @@ function distanceKm(lat1, lat2, lon1, lon2) {
 
 d.id("locs-before-repeat-info").listen("click", ()=>{
     alert(`Minimum number of locations before a location can come up again. For example, if you get the location "Osaka, Japan" and this value is 10, you can't get "Osaka, Japan" again until 10 more locations have come up.`)
+})
+
+d.id("scoring-diff-info").listen("click", ()=>{
+    alert(`This increases how quickly the scores drop as you guess further away.\nHere's a graph showing how the scoring works: www.desmos.com/calculator/ulzg7vjrev`)
 })
 
 d.id("visual-settings-toggle").listen("click", (e)=>{

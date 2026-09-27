@@ -198,7 +198,7 @@ button, select {
     justify-content: center;
 }
 
-#locs-before-repeat-info {
+.info-btn {
     width: 16px;
     height: 16px;
     font-size: 11px;

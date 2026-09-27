@@ -88,7 +88,7 @@
         </div>
         <div>
             <label for="locs-before-repeat">Min. before repeat: </label>
-            <input type="number" id="locs-before-repeat" name="locs-before-repeat" value="10" style="width: 28px;"><button id="locs-before-repeat-info">?</button>
+            <input type="number" id="locs-before-repeat" name="locs-before-repeat" value="10" style="width: 28px;"><button id="locs-before-repeat-info" class="info-btn">?</button>
         </div>
         <div style="margin-bottom: 15px"></div>
         <div>Possible locations: 
@@ -208,7 +208,8 @@
         <div style="display: flex">
             <div class="more-settings-slider">
                 <label for="scoring-diff-slider">
-                    Scoring harshness mult.: <span id="scoring-diff-value"></span>
+                    Scoring harshness: <span id="scoring-diff-value"></span>
+                    <button id="scoring-diff-info" class="info-btn">?</button>
                 </label>
                 <input type="range" id="scoring-diff-slider" name="scoring-diff-slider" min="1" max="5" value="1" step="0.1">
             </div>
@@ -234,11 +235,17 @@
                 <input type="range" id="marker-scale-slider" name="marker-scale-slider" min="0" max="1" value="1" step="0.05">
             </div>
         </div>
-        <div style="height: 15px"></div>
-        <div class="more-settings-slider" style="flex-direction: row; align-items: center;">
-            <label for="ui-hue">UI hue:</label>
-            <div style="width: 8px"></div>
-            <input type="range" id="ui-hue" name="ui-hue" style="width: 160px" min="0" max="360" value="0" step="1">
+        <div style="height: 5px"></div>
+        <div style="display: flex">
+            <div class="more-settings-slider">
+                    <label for="border-opacity-slider">Border opacity: <span id="border-opacity-value"></span></label>
+                    <input type="range" id="border-opacity-slider" name="border-opacity-slider" min="0" max="1" value="0" step="0.05">
+            </div>
+            <div class="more-settings-slider">
+                <label for="ui-hue">UI hue: <span id="ui-hue-value"></span>°</label>
+                <div style="height: 4px"></div>
+                <input type="range" id="ui-hue" name="ui-hue" min="0" max="360" value="0" step="1">
+            </div>
         </div>
     </div>
 
