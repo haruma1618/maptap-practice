@@ -1640,7 +1640,7 @@ function removeSatellites(pop_mult, max_distance_km, max_pop=1e8, need_same_subd
     
     let prevRemovedNum = removedSatellites.length;
     removedSatellites.length = 0;
-    citiesInCountry = allCities.filter(x => currCountriesList.includes(x.country));
+    let citiesInCountry = allCities.filter(x => currCountriesList.includes(x.country));
     citiesInCountry.sort((a, b) => a.population-b.population);
 
     for (let c1 of citiesInCountry) {
