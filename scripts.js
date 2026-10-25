@@ -81,7 +81,7 @@ let settings = {
     "mapCenterLat": {"val": 0, "id": null, "type": "n"},
     "mapCenterLng": {"val": 0, "id": null, "type": "n"},
     "maptapCitiesOnly": {"val": false, "id": "checkbox-cities-only", "type": "b"},
-    "dotMarkers": {"val": false, "id": "checkbox-dot-markers", "type": "b"},
+    "dotMarkers": {"val": true, "id": "checkbox-dot-markers", "type": "b"},
     "clickMarkerScale": {"val": 0.75, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"},
     "enabledSubdivs": {"val": [], "id": null, "type": "o"},
     "uiHue": {"val": 0, "id": "ui-hue", "type": "n", "textId": "ui-hue-value"},
@@ -577,7 +577,7 @@ function setCurrCities() {
 let maptapDiffColors = [
     "#00cc88", "#33cc00", "#88cc00", "#cccc00", "#cc7700", "#cc4400", "#cc0077", "#cc00cc"
 ];
-// To do: add unclickable ,small yellow markers (The mode after clicking "Show all locations" 2 times, then goes to hiding markers)
+
 function addAllLocMarkers() {
     if (locMarkerMode === 0) return;
     let labelMode = locMarkerMode === 1;
@@ -641,12 +641,12 @@ function addAllLocMarkers() {
         if (!labelMode) {
             markerScale = 0.25;
         } else if (c.maptap_loc) {
-            markerScale = (c.population && isCity(c)) ? 0.55*Math.pow(2, 0.36*Math.log10(c.population/maxPop)) : 0.4;
+            markerScale = (c.population && isCity(c)) ? Math.max(0.55*Math.pow(2, 0.36*Math.log10(c.population/maxPop)), 0.25) : 0.4;
         } else {
             markerScale = 0.67*Math.pow(2, 0.5*Math.log10(c.population/maxPop));
         }
 
-        let marker = createMarker(markerColor, markerScale, c.longitude, c.latitude);
+        let marker = createMarker(markerColor, markerScale, c.longitude, c.latitude, isCity(c) ? "dot-marker" : "dot-marker-square");
 
         if (labelMode) {
             let popup = new maplibregl.Popup({closeButton: false, closeOnClick: false, offset: (val("dotMarkers") ? 10 : 25)});
@@ -1344,13 +1344,13 @@ d.id("globe-brightness-slider").listen("input", (e)=>{
     d.id("map").style.filter = `brightness(${val("globeBrightness")*100}%)`;
 });
 
-function createMarker(col, scl, lng, lat) {
+function createMarker(col, scl, lng, lat, dotClass="dot-marker") {
     let marker;
     if (!val("dotMarkers")) {
         marker = new maplibregl.Marker({"color": col, "scale": scl});
     } else {
         let dot = document.createElement("div");
-        dot.className = "dot-marker";
+        dot.className = dotClass;
         dot.style.backgroundColor = col;
         dot.style.width = 18*scl + "px";
         dot.style.height = 18*scl + "px";

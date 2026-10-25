@@ -264,6 +264,11 @@ label {
     background-image: radial-gradient(rgba(255, 255, 255, 0.4) 0%, transparent 100%);
 }
 
+.dot-marker-square {
+    border: 1px solid #00000080;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.4) 0%, transparent 100%);
+}
+
 .maplibregl-ctrl-bottom-right {
     display: none;
 }
