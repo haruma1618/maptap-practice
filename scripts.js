@@ -575,7 +575,7 @@ function setCurrCities() {
 }
 
 let maptapDiffColors = [
-    "#00cc88", "#33cc00", "#88cc00", "#cccc00", "#cc7700", "#cc4400", "#cc0077", "#cc00cc"
+    "#00cc88", "#33cc00", "#88cc00", "#cccc00", "#cc7700", "#cc3000", "#cc0077", "#cc00cc"
 ];
 
 function addAllLocMarkers() {
