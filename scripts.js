@@ -64,9 +64,9 @@ let settings = {
     "autoRemoveTimes": {"val": 2, "id": "auto-remove-num-times", "type": "n"},
     "showDivision": {"val": true, "id": "checkbox-division-name", "type": "b"},
     "showCountry": {"val": false, "id": "checkbox-country-name", "type": "b"},
-    "showPopulation": {"val": true, "id": "checkbox-city-pop", "type": "b"},
+    "showPopulation": {"val": false, "id": "checkbox-city-pop", "type": "b"},
     "showDifficulty": {"val": true, "id": "checkbox-city-diff", "type": "b"},
-    "showOutline": {"val": false, "id": "checkbox-outline", "type": "b"},
+    "showOutline": {"val": true, "id": "checkbox-outline", "type": "b"},
     "outlineDivisions": {"val": true, "id": "checkbox-outline-subdivisions", "type": "b"},
     "maptapSubdivisions": {"val": false, "id": "checkbox-maptap-subdivisions", "type": "b"},
     "minPopulation": {"val": 100000, "id": "min-population", "type": "n"},
@@ -77,7 +77,7 @@ let settings = {
     "globeTileType": {"val": "maptap", "id": "map-style-select", "type": "s"},
     "useMaptapDatabase": {"val": true, "id": "checkbox-maptap-database", "type": "b"},
     "minDiff": {"val": 1, "id": "min-difficulty", "type": "n"},
-    "maxDiff": {"val": 6, "id": "max-difficulty", "type": "n"},
+    "maxDiff": {"val": 5, "id": "max-difficulty", "type": "n"},
     "mapCenterLat": {"val": 0, "id": null, "type": "n"},
     "mapCenterLng": {"val": 0, "id": null, "type": "n"},
     "maptapCitiesOnly": {"val": false, "id": "checkbox-cities-only", "type": "b"},
@@ -336,10 +336,10 @@ d.id("left-hide-btn").listen("click", (e)=>{
     d.id("left-panel").style.display = (d.id("left-panel").style.display != "none" ? "none" : "flex");
 });
 
-function toggleMenuPopup(panelId, btnId) {
+function toggleMenuPopup(panelId, btnId, display="flex") {
     let panel = d.id(panelId);
     if (panel.style.display == "none") {
-        panel.style.display = "flex";
+        panel.style.display = display;
         d.id(btnId).classList.add("button-highlighted");
     } else {
         panel.style.display = "none";
@@ -787,7 +787,7 @@ function updateCustomMapCountryText() {
     let invalidCodes = [];
     
     displayStr += "(";
-    for (let i = 0; i < countriesArr.length; i++) {
+    for (let i = 0; i < Math.min(countriesArr.length, 50); i++) {
         let cname = iso2ToCountryName[countriesArr[i]];
         if (cname === undefined) {
             invalidCodes.push(countriesArr[i]);
@@ -798,7 +798,7 @@ function updateCustomMapCountryText() {
             displayStr += ", ";
         }
     }
-    displayStr += ")";
+    displayStr += (countriesArr.length > 50 ? "..." : ")");
 
     if (invalidCodes.length > 0) {
         displayStr = "<span style='color: #f8a'>Error - Invalid codes: "
@@ -1746,6 +1746,7 @@ function restoreRemovedCities(last=false) {
 }
 
 d.listen("keydown", (e) => {
+    if (d.activeElement && ["INPUT"].includes(d.activeElement.tagName) && d.activeElement.type == "text") return;
     if (e.key === "r") {
         removeLatestCity();
     } else if (e.key === "t") {
@@ -1801,6 +1802,10 @@ function distanceKm(lat1, lat2, lon1, lon2) {
 
     return c * r;
 }
+
+d.id("country-code-input-toggle").listen("click", ()=>{
+    toggleMenuPopup("country-code-input", "country-code-input-toggle", "block");
+})
 
 d.id("locs-before-repeat-info").listen("click", ()=>{
     alert(`Minimum number of locations before a location can come up again. For example, if you get the location "Osaka, Japan" and this value is 10, you can't get "Osaka, Japan" again until 10 more locations have come up.`)

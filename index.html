@@ -279,7 +279,7 @@
     <div id="map-select-popup" class="center-popup" style="display: none">
         <button id="map-select-exit" style="position: absolute; top: 10px; right: 10px">X</button>
         <b style="font-size: 20px; text-align: center; margin-bottom: 15px">Select map:</b>
-        <button id="select-countries" style="font-size: 14px; background-color: #404">Custom map - Select countries</button>
+        <button id="select-countries" style="font-size: 14px; background-color: #404; padding: 3px 6px 3px 6px">Custom map - Select countries</button>
         <div style="height: 15px"></div>
         <div id="map-select-button-container">
             <div class="map-select-buttons" id="map-select-countries-large">
@@ -343,17 +343,19 @@
             <div id="saved-maps"></div>
         </div> -->
 
-        <div style="height: 15px"></div>
-        <div style="font-size: 14px; text-align: center;">Or - enter list of country codes:</div>
-        <div style="height: 5px"></div>
-        <input type="text" id="custom-map-input" style="width: 100%; margin-bottom: 7px" placeholder="GB,FR,DE">
-        <div id="custom-map-countries" style="font-size: 12px; font-style: italic; text-align: center; color:#eee"></div>
-        <div style="height: 10px"></div>
-        <div style="margin-bottom: 5px">
-            <button id="use-custom">Use custom map</button>
-            <button id="load-curr-code">Load curr. map code</button>
+        <div style="height: 25px"></div>
+        <button id="country-code-input-toggle" style="font-size: 12px; text-align: center; background-color: #222;">Fallback - enter list of country codes</button>
+        <div id="country-code-input" style="display: none; width: 100%; text-align: center;">
+            <div style="height: 5px"></div>
+            <input type="text" id="custom-map-input" style="width: 100%; margin-bottom: 7px" placeholder="GB,FR,DE">
+            <div id="custom-map-countries" style="font-size: 12px; font-style: italic; text-align: center; color:#eee"></div>
+            <div style="height: 10px"></div>
+            <div style="margin-bottom: 5px">
+                <button id="use-custom">Use custom map</button>
+                <button id="load-curr-code">Load curr. map code</button>
+            </div>
+            <a href="iso2_codes.txt" target="_blank" rel="noopener noreferrer" style="font-size:12px; color:#ddd">Country Codes List</a>
         </div>
-        <a href="iso2_codes.txt" target="_blank" rel="noopener noreferrer" style="font-size:12px; color:#ddd">Country Codes List</a>
     </div>
 
     <script src="scripts.js" type="module"></script>
