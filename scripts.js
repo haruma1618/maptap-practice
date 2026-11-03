@@ -59,7 +59,7 @@ let settings = {
     "globeBrightness": {"val": 1.2, "id": "globe-brightness-slider", "type": "n", "textId": "globe-brightness-value"},
     "scoringDiff": {"val": 1, "id": "scoring-diff-slider", "type": "n", "textId": "scoring-diff-value"},
     "fadeTime": {"val": 1000, "id": "location-fade-slider", "type": "n", "textId": "location-fade-value"},
-    "autoRemove": {"val": false, "id": "checkbox-auto-remove", "type": "b"},
+    "autoRemove": {"val": true, "id": "checkbox-auto-remove", "type": "b"},
     "autoRemoveDist": {"val": 40, "id": "auto-remove-dist", "type": "n"},
     "autoRemoveTimes": {"val": 2, "id": "auto-remove-num-times", "type": "n"},
     "showDivision": {"val": true, "id": "checkbox-division-name", "type": "b"},
@@ -82,7 +82,7 @@ let settings = {
     "mapCenterLng": {"val": 0, "id": null, "type": "n"},
     "maptapCitiesOnly": {"val": false, "id": "checkbox-cities-only", "type": "b"},
     "dotMarkers": {"val": true, "id": "checkbox-dot-markers", "type": "b"},
-    "clickMarkerScale": {"val": 0.75, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"},
+    "clickMarkerScale": {"val": 0.6, "id": "marker-scale-slider", "type": "n", "textId": "marker-scale-value"},
     "enabledSubdivs": {"val": [], "id": null, "type": "o"},
     "uiHue": {"val": 0, "id": "ui-hue", "type": "n", "textId": "ui-hue-value"},
     "borderOpacity": {"val": 0.5, "id": "border-opacity-slider", "type": "n", "textId": "border-opacity-value"}
