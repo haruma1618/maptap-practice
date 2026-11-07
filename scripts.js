@@ -1445,7 +1445,6 @@ map.on("click", (e)=> {
     distPopup.listen("animationend", distPopup.remove);
     distPopup.style.color = "hsl(" + (240 * (1-score/1000)) + ", 100%, 60%)";
     distPopup.style["-webkit-text-stroke"] = "0.75px hsl(" + (240 * (1-score/1000)) + ", 100%, 20%)";
-    distPopup.style["user-select"] = "none";
     d.body.appendChild(distPopup);
 
     let scoreText = Math.round(score) + "/1000" + " (" + distFromClick.toFixed(2) + " km)";
